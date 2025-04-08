@@ -13,9 +13,9 @@ const Tab = createMaterialTopTabNavigator();
 export default function App() {
   return (
     <SafeAreaProvider>
-
-      <SafeAreaView style={{ flex: 1 , backgroundColor: ColorEerieBlack}}>
       <StatusBar style="dark" backgroundColor= {ColorDarkCyan} />
+      <SafeAreaView style={{ flex: 1 , backgroundColor: ColorEerieBlack}}>
+
         <NavigationContainer>
           <Tab.Navigator
             screenOptions={{
@@ -35,27 +35,27 @@ export default function App() {
             <Tab.Screen name="Sun"  component={() => CreateDayScreen('Sunday')} />
           </Tab.Navigator>
         </NavigationContainer>
-      </SafeAreaView>
-      
-      <SafeAreaView style={{ backgroundColor: ColorDarkCyan, height: 70, flexDirection: 'row' }}>
-        <View style={{ flex: 1, justifyItems: 'center', alignItems: 'center', flexDirection: "column" }}>
+
+      <View style={{ backgroundColor: ColorDarkCyan, height: 70, flexDirection: 'row' }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
           <Text>Calories</Text>
           <Text>0</Text>
         </View>
-        <View style={{ flex: 1, justifyItems: 'center', alignItems: 'center', flexDirection: "column" }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
           <Text>Proteins</Text>
           <Text>0</Text>
         </View>
-        <View style={{ flex: 1, justifyItems: 'center', alignItems: 'center', flexDirection: "column" }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
           <Text>Fat</Text>
           <Text>0</Text>
         </View>
-        <View style={{ flex: 1, justifyItems: 'center', alignItems: 'center', flexDirection: "column" }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
           <Text>Carbs</Text>
           <Text>0</Text>
         </View>
-</SafeAreaView>
+      </View>
 
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
