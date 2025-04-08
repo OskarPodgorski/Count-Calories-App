@@ -8,6 +8,18 @@ const ColorDarkCyan = "#0E9594";
 const ColorBlack = "#000000";
 const ColorEerieBlack = "#222222";
 
+const footerStyle = StyleSheet.create({
+  text: {
+    fontWeight: "bold"
+  },
+  viewInside: {
+    flex: 1,
+     justifyContent: 'center',
+      alignItems: 'center',
+       flexDirection: "column" 
+  }
+});
+
 const Tab = createMaterialTopTabNavigator();
 
 export default function App() {
@@ -36,34 +48,54 @@ export default function App() {
           </Tab.Navigator>
         </NavigationContainer>
 
-      <View style={{ backgroundColor: ColorDarkCyan, height: 70, flexDirection: 'row' }}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
-          <Text>Calories</Text>
-          <Text>0</Text>
-        </View>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
-          <Text>Proteins</Text>
-          <Text>0</Text>
-        </View>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
-          <Text>Fat</Text>
-          <Text>0</Text>
-        </View>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
-          <Text>Carbs</Text>
-          <Text>0</Text>
-        </View>
-      </View>
+        <CreateFooter/>
 
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 
+function CreateFooter() {
+  return(
+      <View style={{ backgroundColor: ColorDarkCyan, height: 70, flexDirection: 'row' }}>
+        <View style={ footerStyle.viewInside}>
+          <Text>Calories</Text>
+          <Text style={footerStyle.text}>0</Text>
+        </View>
+        <View style={footerStyle.viewInside}>
+          <Text>Proteins</Text>
+          <Text style={footerStyle.text}>0</Text>
+        </View>
+        <View style={footerStyle.viewInside}>
+          <Text>Fat</Text>
+          <Text style={footerStyle.text}>0</Text>
+        </View>
+        <View style={footerStyle.viewInside}>
+          <Text>Carbs</Text>
+          <Text style={footerStyle.text}>0</Text>
+        </View>
+      </View>
+  );
+}
+
 function CreateDayScreen(dayName) {
   return (
-    <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: ColorEerieBlack }}>
-      <Text style={{fontSize: 32, color: ColorDarkCyan}}>{dayName}</Text>
-    </SafeAreaView>
+    <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "flex-start", backgroundColor: ColorEerieBlack }}>
+      <MealSection title={"Breakfast"}/>
+    </View>
+  );
+}
+
+function MealSection({title}) {
+  return (
+    <View style={{
+      backgroundColor: '#333',
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 12,
+    }}>
+      <Text style={{ color: 'white', fontSize: 18, marginBottom: 4 }}>{title}</Text>
+      <Text style={{ color: '#aaa' }}>Tu będą dodane produkty</Text>
+    </View>
   );
 }
