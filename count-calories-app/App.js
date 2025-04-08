@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -37,10 +37,25 @@ export default function App() {
         </NavigationContainer>
       </SafeAreaView>
       
-      <SafeAreaView style={{ backgroundColor: ColorDarkCyan, height: 70 }}>
-        <Text>FOOTER</Text>
-      </SafeAreaView>
-      
+      <SafeAreaView style={{ backgroundColor: ColorDarkCyan, height: 70, flexDirection: 'row' }}>
+        <View style={{ flex: 1, justifyItems: 'center', alignItems: 'center', flexDirection: "column" }}>
+          <Text>Calories</Text>
+          <Text>0</Text>
+        </View>
+        <View style={{ flex: 1, justifyItems: 'center', alignItems: 'center', flexDirection: "column" }}>
+          <Text>Proteins</Text>
+          <Text>0</Text>
+        </View>
+        <View style={{ flex: 1, justifyItems: 'center', alignItems: 'center', flexDirection: "column" }}>
+          <Text>Fat</Text>
+          <Text>0</Text>
+        </View>
+        <View style={{ flex: 1, justifyItems: 'center', alignItems: 'center', flexDirection: "column" }}>
+          <Text>Carbs</Text>
+          <Text>0</Text>
+        </View>
+</SafeAreaView>
+
     </SafeAreaProvider>
   );
 }
