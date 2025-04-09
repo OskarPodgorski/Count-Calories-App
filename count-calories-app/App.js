@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -36,26 +36,26 @@ export default function App() {
               tabBarLabelStyle: { fontSize: 14 },
               tabBarItemStyle: { width: 70 },
               tabBarIndicatorStyle: { backgroundColor: ColorBlack , height: 3 },
-              tabBarStyle: { backgroundColor : ColorDarkCyan, borderBottomLeftRadius: 8, borderBottomRightRadius: 8}             
+              tabBarStyle: { backgroundColor : ColorDarkCyan, borderBottomLeftRadius: 8, borderBottomRightRadius: 8, overflow: 'hidden'}             
             }}>
-            <Tab.Screen name="Mon"  component={() => CreateDayScreen('Monday')} />
-            <Tab.Screen name="Tue"  component={() => CreateDayScreen('Tuesday')} />
-            <Tab.Screen name="Wed"  component={() => CreateDayScreen('Wednesday')} />
-            <Tab.Screen name="Thu" component={() => CreateDayScreen('Thursday')} />
-            <Tab.Screen name="Fri"  component={() => CreateDayScreen('Friday')} />
-            <Tab.Screen name="Sat" component={() => CreateDayScreen('Saturday')} />
-            <Tab.Screen name="Sun"  component={() => CreateDayScreen('Sunday')} />
+            <Tab.Screen name="Mon"  component={() => DayScreen('Monday')} />
+            <Tab.Screen name="Tue"  component={() => DayScreen('Tuesday')} />
+            <Tab.Screen name="Wed"  component={() => DayScreen('Wednesday')} />
+            <Tab.Screen name="Thu" component={() => DayScreen('Thursday')} />
+            <Tab.Screen name="Fri"  component={() => DayScreen('Friday')} />
+            <Tab.Screen name="Sat" component={() => DayScreen('Saturday')} />
+            <Tab.Screen name="Sun"  component={() => DayScreen('Sunday')} />
           </Tab.Navigator>
         </NavigationContainer>
 
-        <CreateFooter/>
+        <CaloriesFooter/>
 
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 
-function CreateFooter() {
+function CaloriesFooter() {
   return(
       <View style={{ backgroundColor: ColorDarkCyan, height: 70, flexDirection: 'row', borderRadius: 8 }}>
         <View style={ footerStyle.viewInside}>
@@ -78,7 +78,7 @@ function CreateFooter() {
   );
 }
 
-function CreateDayScreen(dayName) {
+function DayScreen(dayName) {
   return (
     <View style ={{flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: ColorEerieBlack}}>
       <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: ColorEerieBlack, margin: 4 }}>
@@ -94,13 +94,35 @@ function MealSection({title}) {
   return (
     <View style={{
       backgroundColor: ColorNight,
-      padding: 14,
+      padding: 12,
       borderRadius: 8,
       marginTop: 4,
       marginBottom: 4,
+      flexDirection: "row",
+      justifyContent: "space-between"
     }}>
-      <Text style={{ color: 'white', fontSize: 18, marginBottom: 4 }}>{title}</Text>
-      <Text style={{ color: '#aaa' }}>Calories:</Text>
+
+      <View>
+        <Text style={{ color: 'white', fontSize: 18, marginBottom: 4 }}>{title}</Text>
+        <Text style={{ color: '#aaa' }}>Calories:</Text>
+      </View>
+
+      <View style={{alignItems: "flex-end", justifyContent: "flex-end"}}>
+        <TouchableOpacity
+          style={{
+            backgroundColor: ColorDarkCyan,
+            minHeight: 40,
+            minWidth: 40,
+            borderRadius: 8,
+            alignSelf: 'flex-end',
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+          onPress={() => console.log(`Dodano do: ${title}`)}>
+          <Text style={{ color: {ColorBlack}, fontSize: 22 }}>+</Text>
+        </TouchableOpacity>
+      </View>
+      
     </View>
   );
 }
