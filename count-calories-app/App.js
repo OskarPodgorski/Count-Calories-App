@@ -7,6 +7,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 const ColorDarkCyan = "#0E9594";
 const ColorBlack = "#000000";
 const ColorEerieBlack = "#222222";
+const ColorNight = "#161616";
 
 const footerStyle = StyleSheet.create({
   text: {
@@ -35,10 +36,9 @@ export default function App() {
               tabBarLabelStyle: { fontSize: 14 },
               tabBarItemStyle: { width: 70 },
               tabBarIndicatorStyle: { backgroundColor: ColorBlack , height: 3 },
-              tabBarStyle: { backgroundColor : ColorDarkCyan}
-            }}
-            >
-            <Tab.Screen name="Mon" component={() => CreateDayScreen('Monday')} />
+              tabBarStyle: { backgroundColor : ColorDarkCyan, borderBottomLeftRadius: 8, borderBottomRightRadius: 8}             
+            }}>
+            <Tab.Screen name="Mon"  component={() => CreateDayScreen('Monday')} />
             <Tab.Screen name="Tue"  component={() => CreateDayScreen('Tuesday')} />
             <Tab.Screen name="Wed"  component={() => CreateDayScreen('Wednesday')} />
             <Tab.Screen name="Thu" component={() => CreateDayScreen('Thursday')} />
@@ -57,7 +57,7 @@ export default function App() {
 
 function CreateFooter() {
   return(
-      <View style={{ backgroundColor: ColorDarkCyan, height: 70, flexDirection: 'row' }}>
+      <View style={{ backgroundColor: ColorDarkCyan, height: 70, flexDirection: 'row', borderRadius: 8 }}>
         <View style={ footerStyle.viewInside}>
           <Text>Calories</Text>
           <Text style={footerStyle.text}>0</Text>
@@ -80,8 +80,12 @@ function CreateFooter() {
 
 function CreateDayScreen(dayName) {
   return (
-    <View style={{ flex: 1, justifyContent: "flex-end", alignItems: "flex-start", backgroundColor: ColorEerieBlack }}>
-      <MealSection title={"Breakfast"}/>
+    <View style ={{flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: ColorEerieBlack}}>
+      <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: ColorEerieBlack, margin: 4 }}>
+        <MealSection title={"Breakfast"}/>
+        <MealSection title={"Lunch"}/>
+        <MealSection title={"Dinner"}/>
+      </View>
     </View>
   );
 }
@@ -89,13 +93,14 @@ function CreateDayScreen(dayName) {
 function MealSection({title}) {
   return (
     <View style={{
-      backgroundColor: '#333',
-      padding: 12,
+      backgroundColor: ColorNight,
+      padding: 14,
       borderRadius: 8,
-      marginBottom: 12,
+      marginTop: 4,
+      marginBottom: 4,
     }}>
       <Text style={{ color: 'white', fontSize: 18, marginBottom: 4 }}>{title}</Text>
-      <Text style={{ color: '#aaa' }}>Tu będą dodane produkty</Text>
+      <Text style={{ color: '#aaa' }}>Calories:</Text>
     </View>
   );
 }
