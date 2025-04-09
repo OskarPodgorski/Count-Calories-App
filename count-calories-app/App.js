@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -91,6 +92,19 @@ function DayScreen(dayName) {
 }
 
 function MealSection({title}) {
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [productName, setProductName] = useState('');
+  const [productCalories, setProductCalories] = useState('');
+
+  const handleAdd = () => {
+    console.log(`Dodano: ${productName} (${productCalories} kcal) do ${title}`);
+    // tutaj dodasz logikę do stanu / wysyłania do listy
+    setModalVisible(false);
+    setProductName('');
+    setProductCalories('');
+  };
+
   return (
     <View style={{
       backgroundColor: ColorNight,
@@ -111,18 +125,92 @@ function MealSection({title}) {
         <TouchableOpacity
           style={{
             backgroundColor: ColorDarkCyan,
-            minHeight: 40,
-            minWidth: 40,
+            minHeight: 38,
+            minWidth: 38,
             borderRadius: 8,
             alignSelf: 'flex-end',
             alignItems: "center",
             justifyContent: "center"
           }}
-          onPress={() => console.log(`Dodano do: ${title}`)}>
+          onPress={() => setModalVisible(true)}>
           <Text style={{ color: {ColorBlack}, fontSize: 22 }}>+</Text>
         </TouchableOpacity>
       </View>
       
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(0, 0, 0, 0.35)'
+        }}>
+          <View style={{
+            backgroundColor: ColorDarkCyan,
+            padding: 20,
+            borderRadius: 10,
+            width: '80%'
+          }}>
+            <Text style={{ fontSize: 18, marginBottom: 10 }}>Add to {title}</Text>
+
+            <TextInput
+              placeholder="Name"
+              value={productName}
+              onChangeText={setProductName}
+              style={{ borderBottomWidth: 1, marginBottom: 15 }}
+            />
+
+            <Text style={{ fontSize: 14, marginBottom: 5}}>In 100 grams:</Text>
+
+            <TextInput
+              placeholder="Calories"
+              value={productCalories}
+              onChangeText={setProductCalories}
+              keyboardType="numeric"
+              style={{ borderBottomWidth: 1, marginBottom: 5 }}
+            />
+            <TextInput
+              placeholder="Proteins"
+              value={productCalories}
+              onChangeText={setProductCalories}
+              keyboardType="numeric"
+              style={{ borderBottomWidth: 1, marginBottom: 5 }}
+            />
+            <TextInput
+              placeholder="Fat"
+              value={productCalories}
+              onChangeText={setProductCalories}
+              keyboardType="numeric"
+              style={{ borderBottomWidth: 1, marginBottom: 5 }}
+            />
+            <TextInput
+              placeholder="Carbs"
+              value={productCalories}
+              onChangeText={setProductCalories}
+              keyboardType="numeric"
+              style={{ borderBottomWidth: 1, marginBottom: 25 }}
+            />
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <Text style={{ color: ColorEerieBlack }}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={handleAdd}>
+                <Text style={{ color: ColorBlack, fontWeight: 'bold' }}>Add +</Text>
+              </TouchableOpacity>
+
+            </View>
+
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 }
