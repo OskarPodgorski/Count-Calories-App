@@ -92,6 +92,22 @@ function DayScreen(dayName) {
 }
 
 function MealSection({title}) {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [mealName, setMealName] = useState('');
+  const [productCalories, setProductCalories] = useState('');
+  const [productProteins, setProductProteins] = useState('');
+  const [productFat, setProductFat] = useState('');
+  const [productCarbs, setProductCarbs] = useState('');
+
+  const handleAdd = () => {
+    setModalVisible(false);
+    setMealName("");
+    setProductCalories("");
+    setProductProteins("");
+    setProductFat("");
+    setProductCarbs("");
+  };
+
   return (
     <View style={{
       backgroundColor: ColorNight,
@@ -124,24 +140,6 @@ function MealSection({title}) {
         </TouchableOpacity>
       </View>
       
-      <AddProductModal title={title}/>
-
-    </View>
-  );
-}
-
-function AddProductModal({title}) { 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [productName, setProductName] = useState('');
-  const [productCalories, setProductCalories] = useState('');
-
-  const handleAdd = () => {
-    setModalVisible(false);
-    setProductName('');
-    setProductCalories('');
-  };
-
-  return(
       <Modal
         animationType="slide"
         transparent={true}
@@ -167,12 +165,12 @@ function AddProductModal({title}) {
 
             <TextInput
               placeholder="Name"
-              value={productName}
-              onChangeText={setProductName}
+              value={mealName}
+              onChangeText={setMealName}
               style={{ borderBottomWidth: 1, marginBottom: 15 }}
             />
 
-            <Text style={{ fontSize: 14, marginBottom: 5}}>In 100 grams:</Text>
+            <Text style={{ fontSize: 14, marginBottom: 5}}>Product data in 100 grams:</Text>
 
             <TextInput
               placeholder="Calories"
@@ -183,22 +181,22 @@ function AddProductModal({title}) {
             />
             <TextInput
               placeholder="Proteins"
-              value={productCalories}
-              onChangeText={setProductCalories}
+              value={productProteins}
+              onChangeText={setProductProteins}
               keyboardType="numeric"
               style={{ borderBottomWidth: 1, marginBottom: 5 }}
             />
             <TextInput
               placeholder="Fat"
-              value={productCalories}
-              onChangeText={setProductCalories}
+              value={productFat}
+              onChangeText={setProductFat}
               keyboardType="numeric"
               style={{ borderBottomWidth: 1, marginBottom: 5 }}
             />
             <TextInput
               placeholder="Carbs"
-              value={productCalories}
-              onChangeText={setProductCalories}
+              value={productCarbs}
+              onChangeText={setProductCarbs}
               keyboardType="numeric"
               style={{ borderBottomWidth: 1, marginBottom: 25 }}
             />
@@ -218,5 +216,7 @@ function AddProductModal({title}) {
           </View>
         </View>
       </Modal>
+
+    </View>
   );
 }
