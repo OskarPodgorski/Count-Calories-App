@@ -99,9 +99,21 @@ function MealSection({title}) {
   const [productProteins, setProductProteins] = useState('');
   const [productFat, setProductFat] = useState('');
   const [productCarbs, setProductCarbs] = useState('');
+  const [products, setProducts] = useState([]);
 
   const handleAdd = () => {
+    const addedProduct = {
+      name: mealName,
+      grams: Number(mealGrams),
+      calories: Number(productCalories),
+      proteins: Number(productProteins),
+      fat: Number(productFat),
+      carbs: Number(productCarbs)
+    };
+
+    setProducts(prev => [...prev, addedProduct]);
     setModalVisible(false);
+
     setMealName("");
     setMealGrams("");
     setProductCalories("");
@@ -121,10 +133,28 @@ function MealSection({title}) {
       justifyContent: "space-between"
     }}>
 
-      <View>
-        <Text style={{ color: 'white', fontSize: 18, marginBottom: 4 }}>{title}</Text>
-        <Text style={{ color: '#aaa' }}>Calories:</Text>
-      </View>
+    <View style={{ flex: 1 }}>
+
+      <Text style={{ color: 'white', fontSize: 18, marginBottom: 4 }}>{title}</Text>
+      <Text style={{ color: '#aaa' }}>Calories:</Text>
+
+      {products.length > 0 && (
+        <View style={{ marginTop: 12 }}>
+
+          {products.map((item, index) => (
+            <View key={index} style={{ marginBottom: 4 }}>
+              
+              <Text style={{ color: 'white' }}>
+                {item.name} - {item.grams}g ({Math.round(item.calories * item.grams / 100)} kcal)
+              </Text>
+
+            </View>
+          ))}
+
+        </View>
+      )}
+
+    </View>
 
       <View style={{alignItems: "flex-end", justifyContent: "flex-end"}}>
         <TouchableOpacity
