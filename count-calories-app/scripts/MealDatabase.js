@@ -1,5 +1,8 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export class MealEntry {
     constructor(name, grams, caloriesPer100g, proteins, fat, carbs) {
+        this.id = uuidv4();
       this.name = name;
       this.grams = grams;
       this.calories = caloriesPer100g;
@@ -15,16 +18,25 @@ export class MealEntry {
 
   class MealDatabase {
     data = {
-      Monday: { Breakfast: [], Lunch: [], Dinner: [] },
-      Tuesday: { Breakfast: [], Lunch: [], Dinner: [] },
+      Monday: { Breakfast: new Map(), Lunch: new Map(), Dinner: new Map() },
+      Tuesday: { Breakfast: new Map(), Lunch: new Map(), Dinner: new Map() },
+      Wednesday: { Breakfast: new Map(), Lunch: new Map(), Dinner: new Map() },
+      Thursday: { Breakfast: new Map(), Lunch: new Map(), Dinner: new Map() },
+      Friday: { Breakfast: new Map(), Lunch: new Map(), Dinner: new Map() },
+      Saturday: { Breakfast: new Map(), Lunch: new Map(), Dinner: new Map() },
+      Sunday: { Breakfast: new Map(), Lunch: new Map(), Dinner: new Map() },
     };
   
     addMeal(day, mealType, mealEntry) {
-      this.data[day][mealType].push(mealEntry);
+      this.data[day][mealType].set(mealEntry.id, mealEntry);
     }
   
     getMeals(day, mealType) {
       return this.data[day][mealType];
+    }
+
+    removeMeal(day, mealType, id) {
+        this.data[day][mealType].delete(id);
     }
   
     getDayTotals(day) {
