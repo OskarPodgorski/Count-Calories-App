@@ -94,6 +94,7 @@ function DayScreen(dayName) {
 function MealSection({title}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [mealName, setMealName] = useState('');
+  const [mealGrams, setMealGrams] = useState('');
   const [productCalories, setProductCalories] = useState('');
   const [productProteins, setProductProteins] = useState('');
   const [productFat, setProductFat] = useState('');
@@ -102,6 +103,7 @@ function MealSection({title}) {
   const handleAdd = () => {
     setModalVisible(false);
     setMealName("");
+    setMealGrams("");
     setProductCalories("");
     setProductProteins("");
     setProductFat("");
@@ -157,16 +159,37 @@ function MealSection({title}) {
           <View style={{
             backgroundColor: ColorDarkCyan,
             padding: 20,
-            borderRadius: 10,
+            borderRadius: 8,
             width: '80%'
           }}>
 
-            <Text style={{ fontSize: 18, marginBottom: 10 }}>Add to {title}</Text>
+             <View style={{
+                backgroundColor: ColorEerieBlack,
+                padding: 10,
+                borderRadius: 8,
+                alignItems: "center",
+                justifyContent: "center",
+                alignSelf: "center"
+              }}>
+            
+              <Text style={{ fontSize: 18, color: "white" }}>Add to {title}</Text>
+
+              </View>
+
+              <Text style={{ fontSize: 14, marginBottom: 5, marginTop: 15}}>Meal data:</Text>
 
             <TextInput
               placeholder="Name"
               value={mealName}
               onChangeText={setMealName}
+              style={{ borderBottomWidth: 1, marginBottom: 5 }}
+            />
+
+            <TextInput
+              placeholder="Grams"
+              value={mealGrams}
+              onChangeText={setMealGrams}
+              keyboardType="numeric"
               style={{ borderBottomWidth: 1, marginBottom: 15 }}
             />
 
@@ -198,7 +221,7 @@ function MealSection({title}) {
               value={productCarbs}
               onChangeText={setProductCarbs}
               keyboardType="numeric"
-              style={{ borderBottomWidth: 1, marginBottom: 25 }}
+              style={{ borderBottomWidth: 1, marginBottom: 20 }}
             />
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
