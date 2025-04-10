@@ -92,19 +92,6 @@ function DayScreen(dayName) {
 }
 
 function MealSection({title}) {
-
-  const [modalVisible, setModalVisible] = useState(false);
-  const [productName, setProductName] = useState('');
-  const [productCalories, setProductCalories] = useState('');
-
-  const handleAdd = () => {
-    console.log(`Dodano: ${productName} (${productCalories} kcal) do ${title}`);
-    // tutaj dodasz logikę do stanu / wysyłania do listy
-    setModalVisible(false);
-    setProductName('');
-    setProductCalories('');
-  };
-
   return (
     <View style={{
       backgroundColor: ColorNight,
@@ -137,24 +124,45 @@ function MealSection({title}) {
         </TouchableOpacity>
       </View>
       
+      <AddProductModal title={title}/>
+
+    </View>
+  );
+}
+
+function AddProductModal({title}) { 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [productName, setProductName] = useState('');
+  const [productCalories, setProductCalories] = useState('');
+
+  const handleAdd = () => {
+    setModalVisible(false);
+    setProductName('');
+    setProductCalories('');
+  };
+
+  return(
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
-      >
+        >
+
         <View style={{
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
           backgroundColor: 'rgba(0, 0, 0, 0.35)'
         }}>
+
           <View style={{
             backgroundColor: ColorDarkCyan,
             padding: 20,
             borderRadius: 10,
             width: '80%'
           }}>
+
             <Text style={{ fontSize: 18, marginBottom: 10 }}>Add to {title}</Text>
 
             <TextInput
@@ -210,7 +218,5 @@ function MealSection({title}) {
           </View>
         </View>
       </Modal>
-
-    </View>
   );
 }
