@@ -4,11 +4,14 @@ import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput } from 'reac
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { MealDatabase, mealDB } from './scripts/MealDatabase'
 
 const ColorDarkCyan = "#0E9594";
 const ColorBlack = "#000000";
 const ColorEerieBlack = "#222222";
 const ColorNight = "#161616";
+
+const Tab = createMaterialTopTabNavigator();
 
 const footerStyle = StyleSheet.create({
   text: {
@@ -21,8 +24,6 @@ const footerStyle = StyleSheet.create({
        flexDirection: "column" 
   }
 });
-
-const Tab = createMaterialTopTabNavigator();
 
 export default function App() {
   return (
