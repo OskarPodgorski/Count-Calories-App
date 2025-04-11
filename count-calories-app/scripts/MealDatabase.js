@@ -43,11 +43,11 @@ export class MealEntry {
       const totals = { calories: 0, proteins: 0, fat: 0, carbs: 0 };
   
       for (const mealType of ['Breakfast', 'Lunch', 'Dinner']) {
-        for (const meal of this.data[day][mealType]) {
-          totals.calories += (meal.calories * meal.grams) / 100;
-          totals.proteins += (meal.proteins * meal.grams) / 100;
-          totals.fat     += (meal.fat * meal.grams) / 100;
-          totals.carbs   += (meal.carbs * meal.grams) / 100;
+        for (const meal of Array.from(this.data[day][mealType].values())) {
+          totals.calories += Math.round((meal.calories * meal.grams) / 100);
+          totals.proteins += Math.round((meal.proteins * meal.grams) / 100);
+          totals.fat     += Math.round((meal.fat * meal.grams) / 100);
+          totals.carbs   += Math.round((meal.carbs * meal.grams) / 100);
         }
       }
   
