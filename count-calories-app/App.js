@@ -1,10 +1,14 @@
 import 'react-native-get-random-values';
+import 'react-native-gesture-handler';
+
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+
 import { MealDatabase, mealDB, MealEntry } from './scripts/MealDatabase'
 
 const ColorDarkCyan = "#0E9594";
@@ -13,6 +17,7 @@ const ColorEerieBlack = "#222222";
 const ColorNight = "#161616";
 
 const Tab = createMaterialTopTabNavigator();
+const Drawer = createDrawerNavigator();
 
 const footerStyle = StyleSheet.create({
   text: {
@@ -30,17 +35,71 @@ export default function App() {
   return (
     <SafeAreaProvider>
 
-      <StatusBar style="dark" backgroundColor= {ColorDarkCyan} />
+      <StatusBar style="light" backgroundColor= {ColorEerieBlack} />
       <SafeAreaView style={{ flex: 1 , backgroundColor: ColorEerieBlack}}>
 
         <NavigationContainer>
+
+          <DrawerCreate/>
+
+        </NavigationContainer>
+
+      </SafeAreaView>
+
+    </SafeAreaProvider>
+  );
+}
+
+function DrawerCreate() {
+  return(
+  <Drawer.Navigator
+    screenOptions={{
+      drawerStyle: {
+        backgroundColor: ColorEerieBlack,
+        width: 200,
+        borderBottomRightRadius:8,
+        borderTopRightRadius:0
+      },
+      drawerLabelStyle: {
+        color: "white",
+        fontSize: 14,
+      },
+      headerStyle: {
+        backgroundColor: ColorEerieBlack,
+        height: 60
+      },
+      headerStatusBarHeight: 0,
+      headerTitleAlign: "center",
+      headerTintColor: "white",
+      headerShadowVisible: false,
+      headerTitleStyle: {
+        textAlignVertical: "top",
+        fontSize: 18
+      },
+  }}
+  >
+    <Drawer.Screen name="Home Screen" component={TabNavigator} />
+    <Drawer.Screen name="Settings" component={SettingsScreen} />
+  </Drawer.Navigator>
+  );
+}
+
+function SettingsScreen() {
+  return(
+    <View/>
+  )
+}
+
+function TabNavigator() {
+  return(
+      <View style={{backgroundColor: ColorEerieBlack, flex: 1, paddingTop: 0}}>
           <Tab.Navigator
-            screenOptions={{
+            screenOptions={{            
               tabBarScrollEnabled: true,
               tabBarLabelStyle: { fontSize: 14 },
               tabBarItemStyle: { width: 70 },
               tabBarIndicatorStyle: { backgroundColor: ColorBlack , height: 3 },
-              tabBarStyle: { backgroundColor : ColorDarkCyan, borderBottomLeftRadius: 8, borderBottomRightRadius: 8, overflow: 'hidden'}             
+              tabBarStyle: { backgroundColor : ColorDarkCyan, borderRadius: 8, overflow: 'hidden'}             
             }}>
             <Tab.Screen name="Mon"  component={() => DayScreen('Monday')} />
             <Tab.Screen name="Tue"  component={() => DayScreen('Tuesday')} />
@@ -50,11 +109,7 @@ export default function App() {
             <Tab.Screen name="Sat" component={() => DayScreen('Saturday')} />
             <Tab.Screen name="Sun"  component={() => DayScreen('Sunday')} />
           </Tab.Navigator>
-        </NavigationContainer>
-
-      </SafeAreaView>
-      
-    </SafeAreaProvider>
+        </View>
   );
 }
 
