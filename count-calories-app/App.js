@@ -27,6 +27,8 @@ const footerStyle = StyleSheet.create({
 });
 
 export default function App() {
+  const [refreshFooter, setRefreshFooter] = useState(false);
+
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" backgroundColor= {ColorDarkCyan} />
@@ -41,17 +43,17 @@ export default function App() {
               tabBarIndicatorStyle: { backgroundColor: ColorBlack , height: 3 },
               tabBarStyle: { backgroundColor : ColorDarkCyan, borderBottomLeftRadius: 8, borderBottomRightRadius: 8, overflow: 'hidden'}             
             }}>
-            <Tab.Screen name="Mon"  component={() => DayScreen('Monday')} />
-            <Tab.Screen name="Tue"  component={() => DayScreen('Tuesday')} />
-            <Tab.Screen name="Wed"  component={() => DayScreen('Wednesday')} />
-            <Tab.Screen name="Thu" component={() => DayScreen('Thursday')} />
-            <Tab.Screen name="Fri"  component={() => DayScreen('Friday')} />
-            <Tab.Screen name="Sat" component={() => DayScreen('Saturday')} />
-            <Tab.Screen name="Sun"  component={() => DayScreen('Sunday')} />
+            <Tab.Screen name="Mon"  component={() => DayScreen('Monday', ()=> setRefreshFooter(prev=> !prev))} />
+            <Tab.Screen name="Tue"  component={() => DayScreen('Tuesday', ()=> setRefreshFooter(prev=> !prev))} />
+            <Tab.Screen name="Wed"  component={() => DayScreen('Wednesday', ()=> setRefreshFooter(prev=> !prev))} />
+            <Tab.Screen name="Thu" component={() => DayScreen('Thursday', ()=> setRefreshFooter(prev=> !prev))} />
+            <Tab.Screen name="Fri"  component={() => DayScreen('Friday', ()=> setRefreshFooter(prev=> !prev))} />
+            <Tab.Screen name="Sat" component={() => DayScreen('Saturday', ()=> setRefreshFooter(prev=> !prev))} />
+            <Tab.Screen name="Sun"  component={() => DayScreen('Sunday', ()=> setRefreshFooter(prev=> !prev))} />
           </Tab.Navigator>
         </NavigationContainer>
 
-        <CaloriesFooter/>
+        <CaloriesFooter key={refreshFooter}/>
 
       </SafeAreaView>
     </SafeAreaProvider>
@@ -59,41 +61,43 @@ export default function App() {
 }
 
 function CaloriesFooter() {
+  const {calories,proteins,fat,carbs} = mealDB.getDayTotals("Monday")
+
   return(
       <View style={{ backgroundColor: ColorDarkCyan, height: 70, flexDirection: 'row', borderRadius: 8 }}>
         <View style={ footerStyle.viewInside}>
           <Text>Calories</Text>
-          <Text style={footerStyle.text}>0</Text>
+          <Text style={footerStyle.text}>{calories}</Text>
         </View>
         <View style={footerStyle.viewInside}>
           <Text>Proteins</Text>
-          <Text style={footerStyle.text}>0</Text>
+          <Text style={footerStyle.text}>{proteins}</Text>
         </View>
         <View style={footerStyle.viewInside}>
           <Text>Fat</Text>
-          <Text style={footerStyle.text}>0</Text>
+          <Text style={footerStyle.text}>{fat}</Text>
         </View>
         <View style={footerStyle.viewInside}>
           <Text>Carbs</Text>
-          <Text style={footerStyle.text}>0</Text>
+          <Text style={footerStyle.text}>{carbs}</Text>
         </View>
       </View>
   );
 }
 
-function DayScreen(dayName) {
+function DayScreen(dayName, onMealAdded) {
   return (
     <View style ={{flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: ColorEerieBlack}}>
       <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: ColorEerieBlack, margin: 4 }}>
-        <MealSection day = {dayName} mealType={"Breakfast"}/>
-        <MealSection day = {dayName} mealType={"Lunch"}/>
-        <MealSection day = {dayName} mealType={"Dinner"}/>
+        <MealSection day = {dayName} mealType={"Breakfast"} onMealAdded={onMealAdded}/>
+        <MealSection day = {dayName} mealType={"Lunch"} onMealAdded={onMealAdded}/>
+        <MealSection day = {dayName} mealType={"Dinner"} onMealAdded={onMealAdded}/>
       </View>
     </View>
   );
 }
 
-function MealSection({day, mealType}) {
+function MealSection({day, mealType, onMealAdded}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [mealName, setMealName] = useState('');
   const [mealGrams, setMealGrams] = useState('');
@@ -120,6 +124,8 @@ function MealSection({day, mealType}) {
     setProductProteins("");
     setProductFat("");
     setProductCarbs("");
+
+    onMealAdded?.();
   };
 
   return (
