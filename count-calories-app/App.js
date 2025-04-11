@@ -1,10 +1,11 @@
+import 'react-native-get-random-values';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { MealDatabase, mealDB } from './scripts/MealDatabase'
+import { MealDatabase, mealDB, MealEntry } from './scripts/MealDatabase'
 
 const ColorDarkCyan = "#0E9594";
 const ColorBlack = "#000000";
@@ -84,15 +85,15 @@ function DayScreen(dayName) {
   return (
     <View style ={{flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: ColorEerieBlack}}>
       <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: ColorEerieBlack, margin: 4 }}>
-        <MealSection title={"Breakfast"}/>
-        <MealSection title={"Lunch"}/>
-        <MealSection title={"Dinner"}/>
+        <MealSection day = {dayName} mealType={"Breakfast"}/>
+        <MealSection day = {dayName} mealType={"Lunch"}/>
+        <MealSection day = {dayName} mealType={"Dinner"}/>
       </View>
     </View>
   );
 }
 
-function MealSection({title}) {
+function MealSection({day, mealType}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [mealName, setMealName] = useState('');
   const [mealGrams, setMealGrams] = useState('');
@@ -100,19 +101,17 @@ function MealSection({title}) {
   const [productProteins, setProductProteins] = useState('');
   const [productFat, setProductFat] = useState('');
   const [productCarbs, setProductCarbs] = useState('');
-  const [products, setProducts] = useState([]);
-
+  
   const handleAdd = () => {
-    const addedProduct = {
-      name: mealName,
-      grams: Number(mealGrams),
-      calories: Number(productCalories),
-      proteins: Number(productProteins),
-      fat: Number(productFat),
-      carbs: Number(productCarbs)
-    };
+    mealDB.addMeal(day,mealType, new MealEntry(     
+      mealName,
+      mealGrams,
+      productCalories,
+      productProteins,
+      productFat,
+      productCarbs
+    ));
 
-    setProducts(prev => [...prev, addedProduct]);
     setModalVisible(false);
 
     setMealName("");
@@ -136,19 +135,17 @@ function MealSection({title}) {
 
     <View style={{ flex: 1 }}>
 
-      <Text style={{ color: 'white', fontSize: 18, marginBottom: 4 }}>{title}</Text>
+      <Text style={{ color: 'white', fontSize: 18, marginBottom: 4 }}>{mealType}</Text>
       <Text style={{ color: '#aaa' }}>Calories:</Text>
-
-      {products.length > 0 && (
+      
+      {mealDB.getMeals(day, mealType).size > 0 && (
         <View style={{ marginTop: 12 }}>
-
-          {products.map((item, index) => (
-            <View key={index} style={{ marginBottom: 4 }}>
-              
+        
+          {[...mealDB.getMeals(day, mealType).values()].map((item, index) => (
+            <View key={item.id} style={{ marginBottom: 4 }}>
               <Text style={{ color: 'white' }}>
-                {item.name} - {item.grams}g ({Math.round(item.calories * item.grams / 100)} kcal)
+                {item.name} - {item.grams}g ({item.getTotalCalories()} kcal)
               </Text>
-
             </View>
           ))}
 
@@ -203,7 +200,7 @@ function MealSection({title}) {
                 alignSelf: "center"
               }}>
             
-              <Text style={{ fontSize: 18, color: "white" }}>Add to {title}</Text>
+              <Text style={{ fontSize: 18, color: "white" }}>Add to {mealType}</Text>
 
               </View>
 
