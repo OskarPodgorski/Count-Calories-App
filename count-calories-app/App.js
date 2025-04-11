@@ -10,6 +10,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { MealDatabase, mealDB, MealEntry } from './scripts/MealDatabase'
+import SettingsScreen from './screens/SettingsScreen';
 
 const ColorDarkCyan = "#0E9594";
 const ColorBlack = "#000000";
@@ -84,15 +85,9 @@ function DrawerCreate() {
   );
 }
 
-function SettingsScreen() {
-  return(
-    <View/>
-  )
-}
-
 function TabNavigator() {
   return(
-      <View style={{backgroundColor: ColorEerieBlack, flex: 1, paddingTop: 0}}>
+      <View style={{backgroundColor: ColorEerieBlack, flex: 1}}>
           <Tab.Navigator
             screenOptions={{            
               tabBarScrollEnabled: true,
@@ -144,7 +139,7 @@ function DayScreen(dayName) {
   return (
     <View style ={{flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: ColorEerieBlack}}>
 
-      <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: ColorEerieBlack, margin: 4 }}>
+      <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: ColorEerieBlack, margin: 4}}>
 
         <MealSection day = {dayName} mealType={"Breakfast"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
         <MealSection day = {dayName} mealType={"Lunch"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
