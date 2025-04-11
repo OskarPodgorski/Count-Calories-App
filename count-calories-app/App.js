@@ -27,10 +27,9 @@ const footerStyle = StyleSheet.create({
 });
 
 export default function App() {
-  const [refreshFooter, setRefreshFooter] = useState(false);
-
   return (
     <SafeAreaProvider>
+
       <StatusBar style="dark" backgroundColor= {ColorDarkCyan} />
       <SafeAreaView style={{ flex: 1 , backgroundColor: ColorEerieBlack}}>
 
@@ -43,29 +42,28 @@ export default function App() {
               tabBarIndicatorStyle: { backgroundColor: ColorBlack , height: 3 },
               tabBarStyle: { backgroundColor : ColorDarkCyan, borderBottomLeftRadius: 8, borderBottomRightRadius: 8, overflow: 'hidden'}             
             }}>
-            <Tab.Screen name="Mon"  component={() => DayScreen('Monday', ()=> setRefreshFooter(prev=> !prev))} />
-            <Tab.Screen name="Tue"  component={() => DayScreen('Tuesday', ()=> setRefreshFooter(prev=> !prev))} />
-            <Tab.Screen name="Wed"  component={() => DayScreen('Wednesday', ()=> setRefreshFooter(prev=> !prev))} />
-            <Tab.Screen name="Thu" component={() => DayScreen('Thursday', ()=> setRefreshFooter(prev=> !prev))} />
-            <Tab.Screen name="Fri"  component={() => DayScreen('Friday', ()=> setRefreshFooter(prev=> !prev))} />
-            <Tab.Screen name="Sat" component={() => DayScreen('Saturday', ()=> setRefreshFooter(prev=> !prev))} />
-            <Tab.Screen name="Sun"  component={() => DayScreen('Sunday', ()=> setRefreshFooter(prev=> !prev))} />
+            <Tab.Screen name="Mon"  component={() => DayScreen('Monday')} />
+            <Tab.Screen name="Tue"  component={() => DayScreen('Tuesday')} />
+            <Tab.Screen name="Wed"  component={() => DayScreen('Wednesday')} />
+            <Tab.Screen name="Thu" component={() => DayScreen('Thursday')} />
+            <Tab.Screen name="Fri"  component={() => DayScreen('Friday')} />
+            <Tab.Screen name="Sat" component={() => DayScreen('Saturday')} />
+            <Tab.Screen name="Sun"  component={() => DayScreen('Sunday')} />
           </Tab.Navigator>
         </NavigationContainer>
 
-        <CaloriesFooter key={refreshFooter}/>
-
       </SafeAreaView>
+      
     </SafeAreaProvider>
   );
 }
 
-function CaloriesFooter() {
-  const {calories,proteins,fat,carbs} = mealDB.getDayTotals("Monday")
+function CaloriesFooter({day}) {
+  const {calories,proteins,fat,carbs} = mealDB.getDayTotals(day);
 
   return(
-      <View style={{ backgroundColor: ColorDarkCyan, height: 70, flexDirection: 'row', borderRadius: 8 }}>
-        <View style={ footerStyle.viewInside}>
+      <View style={{ backgroundColor: ColorDarkCyan, height: 80, flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8}}>
+        <View style={footerStyle.viewInside}>
           <Text>Calories</Text>
           <Text style={footerStyle.text}>{calories}</Text>
         </View>
@@ -85,14 +83,22 @@ function CaloriesFooter() {
   );
 }
 
-function DayScreen(dayName, onMealAdded) {
+function DayScreen(dayName) {
+  const [refreshFooter, setRefreshFooter] = useState(false);
+
   return (
     <View style ={{flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: ColorEerieBlack}}>
+
       <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: ColorEerieBlack, margin: 4 }}>
-        <MealSection day = {dayName} mealType={"Breakfast"} onMealAdded={onMealAdded}/>
-        <MealSection day = {dayName} mealType={"Lunch"} onMealAdded={onMealAdded}/>
-        <MealSection day = {dayName} mealType={"Dinner"} onMealAdded={onMealAdded}/>
+
+        <MealSection day = {dayName} mealType={"Breakfast"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
+        <MealSection day = {dayName} mealType={"Lunch"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
+        <MealSection day = {dayName} mealType={"Dinner"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
+
       </View>
+
+      <CaloriesFooter key={refreshFooter} day={dayName}/> 
+
     </View>
   );
 }
