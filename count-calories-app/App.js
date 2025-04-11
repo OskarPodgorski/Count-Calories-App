@@ -3,41 +3,25 @@ import 'react-native-gesture-handler';
 
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import { MealDatabase, mealDB, MealEntry } from './scripts/MealDatabase'
+import { mealDB, MealEntry } from './scripts/MealDatabase'
 import SettingsScreen from './screens/SettingsScreen';
-
-const ColorDarkCyan = "#0E9594";
-const ColorBlack = "#000000";
-const ColorEerieBlack = "#222222";
-const ColorNight = "#161616";
+import * as MyStyles from "./styles/MyStyles"
 
 const Tab = createMaterialTopTabNavigator();
 const Drawer = createDrawerNavigator();
-
-const footerStyle = StyleSheet.create({
-  text: {
-    fontWeight: "bold"
-  },
-  viewInside: {
-    flex: 1,
-     justifyContent: 'center',
-      alignItems: 'center',
-       flexDirection: "column" 
-  }
-});
 
 export default function App() {
   return (
     <SafeAreaProvider>
 
-      <StatusBar style="light" backgroundColor= {ColorEerieBlack} />
-      <SafeAreaView style={{ flex: 1 , backgroundColor: ColorEerieBlack}}>
+      <StatusBar style="light" backgroundColor= {MyStyles.ColorEerieBlack} />
+      <SafeAreaView style={{ flex: 1 , backgroundColor: MyStyles.ColorEerieBlack}}>
 
         <NavigationContainer>
 
@@ -56,7 +40,7 @@ function DrawerCreate() {
   <Drawer.Navigator
     screenOptions={{
       drawerStyle: {
-        backgroundColor: ColorEerieBlack,
+        backgroundColor: MyStyles.ColorEerieBlack,
         width: 200,
         borderBottomRightRadius:8,
         borderTopRightRadius:0
@@ -66,7 +50,7 @@ function DrawerCreate() {
         fontSize: 14,
       },
       headerStyle: {
-        backgroundColor: ColorEerieBlack,
+        backgroundColor: MyStyles.ColorEerieBlack,
         height: 60
       },
       headerStatusBarHeight: 0,
@@ -87,14 +71,14 @@ function DrawerCreate() {
 
 function TabNavigator() {
   return(
-      <View style={{backgroundColor: ColorEerieBlack, flex: 1}}>
+      <View style={{backgroundColor: MyStyles.ColorEerieBlack, flex: 1}}>
           <Tab.Navigator
             screenOptions={{            
               tabBarScrollEnabled: true,
               tabBarLabelStyle: { fontSize: 14 },
               tabBarItemStyle: { width: 70 },
-              tabBarIndicatorStyle: { backgroundColor: ColorBlack , height: 3 },
-              tabBarStyle: { backgroundColor : ColorDarkCyan, borderRadius: 8, overflow: 'hidden'}             
+              tabBarIndicatorStyle: { backgroundColor: MyStyles.ColorBlack , height: 3 },
+              tabBarStyle: { backgroundColor : MyStyles.ColorDarkCyan, borderRadius: 8, overflow: 'hidden'}             
             }}>
             <Tab.Screen name="Mon"  component={() => DayScreen('Monday')} />
             <Tab.Screen name="Tue"  component={() => DayScreen('Tuesday')} />
@@ -112,22 +96,22 @@ function CaloriesFooter({day}) {
   const {calories,proteins,fat,carbs} = mealDB.getDayTotals(day);
 
   return(
-      <View style={{ backgroundColor: ColorDarkCyan, height: 80, flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8}}>
-        <View style={footerStyle.viewInside}>
+      <View style={{ backgroundColor: MyStyles.ColorDarkCyan, height: 80, flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8}}>
+        <View style={MyStyles.footerStyle.viewInside}>
           <Text>Calories</Text>
-          <Text style={footerStyle.text}>{calories}</Text>
+          <Text style={MyStyles.footerStyle.text}>{calories}</Text>
         </View>
-        <View style={footerStyle.viewInside}>
+        <View style={MyStyles.footerStyle.viewInside}>
           <Text>Proteins</Text>
-          <Text style={footerStyle.text}>{proteins}</Text>
+          <Text style={MyStyles.footerStyle.text}>{proteins}</Text>
         </View>
-        <View style={footerStyle.viewInside}>
+        <View style={MyStyles.footerStyle.viewInside}>
           <Text>Fat</Text>
-          <Text style={footerStyle.text}>{fat}</Text>
+          <Text style={MyStyles.footerStyle.text}>{fat}</Text>
         </View>
-        <View style={footerStyle.viewInside}>
+        <View style={MyStyles.footerStyle.viewInside}>
           <Text>Carbs</Text>
-          <Text style={footerStyle.text}>{carbs}</Text>
+          <Text style={MyStyles.footerStyle.text}>{carbs}</Text>
         </View>
       </View>
   );
@@ -137,9 +121,9 @@ function DayScreen(dayName) {
   const [refreshFooter, setRefreshFooter] = useState(false);
 
   return (
-    <View style ={{flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: ColorEerieBlack}}>
+    <View style ={{flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack}}>
 
-      <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: ColorEerieBlack, margin: 4}}>
+      <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack, margin: 4}}>
 
         <MealSection day = {dayName} mealType={"Breakfast"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
         <MealSection day = {dayName} mealType={"Lunch"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
@@ -186,7 +170,7 @@ function MealSection({day, mealType, onMealAdded}) {
 
   return (
     <View style={{
-      backgroundColor: ColorNight,
+      backgroundColor: MyStyles.ColorNight,
       padding: 12,
       borderRadius: 8,
       marginTop: 4,
@@ -219,7 +203,7 @@ function MealSection({day, mealType, onMealAdded}) {
       <View style={{alignItems: "flex-end", justifyContent: "flex-end"}}>
         <TouchableOpacity
           style={{
-            backgroundColor: ColorDarkCyan,
+            backgroundColor: MyStyles.ColorDarkCyan,
             minHeight: 38,
             minWidth: 38,
             borderRadius: 8,
@@ -228,7 +212,7 @@ function MealSection({day, mealType, onMealAdded}) {
             justifyContent: "center"
           }}
           onPress={() => setModalVisible(true)}>
-          <Text style={{ color: {ColorBlack}, fontSize: 22 }}>+</Text>
+          <Text style={{ color: MyStyles.ColorBlack, fontSize: 22 }}>+</Text>
         </TouchableOpacity>
       </View>
       
@@ -247,14 +231,14 @@ function MealSection({day, mealType, onMealAdded}) {
         }}>
 
           <View style={{
-            backgroundColor: ColorDarkCyan,
+            backgroundColor: MyStyles.ColorDarkCyan,
             padding: 20,
             borderRadius: 8,
             width: '80%'
           }}>
 
              <View style={{
-                backgroundColor: ColorEerieBlack,
+                backgroundColor: MyStyles.ColorEerieBlack,
                 padding: 10,
                 borderRadius: 8,
                 alignItems: "center",
@@ -317,11 +301,11 @@ function MealSection({day, mealType, onMealAdded}) {
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
 
               <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Text style={{ color: ColorEerieBlack }}>Cancel</Text>
+                <Text style={{ color: MyStyles.ColorEerieBlack }}>Cancel</Text>
               </TouchableOpacity>
 
               <TouchableOpacity onPress={handleAdd}>
-                <Text style={{ color: ColorBlack, fontWeight: 'bold' }}>Add +</Text>
+                <Text style={{ color: MyStyles.ColorBlack, fontWeight: 'bold' }}>Add +</Text>
               </TouchableOpacity>
 
             </View>
