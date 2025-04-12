@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import { View, Text, TouchableOpacity, TextInput, _Text } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, _Text, Linking } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { dailyTargetSettings } from '../settings/Settings';
 
@@ -35,7 +35,7 @@ export default function SettingsScreen() {
                 </View>
 
                     <TextInput style={{color: MyStyles.ColorWhite, alignSelf: "center", fontSize:20}} keyboardType='numeric'
-                    onEndEditing={(e) => {dailyTargetSettings.carbs = parseInt(e.nativeEvent.text) || 0}}>
+                    onEndEditing={(e) => {dailyTargetSettings.calories = parseInt(e.nativeEvent.text) || 0}}>
                         {dailyTargetSettings.calories}
                     </TextInput>
 
@@ -76,18 +76,15 @@ export default function SettingsScreen() {
 
   function AboutApp() {
     return (
-        <View style={{flex:1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack}}>
-            <View style={{flex: 1, backgroundColor: MyStyles.ColorEerieBlack, justifyContent: "flex-start", alignItems: 'stretch', margin:4}}>
+        <View style={{flex:1, justifyContent: 'center', alignItems: "center", backgroundColor: MyStyles.ColorEerieBlack}}>
+            
+            <Text style={{color: MyStyles.ColorDarkCyan, fontSize: 32, textAlign: "center", marginBottom: 20}}>{"Created by:\nOskar Podgórski"}</Text>
 
-                <TouchableOpacity style={{backgroundColor: MyStyles.ColorNight,minHeight: 42,borderRadius: 8,alignItems: "flex-start",justifyContent: "center",padding: 12,marginBottom:4}}>
-                    <Text style={{ color: MyStyles.ColorWhite, fontSize: 18 }}>Daily targets</Text>
-                </TouchableOpacity>
+            <TouchableOpacity style={{backgroundColor: MyStyles.ColorDarkCyan, borderRadius: 8, paddingHorizontal: 16, paddingVertical:4}}
+            onPress={() => {Linking.openURL("https://github.com/OskarPodgorski")}}>
+                <Text style={{color: MyStyles.ColorBlack, fontSize: 32, textAlign: "center"}}>Go to my GitHub</Text>
+            </TouchableOpacity>
 
-                <TouchableOpacity style={{backgroundColor: MyStyles.ColorNight,minHeight: 42,borderRadius: 8,alignItems: "flex-start",justifyContent: "center",padding: 12}}>
-                    <Text style={{ color: MyStyles.ColorWhite, fontSize: 18 }}>About app</Text>
-                </TouchableOpacity>
-
-            </View>
         </View>
     );
 }
