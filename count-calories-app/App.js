@@ -10,6 +10,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { mealDB, MealEntry } from './scripts/MealDatabase'
+import { dailyTargetSettings } from './settings/Settings';
 import SettingsScreen from './screens/SettingsScreen';
 import * as MyStyles from "./styles/MyStyles"
 
@@ -98,25 +99,26 @@ function TabNavigator() {
 }
 
 function CaloriesFooter({day}) {
-  const {calories,proteins,fat,carbs} = mealDB.getDayTotals(day);
-
+  const {calories: caloriesTotal,proteins: proteintsTotal,fat: fatTotal,carbs: carbsTotal} = mealDB.getDayTotals(day);
+  const {calories: caloriesTarget, proteins: proteinsTarget, fat: fatTarget, carbs: carbsTarget} = dailyTargetSettings;
+  
   return(
       <View style={{ backgroundColor: MyStyles.ColorDarkCyan, height: 80, flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8}}>
         <View style={MyStyles.footerStyle.viewInside}>
           <Text>Calories</Text>
-          <Text style={MyStyles.footerStyle.text}>{calories}</Text>
+          <Text style={MyStyles.footerStyle.text}>{caloriesTotal} / {caloriesTarget}</Text>
         </View>
         <View style={MyStyles.footerStyle.viewInside}>
           <Text>Proteins</Text>
-          <Text style={MyStyles.footerStyle.text}>{proteins}</Text>
+          <Text style={MyStyles.footerStyle.text}>{proteintsTotal} / {proteinsTarget}</Text>
         </View>
         <View style={MyStyles.footerStyle.viewInside}>
           <Text>Fat</Text>
-          <Text style={MyStyles.footerStyle.text}>{fat}</Text>
+          <Text style={MyStyles.footerStyle.text}>{fatTotal}/ {fatTarget}</Text>
         </View>
         <View style={MyStyles.footerStyle.viewInside}>
           <Text>Carbs</Text>
-          <Text style={MyStyles.footerStyle.text}>{carbs}</Text>
+          <Text style={MyStyles.footerStyle.text}>{carbsTotal} / {carbsTarget}</Text>
         </View>
       </View>
   );

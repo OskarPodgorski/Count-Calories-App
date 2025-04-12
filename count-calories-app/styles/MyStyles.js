@@ -17,3 +17,7 @@ export const footerStyle = StyleSheet.create({
        flexDirection: "column" 
   }
 });
+
+export const textInputStyle = StyleSheet.create({
+  
+});
