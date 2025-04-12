@@ -41,21 +41,26 @@ function DrawerCreate() {
     screenOptions={{
       drawerStyle: {
         backgroundColor: MyStyles.ColorEerieBlack,
-        width: 200,
+        width: 190,
         borderBottomRightRadius:8,
         borderTopRightRadius:0
       },
       drawerLabelStyle: {
-        color: "white",
-        fontSize: 14,
+        color: MyStyles.ColorWhite,
+        fontSize: 16
       },
+      drawerItemStyle: {
+        borderRadius: 8
+      },
+      drawerActiveBackgroundColor: MyStyles.ColorDarkCyan,
+      drawerInactiveBackgroundColor: MyStyles.ColorNight,
       headerStyle: {
         backgroundColor: MyStyles.ColorEerieBlack,
         height: 60
       },
       headerStatusBarHeight: 0,
       headerTitleAlign: "center",
-      headerTintColor: "white",
+      headerTintColor: MyStyles.ColorWhite,
       headerShadowVisible: false,
       headerTitleStyle: {
         textAlignVertical: "top",
