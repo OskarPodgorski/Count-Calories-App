@@ -2,7 +2,7 @@ import 'react-native-get-random-values';
 import 'react-native-gesture-handler';
 
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -10,9 +10,9 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { mealDB, MealEntry } from './scripts/MealDatabase'
-import { dailyTargetSettings } from './settings/Settings';
 import SettingsScreen from './screens/SettingsScreen';
 import * as MyStyles from "./styles/MyStyles"
+import { DailyTargetsProvider, dailyTargetsContext } from './scripts/Context';
 
 const Tab = createMaterialTopTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -26,7 +26,9 @@ export default function App() {
 
         <NavigationContainer>
 
-          <DrawerCreate/>
+          <DailyTargetsProvider>
+            <DrawerCreate/>
+          </DailyTargetsProvider>
 
         </NavigationContainer>
 
@@ -100,10 +102,11 @@ function TabNavigator() {
 
 function CaloriesFooter({day}) {
   const {calories: caloriesTotal,proteins: proteintsTotal,fat: fatTotal,carbs: carbsTotal} = mealDB.getDayTotals(day);
-  const {calories: caloriesTarget, proteins: proteinsTarget, fat: fatTarget, carbs: carbsTarget} = dailyTargetSettings;
+  const { dailyTargets } = useContext(dailyTargetsContext);
+  const {calories: caloriesTarget, proteins: proteinsTarget, fat: fatTarget, carbs: carbsTarget} = dailyTargets;
   
   return(
-      <View style={{ backgroundColor: MyStyles.ColorDarkCyan, height: 80, flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8}}>
+      <View style={{ backgroundColor: MyStyles.ColorDarkCyan, height: 80, marginHorizontal: 8, flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8}}>
         <View style={MyStyles.footerStyle.viewInside}>
           <Text>Calories</Text>
           <Text style={MyStyles.footerStyle.text}>{caloriesTotal} / {caloriesTarget}</Text>

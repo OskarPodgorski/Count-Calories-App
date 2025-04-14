@@ -1,9 +1,10 @@
-import {useState} from 'react';
+import { useContext } from 'react';
 import { View, Text, TouchableOpacity, TextInput, _Text, Linking } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { dailyTargetSettings } from '../settings/Settings';
 
 import * as MyStyles from "../styles/MyStyles"
+import { dailyTargetSettings } from '../settings/Settings';
+import { dailyTargetsContext, DailyTargetsProvider } from '../scripts/Context';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -17,14 +18,16 @@ export default function SettingsScreen() {
                 tabBarItemStyle: { width: 120, justifyContent: "space-evenly" },
                 tabBarIndicatorStyle: { backgroundColor: MyStyles.ColorBlack , height: 3 },
                 tabBarStyle: { backgroundColor : MyStyles.ColorDarkCyan, borderRadius: 8, overflow: 'hidden'}             
-            }}>
-            <Tab.Screen name="Daily targets"  component={DailyTargets} />
+            }}>         
+                <Tab.Screen name="Daily targets"  component={DailyTargets} />
             <Tab.Screen name="About app"  component={AboutApp} />
           </Tab.Navigator>
         </View>
   );
 }
   function DailyTargets() {
+    const { dailyTargets, setDailyTargets } = useContext(dailyTargetsContext);
+
       return (
           <View style={{flex:1, justifyContent: "center", alignItems: "center", backgroundColor: MyStyles.ColorEerieBlack}}>
 
@@ -35,7 +38,8 @@ export default function SettingsScreen() {
                 </View>
 
                     <TextInput style={{color: MyStyles.ColorWhite, alignSelf: "center", fontSize:20}} keyboardType='numeric'
-                    onEndEditing={(e) => {dailyTargetSettings.calories = parseInt(e.nativeEvent.text) || 0}}>
+                    onEndEditing={(e) => { setDailyTargets(prev => ({ ...prev, calories: parseInt(e.nativeEvent.text) || 0 }));
+                    }}>
                         {dailyTargetSettings.calories}
                     </TextInput>
 
@@ -44,7 +48,8 @@ export default function SettingsScreen() {
                 </View>
 
                     <TextInput style={{color: MyStyles.ColorWhite, alignSelf: "center", fontSize:20}} keyboardType='numeric'
-                    onEndEditing={(e) => {dailyTargetSettings.proteins = parseInt(e.nativeEvent.text) || 0}}>
+                    onEndEditing={(e) => { setDailyTargets(prev => ({ ...prev, proteins: parseInt(e.nativeEvent.text) || 0 }));
+                    }}>
                         {dailyTargetSettings.proteins}
                     </TextInput>
 
@@ -54,7 +59,8 @@ export default function SettingsScreen() {
                 </View>
 
                     <TextInput style={{color: MyStyles.ColorWhite, alignSelf: "center", fontSize:20}} keyboardType='numeric'
-                        onEndEditing={(e) => {dailyTargetSettings.fat = parseInt(e.nativeEvent.text) || 0}}>
+                        onEndEditing={(e) => { setDailyTargets(prev => ({ ...prev, fat: parseInt(e.nativeEvent.text) || 0 }));
+                    }}>
                         {dailyTargetSettings.fat}
                     </TextInput>
                 
@@ -64,13 +70,14 @@ export default function SettingsScreen() {
                 </View>
 
                     <TextInput style={{color: MyStyles.ColorWhite, alignSelf: "center", fontSize:20}} keyboardType='numeric'
-                    onEndEditing={(e) => {dailyTargetSettings.carbs = parseInt(e.nativeEvent.text) || 0}}>
+                    onEndEditing={(e) => { setDailyTargets(prev => ({ ...prev, carbs: parseInt(e.nativeEvent.text) || 0 }));
+                    }}>
                         {dailyTargetSettings.carbs}
                     </TextInput>
   
               </View>
 
-          </View>
+            </View>
       );
   }
 
