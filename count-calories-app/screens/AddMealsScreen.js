@@ -1,11 +1,12 @@
 import { useState, useContext } from 'react';
 import { Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { useNavigation } from '@react-navigation/native';
 
 import * as MyStyles from "../styles/MyStyles"
 import { mealDB, MealEntry } from '../scripts/MealDatabase'
 import { dailyTargetsContext } from '../scripts/Context';
-//import { BarcodeScannerScreen } from "./BarcodeScannerScreen"
+
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -80,6 +81,8 @@ export default function AddMealScreen() {
   }
   
   function MealSection({day, mealType, onMealAdded}) {
+    const navigation = useNavigation();
+
     const [modalVisible, setModalVisible] = useState(false);
     const [mealName, setMealName] = useState('');
     const [mealGrams, setMealGrams] = useState('');
@@ -200,7 +203,7 @@ export default function AddMealScreen() {
                    placeholder="Barcode"
                    value={mealName}
                    onChangeText={setMealName}
-                   style={{ borderBottomWidth: 1, marginBottom: 5, marginRight:10, flex:1 }}
+                   style={{ borderBottomWidth: 1, marginBottom: 5, marginRight:15, flex:1 }}
                     />
 
                   <TouchableOpacity
@@ -212,7 +215,7 @@ export default function AddMealScreen() {
                       justifyContent: "center",
                       padding: 8
                     }}
-                    onPress={() => {BarcodeScannerScreen}}>
+                    onPress={() => navigation.navigate("BarcodeScanner")}>
                     <Text style={{ color: MyStyles.ColorWhite, fontSize: 16 }}>Scanner</Text>
                   </TouchableOpacity>
 
