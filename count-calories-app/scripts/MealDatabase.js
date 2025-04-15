@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export class MealEntry {
-    constructor(name, grams, caloriesPer100g, proteins, fat, carbs) {
+    constructor(name, grams, caloriesPer100g, proteins, fat, carbs, barcode) {
         this.id = uuidv4();
       this.name = name;
       this.grams = grams;
@@ -9,6 +9,7 @@ export class MealEntry {
       this.proteins = proteins;
       this.fat = fat;
       this.carbs = carbs;
+      this.barcode = barcode;
     }
   
     getTotalCalories() {

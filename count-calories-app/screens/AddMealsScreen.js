@@ -5,6 +5,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import * as MyStyles from "../styles/MyStyles"
 import { mealDB, MealEntry } from '../scripts/MealDatabase'
 import { dailyTargetsContext } from '../scripts/Context';
+//import { BarcodeScannerScreen } from "./BarcodeScannerScreen"
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -190,8 +191,34 @@ export default function AddMealScreen() {
                 <Text style={{ fontSize: 18, color: "white" }}>Add to {mealType}</Text>
   
                 </View>
+
+                <Text style={{ fontSize: 14, marginBottom: 5, marginTop: 15}}>Barcode:</Text>
+
+                <View style={{ flexDirection: "row" , justifyContent: "stretch", alignSelf: "stretch"}}>
+
+                   <TextInput
+                   placeholder="Barcode"
+                   value={mealName}
+                   onChangeText={setMealName}
+                   style={{ borderBottomWidth: 1, marginBottom: 5, marginRight:10, flex:1 }}
+                    />
+
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: MyStyles.ColorEerieBlack,
+                      borderRadius: 8,
+                      alignSelf: 'center',
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: 8
+                    }}
+                    onPress={() => {BarcodeScannerScreen}}>
+                    <Text style={{ color: MyStyles.ColorWhite, fontSize: 16 }}>Scanner</Text>
+                  </TouchableOpacity>
+
+                </View>
   
-                <Text style={{ fontSize: 14, marginBottom: 5, marginTop: 15}}>Meal data:</Text>
+                <Text style={{ fontSize: 14, marginBottom: 5, marginTop: 10}}>Meal data:</Text>
   
               <TextInput
                 placeholder="Name"
