@@ -1,13 +1,28 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
 import { Button, Text, TouchableOpacity, View } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+
 import * as MyStyles from "../styles/MyStyles"
 
 export default function BarcodeScannerScreen() {
+  const navigation = useNavigation();
+  const { params } = useRoute();
+
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState('back');
   const [barcode, setBarcode] = useState("No Barcode Detected");
   const [flashlight, setFlashlight] = useState(false);
+
+  function handleScan(barcode) {
+    if (params)
+    {
+      setBarcode(barcode)
+      navigation.navigate("Main");
+      params.setAddMealModalVisible(true);
+      params.setBarcodeTextInput(barcode);
+    }
+  }
 
   if (!permission) {
     return <View />;
@@ -31,7 +46,7 @@ export default function BarcodeScannerScreen() {
       <CameraView style={{flex:1, flexDirection: "column-reverse", alignItems: "stretch"}} facing= {facing} enableTorch={flashlight} barcodeScannerSettings={{
         barcodeTypes: ["ean13", "ean8"]
       }}
-      onBarcodeScanned={(b)=>{setBarcode(b.data)}}
+      onBarcodeScanned={(b) => handleScan(b.data)}
       >
         <View style={{ zIndex: 0,marginHorizontal: 16, marginBottom:40, alignItems: "center", borderRadius: 8, backgroundColor: MyStyles.ColorEerieBlack}}>
 

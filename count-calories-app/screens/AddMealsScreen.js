@@ -84,6 +84,9 @@ export default function AddMealScreen() {
     const navigation = useNavigation();
 
     const [modalVisible, setModalVisible] = useState(false);
+
+    const [barcode, setBarcode] = useState("");
+
     const [mealName, setMealName] = useState('');
     const [mealGrams, setMealGrams] = useState('');
     const [productCalories, setProductCalories] = useState('');
@@ -103,6 +106,7 @@ export default function AddMealScreen() {
   
       setModalVisible(false);
   
+      setBarcode("");
       setMealName("");
       setMealGrams("");
       setProductCalories("");
@@ -201,8 +205,8 @@ export default function AddMealScreen() {
 
                    <TextInput
                    placeholder="Barcode"
-                   value={mealName}
-                   onChangeText={setMealName}
+                   value={barcode}
+                   onChangeText={setBarcode}
                    style={{ borderBottomWidth: 1, marginBottom: 5, marginRight:15, flex:1 }}
                     />
 
@@ -217,7 +221,12 @@ export default function AddMealScreen() {
                     }}
                     onPress={() => {
                       setModalVisible(false);
-                      navigation.navigate("BarcodeScanner")
+                      navigation.navigate("BarcodeScanner",
+                        {
+                          setAddMealModalVisible: setModalVisible,
+                          setBarcodeTextInput: setBarcode
+                        }
+                      )
                     }}>
                     <Text style={{ color: MyStyles.ColorWhite, fontSize: 16 }}>Scanner</Text>
                   </TouchableOpacity>
