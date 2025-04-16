@@ -1,42 +1,63 @@
-import { Camera } from 'expo-camera';
-import { useState, useEffect } from 'react';
-import { View, Text, Button } from 'react-native';
+import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import { useState } from 'react';
+import { Button, Text, TouchableOpacity, View } from 'react-native';
+import * as MyStyles from "../styles/MyStyles"
 
 export default function BarcodeScannerScreen() {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-  const [cameraRef, setCameraRef] = useState(null);
+  const [permission, requestPermission] = useCameraPermissions();
+  const [facing, setFacing] = useState('back');
+  const [barcode, setBarcode] = useState("No Barcode Detected");
+  const [flashlight, setFlashlight] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
+  if (!permission) {
+    return <View />;
+  }
 
-  const handleBarCodeScanned = ({ type, data }) => {
-    setScanned(true);
-    alert(`Kod zeskanowany: ${data}`);
-  };
+  if (!permission.granted) {
+    return (
+      <View>
+        <Text>We need your permission to show the camera</Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
 
-  if (hasPermission === null) return <Text>Prośba o dostęp do kamery...</Text>;
-  if (hasPermission === false) return <Text>Brak dostępu do kamery</Text>;
+  function toggleCameraFacing() {
+    setFacing(current => (current === 'back' ? 'front' : 'back'));
+  }
 
   return (
-    <View style={{ flex: 1 }}>
-      <Camera
-        ref={ref => setCameraRef(ref)}
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={{ flex: 1 }}
-        ratio="16:9"
-        barCodeScannerSettings={{
-          barCodeTypes: ['code128', 'ean13', 'ean8', 'upc_a', 'upc_e'],
-        }}
-      />
+    <View style={{flex: 1}}>
+      <CameraView style={{flex:1, flexDirection: "column-reverse", alignItems: "stretch"}} facing= {facing} enableTorch={flashlight} barcodeScannerSettings={{
+        barcodeTypes: ["ean13", "ean8"]
+      }}
+      onBarcodeScanned={(b)=>{setBarcode(b.data)}}
+      >
+        <View style={{ zIndex: 0,marginHorizontal: 16, marginBottom:40, alignItems: "center", borderRadius: 8, backgroundColor: MyStyles.ColorEerieBlack}}>
 
-      {scanned && (
-        <Button title="Zeskanuj ponownie" onPress={() => setScanned(false)} />
-      )}
+          <Text style={{
+            color: MyStyles.ColorWhite, fontSize:26, paddingVertical: 12, alignSelf: "stretch", textAlign: "center"
+            }}>{barcode}</Text>
+
+        <View style={{flexDirection: "row"}}>
+
+          <TouchableOpacity style={{backgroundColor: MyStyles.ColorDarkCyan,marginBottom:12, borderRadius: 8, marginRight:4}} onPress={toggleCameraFacing}>
+
+            <Text style={{ color: MyStyles.ColorBlack, paddingHorizontal: 12, paddingVertical: 4, fontSize: 22}}>Flip Camera</Text>
+
+          </TouchableOpacity>
+
+          <TouchableOpacity style={{backgroundColor: MyStyles.ColorDarkCyan,marginBottom:12, borderRadius: 8, marginLeft: 4}} onPress={() => {setFlashlight(current => !current)}}>
+
+            <Text style={{ color: MyStyles.ColorBlack, paddingHorizontal: 12, paddingVertical: 4, fontSize: 22}}>Flashlight</Text>
+
+          </TouchableOpacity>
+
+        </View>
+
+        </View>
+      </CameraView>
     </View>
   );
 }
+

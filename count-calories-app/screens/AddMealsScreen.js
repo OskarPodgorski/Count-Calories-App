@@ -215,7 +215,10 @@ export default function AddMealScreen() {
                       justifyContent: "center",
                       padding: 8
                     }}
-                    onPress={() => navigation.navigate("BarcodeScanner")}>
+                    onPress={() => {
+                      setModalVisible(false);
+                      navigation.navigate("BarcodeScanner")
+                    }}>
                     <Text style={{ color: MyStyles.ColorWhite, fontSize: 16 }}>Scanner</Text>
                   </TouchableOpacity>
 
