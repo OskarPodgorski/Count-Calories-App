@@ -6,7 +6,7 @@ export const ColorEerieBlack = "#222222";
 export const ColorNight = "#161616";
 export const ColorWhite = "#FFFFFF";
 export const ColorOnyx = "#444444";
-export const ColorDimGray = "#666666";
+export const ColorSilver = "#BBBBBB";
 
 export const footerStyle = StyleSheet.create({
   text: {

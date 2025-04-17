@@ -40,14 +40,15 @@ export default function AddMealScreen() {
 
     function ProgressBar({actual,target}) {
       if(typeof(actual) != "number" || typeof(target) != "number"){
-        return;
+        actual = 0;
+        target = 1;
       }
 
-      let result = Math.min(Math.max((actual/target), 0), 1) * 100;
+      const result = Math.min(Math.max((actual/target), 0), 1) * 100;
       
       return(
-        <View style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorBlack, alignSelf: "stretch", height: 10, marginBottom: 5, overflow: "hidden"}}>
-          <View style={{ borderRadius:4,backgroundColor: MyStyles.ColorDimGray, flex: 1, width: `${result}%`}} />
+        <View style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorNight, alignSelf: "stretch", height: 10, marginBottom: 5, overflow: "hidden"}}>
+          <View style={{ borderRadius:4,backgroundColor: MyStyles.ColorSilver, flex: 1, width: `${result}%`}} />
         </View>
       );
     }
@@ -130,7 +131,8 @@ export default function AddMealScreen() {
         productCalories,
         productProteins,
         productFat,
-        productCarbs
+        productCarbs,
+        barcode
       ));
   
       setModalVisible(false);
@@ -145,6 +147,27 @@ export default function AddMealScreen() {
   
       onMealAdded?.();
     };
+
+    const handleScannedFromDatabase = () => {
+      setMealName("");
+      setMealGrams("");
+      setProductCalories("");
+      setProductProteins("");
+      setProductFat("");
+      setProductCarbs("");
+      
+      const mealEntry = mealDB.getMeal(barcode)
+
+      if(!mealEntry){
+        return;
+      }
+
+      setMealName(mealEntry.name);
+      setProductCalories(mealEntry.calories);
+      setProductProteins(mealEntry.proteins);
+      setProductFat(mealEntry.fat);
+      setProductCarbs(mealEntry.carbs);
+    }
   
     return (
       <View style={{
@@ -204,6 +227,23 @@ export default function AddMealScreen() {
       </View>
   
         <View style={{alignItems: "flex-end", justifyContent: "flex-end"}}>
+
+          <TouchableOpacity
+            style={{
+              ...MyStyles.baseStyle.base,
+              backgroundColor: MyStyles.ColorDarkCyan,
+              minHeight: 36,
+              minWidth: 36,
+              alignSelf: 'flex-end',
+              alignItems: "center",
+              justifyContent: "center",
+              marginLeft:10,
+              marginBottom:6
+            }}
+            onPress={() => setModalVisible(true)}>
+            <Text style={{ color: MyStyles.ColorBlack, fontSize: 12 }}>|II|II|</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={{
               ...MyStyles.baseStyle.base,
@@ -218,6 +258,7 @@ export default function AddMealScreen() {
             onPress={() => setModalVisible(true)}>
             <Text style={{ color: MyStyles.ColorBlack, fontSize: 22 }}>+</Text>
           </TouchableOpacity>
+
         </View>
         
         <Modal

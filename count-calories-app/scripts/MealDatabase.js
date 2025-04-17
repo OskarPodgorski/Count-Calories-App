@@ -27,9 +27,33 @@ export class MealEntry {
       Saturday: { Breakfast: new Map(), Lunch: new Map(), Dinner: new Map() },
       Sunday: { Breakfast: new Map(), Lunch: new Map(), Dinner: new Map() },
     };
-  
+
+    barcodeMealMap = new Map();
+    
+    getMeal(barcode){
+      if(!barcode){
+        return null;
+      }
+      return this.barcodeMealMap.get(barcode);
+    }
+
+    addMeal(barcode, mealEntry){
+      if(!barcode || !mealEntry){
+        return;
+      }
+      this.barcodeMealMap.set(barcode,mealEntry);
+    }
+
+    removeMeal(barcode){
+      if(!barcode){
+        return false;
+      }
+      return this.barcodeMealMap.delete(barcode);
+    }
+
     addMeal(day, mealType, mealEntry) {
       this.data[day][mealType].set(mealEntry.id, mealEntry);
+      this.addMeal(mealEntry.barcode, mealEntry);
     }
   
     getMeals(day, mealType) {
