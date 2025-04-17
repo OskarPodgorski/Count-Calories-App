@@ -37,24 +37,50 @@ export default function AddMealScreen() {
     const {calories: caloriesTotal,proteins: proteintsTotal,fat: fatTotal,carbs: carbsTotal} = mealDB.getDayTotals(day);
     const { dailyTargets } = useContext(dailyTargetsContext);
     const {calories: caloriesTarget, proteins: proteinsTarget, fat: fatTarget, carbs: carbsTarget} = dailyTargets;
+
+    function ProgressBar({actual,target}) {
+      if(typeof(actual) != "number" || typeof(target) != "number"){
+        return;
+      }
+
+      let result = Math.min(Math.max((actual/target), 0), 1) * 100;
+      
+      return(
+        <View style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorBlack, alignSelf: "stretch", height: 10, marginBottom: 5, overflow: "hidden"}}>
+          <View style={{ borderRadius:4,backgroundColor: MyStyles.ColorDimGray, flex: 1, width: `${result}%`}} />
+        </View>
+      );
+    }
     
     return(
-        <View style={{ backgroundColor: MyStyles.ColorDarkCyan, height: 80, marginHorizontal: 8, flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8}}>
+        <View style={{ backgroundColor: MyStyles.ColorDarkCyan, height: 82, marginHorizontal: 8, flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8}}>
           <View style={MyStyles.footerStyle.viewInside}>
+
+            <ProgressBar actual={caloriesTotal} target={caloriesTarget}/>
             <Text>Calories</Text>
             <Text style={MyStyles.footerStyle.text}>{caloriesTotal} / {caloriesTarget}</Text>
+
           </View>
           <View style={MyStyles.footerStyle.viewInside}>
+
+          <ProgressBar actual={proteintsTotal} target={proteinsTarget}/>
             <Text>Proteins</Text>
             <Text style={MyStyles.footerStyle.text}>{proteintsTotal} / {proteinsTarget}</Text>
+
           </View>
           <View style={MyStyles.footerStyle.viewInside}>
+
+          <ProgressBar actual={fatTotal} target={fatTarget}/>
             <Text>Fat</Text>
             <Text style={MyStyles.footerStyle.text}>{fatTotal}/ {fatTarget}</Text>
+
           </View>
           <View style={MyStyles.footerStyle.viewInside}>
+
+          <ProgressBar actual={carbsTotal} target={carbsTarget}/>
             <Text>Carbs</Text>
             <Text style={MyStyles.footerStyle.text}>{carbsTotal} / {carbsTarget}</Text>
+
           </View>
         </View>
     );
@@ -161,7 +187,7 @@ export default function AddMealScreen() {
                 }}
                 onPress={()=>{
                   mealDB.removeMeal(day,mealType,item.id);
-                  Refresh();
+                  onMealAdded?.();
                   }}>
 
             <Text style={{...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 14 }}>Remove</Text>

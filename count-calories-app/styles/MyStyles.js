@@ -6,6 +6,7 @@ export const ColorEerieBlack = "#222222";
 export const ColorNight = "#161616";
 export const ColorWhite = "#FFFFFF";
 export const ColorOnyx = "#444444";
+export const ColorDimGray = "#666666";
 
 export const footerStyle = StyleSheet.create({
   text: {
@@ -13,7 +14,8 @@ export const footerStyle = StyleSheet.create({
   },
   viewInside: {
     flex: 1,
-     justifyContent: 'center',
+     justifyContent: 'flex-start',
+     margin: 8,
       alignItems: 'center',
        flexDirection: "column" 
   }
