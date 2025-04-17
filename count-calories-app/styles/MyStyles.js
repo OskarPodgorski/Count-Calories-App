@@ -5,6 +5,7 @@ export const ColorBlack = "#000000";
 export const ColorEerieBlack = "#222222";
 export const ColorNight = "#161616";
 export const ColorWhite = "#FFFFFF";
+export const ColorOnyx = "#444444";
 
 export const footerStyle = StyleSheet.create({
   text: {
@@ -16,6 +17,16 @@ export const footerStyle = StyleSheet.create({
       alignItems: 'center',
        flexDirection: "column" 
   }
+});
+
+export const baseStyle = StyleSheet.create({
+  base: {
+    borderRadius: 8
+  },
+  text: {
+    paddingHorizontal:10,
+    paddingVertical:4
+  }  
 });
 
 export const textInputStyle = StyleSheet.create({

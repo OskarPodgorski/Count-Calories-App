@@ -81,6 +81,9 @@ export default function AddMealScreen() {
   }
   
   function MealSection({day, mealType, onMealAdded}) {
+    const [refresh, refreshUI] = useState(false);
+    const Refresh = () => refreshUI(current => !current);
+
     const navigation = useNavigation();
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -119,9 +122,9 @@ export default function AddMealScreen() {
   
     return (
       <View style={{
+        ...MyStyles.baseStyle.base,
         backgroundColor: MyStyles.ColorNight,
-        padding: 12,
-        borderRadius: 8,
+        padding: 10,
         marginTop: 4,
         marginBottom: 4,
         flexDirection: "row",
@@ -134,14 +137,39 @@ export default function AddMealScreen() {
         <Text style={{ color: '#aaa' }}>Calories:</Text>
         
         {mealDB.getMeals(day, mealType).size > 0 && (
-          <View style={{ marginTop: 12 }}>
+          <View style={{marginTop:4}}>
           
             {[...mealDB.getMeals(day, mealType).values()].map((item, index) => (
-              <View key={item.id} style={{ marginBottom: 4 }}>
-                <Text style={{ color: 'white' }}>
-                  {item.name} - {item.grams}g ({item.getTotalCalories()} kcal)
+
+              <View key={item.id} style={{
+                ...MyStyles.baseStyle.base, marginTop: 6, backgroundColor: MyStyles.ColorOnyx, flexDirection: "row", justifyContent: "space-between",
+                alignItems: "center"
+                }}>
+
+                <Text style={{...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize:15 }}>
+                  {item.name}{item.name ? " - " : ""}{item.grams}{item.grams ? "g " : ""}({item.getTotalCalories()} kcal)
                 </Text>
+
+                <TouchableOpacity
+                style={{
+                  ...MyStyles.baseStyle.base,
+                  backgroundColor: MyStyles.ColorBlack,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  alignSelf: "stretch",
+                  margin: 4
+                }}
+                onPress={()=>{
+                  mealDB.removeMeal(day,mealType,item.id);
+                  Refresh();
+                  }}>
+
+            <Text style={{...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 14 }}>Remove</Text>
+
+          </TouchableOpacity>
+
               </View>
+
             ))}
   
           </View>
@@ -152,13 +180,14 @@ export default function AddMealScreen() {
         <View style={{alignItems: "flex-end", justifyContent: "flex-end"}}>
           <TouchableOpacity
             style={{
+              ...MyStyles.baseStyle.base,
               backgroundColor: MyStyles.ColorDarkCyan,
-              minHeight: 38,
-              minWidth: 38,
-              borderRadius: 8,
+              minHeight: 36,
+              minWidth: 36,
               alignSelf: 'flex-end',
               alignItems: "center",
-              justifyContent: "center"
+              justifyContent: "center",
+              marginLeft:10
             }}
             onPress={() => setModalVisible(true)}>
             <Text style={{ color: MyStyles.ColorBlack, fontSize: 22 }}>+</Text>
