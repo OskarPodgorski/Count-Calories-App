@@ -79,7 +79,7 @@ function DrawerCreate() {
             },
         }}
         >
-          <Drawer.Screen name="Add Meal Screen" component={AddMealScreen} />
+          <Drawer.Screen name="Add Meal" component={AddMealScreen} />
           <Drawer.Screen name="Settings" component={SettingsScreen} />
         </Drawer.Navigator>
   );
