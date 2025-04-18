@@ -1,7 +1,7 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect, useCallback } from 'react';
 import { Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 
 import * as MyStyles from "../styles/MyStyles"
 import { mealDB, MealEntry } from '../scripts/MealDatabase'
@@ -109,9 +109,9 @@ export default function AddMealScreen() {
   
   function MealSection({day, mealType, onMealAdded}) {
     const [refresh, refreshUI] = useState(false);
-    const Refresh = () => refreshUI(current => !current);
 
     const navigation = useNavigation();
+    const { params } = useRoute();
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -123,6 +123,18 @@ export default function AddMealScreen() {
     const [productProteins, setProductProteins] = useState('');
     const [productFat, setProductFat] = useState('');
     const [productCarbs, setProductCarbs] = useState('');
+
+    useFocusEffect(
+      useCallback(() => {
+        console.log("focused")
+        if (params?.scannedBarcode) {
+          setBarcode(params.scannedBarcode);
+          setModalVisible(true);
+
+          navigation.setParams({ scannedBarcode: undefined });
+        }
+      }, [params?.scannedBarcode])
+    );
     
     const handleAdd = () => {
       mealDB.addMeal(day,mealType, new MealEntry(     
@@ -134,10 +146,10 @@ export default function AddMealScreen() {
         productCarbs,
         barcode
       ));
-  
-      Refresh();
+
+
       setModalVisible(false);
-  
+      
       setBarcode("");
       setMealName("");
       setMealGrams("");
@@ -145,8 +157,9 @@ export default function AddMealScreen() {
       setProductProteins("");
       setProductFat("");
       setProductCarbs("");
-  
+      
       onMealAdded?.();
+      // refreshUI(c => !c);
     };
 
     const handleScannedFromDatabase = () => {
@@ -243,13 +256,7 @@ export default function AddMealScreen() {
             }}
             onPress={() => {
               setModalVisible(false);
-              navigation.navigate("BarcodeScanner",
-                {
-                  setAddMealModalVisible: setModalVisible,
-                  setBarcodeTextInput: setBarcode,
-                  invokeMealDataFromDatabase: handleScannedFromDatabase
-                }
-              )
+              navigation.navigate("BarcodeScanner");
             }}>
             <Text style={{ color: MyStyles.ColorBlack, fontSize: 12 }}>|II|II|</Text>
           </TouchableOpacity>
@@ -322,12 +329,7 @@ export default function AddMealScreen() {
                     }}
                     onPress={() => {
                       setModalVisible(false);
-                      navigation.navigate("BarcodeScanner",
-                        {
-                          setAddMealModalVisible: setModalVisible,
-                          setBarcodeTextInput: setBarcode
-                        }
-                      )
+                      navigation.navigate("BarcodeScanner");
                     }}>
                     <Text style={{ color: MyStyles.ColorBlack, fontSize: 12 }}>|II|II|</Text>
                   </TouchableOpacity>

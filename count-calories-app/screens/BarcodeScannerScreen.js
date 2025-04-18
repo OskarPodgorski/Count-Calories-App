@@ -1,14 +1,13 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState, useCallback } from 'react';
 import { Button, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 import * as MyStyles from "../styles/MyStyles"
 
 export default function BarcodeScannerScreen() { 
   const navigation = useNavigation();
-  const { params } = useRoute();
-  
+
   const [cameraMounted, setCameraMounted] = useState(false);
 
   const [permission, requestPermission] = useCameraPermissions();
@@ -18,28 +17,20 @@ export default function BarcodeScannerScreen() {
 
   useFocusEffect(
     useCallback(() => {
-
         setCameraMounted(true);
-        console.log("Ekran aktywny");
-
       return () => {
-
         setCameraMounted(false);
-        console.log("Ekran nieaktywny");
-
       };
     }, [])
   );
 
   function handleScan(barcode) {
-    if (params)
-    {
-      setBarcode(barcode)
-      navigation.navigate("Main");
-      params.setAddMealModalVisible(true);
-      params.setBarcodeTextInput(barcode);
-      params.invokeMealDataFromDatabase?.();
-    }
+    setBarcode(barcode);
+      navigation.navigate("Main",
+        {
+          scannedBarcode: barcode
+        }
+      );
   }
 
   if (!permission) {
@@ -56,7 +47,7 @@ export default function BarcodeScannerScreen() {
   }
 
   function toggleCameraFacing() {
-    setFacing(current => (current === 'back' ? 'front' : 'back'));
+    setFacing(c => (c === 'back' ? 'front' : 'back'));
   }
 
   return (
