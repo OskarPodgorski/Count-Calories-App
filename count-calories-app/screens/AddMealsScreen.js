@@ -282,13 +282,13 @@ export default function AddMealScreen() {
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.4)'
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
           }}>
   
             <View style={{
               ...MyStyles.baseStyle.base,
               backgroundColor: MyStyles.ColorEerieBlack,
-              padding: 20,
+              padding: 10,
               width: '80%'
             }}>
               
@@ -296,8 +296,10 @@ export default function AddMealScreen() {
                   backgroundColor: MyStyles.ColorDarkCyan, fontSize: 18, color: MyStyles.ColorBlack,
                   paddingVertical: 6, paddingHorizontal:12 }}>Add to {mealType}</Text>
 
-                <Text style={{ fontSize: 14, marginBottom: 5, marginTop: 15, color: MyStyles.ColorWhite}}>Barcode:</Text>
+              <View style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, padding: 10, marginBottom:5 , marginTop:10 }}> 
 
+                <Text style={{ fontSize: 14, alignSelf: "center", color: MyStyles.ColorWhite}}>Barcode:</Text>
+    
                 <View style={{ flexDirection: "row" , justifyContent: "stretch", alignSelf: "stretch"}}>
 
                    <TextInput
@@ -305,17 +307,18 @@ export default function AddMealScreen() {
                    value={barcode}
                    onChangeText={setBarcode}
                    placeholderTextColor= {MyStyles.ColorSilver}
-                   style={{ borderBottomWidth: 1, marginBottom: 5, marginRight:15, flex:1 , color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite}}
+                   style={{ borderBottomWidth: 1, marginRight:10, flex:1 , color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite}}
                     />
 
                   <TouchableOpacity
                     style={{
                       ...MyStyles.baseStyle.base,
-                      ...MyStyles.baseStyle.text,
                       backgroundColor: MyStyles.ColorDarkCyan,
-                      alignSelf: 'center',
+                      minHeight: 36,
+                      minWidth: 36,
+                      alignSelf: "flex-end",
                       alignItems: "center",
-                      justifyContent: "center"                   
+                      justifyContent: "center",                   
                     }}
                     onPress={() => {
                       setModalVisible(false);
@@ -326,12 +329,16 @@ export default function AddMealScreen() {
                         }
                       )
                     }}>
-                    <Text style={{ color: MyStyles.ColorBlack, fontSize: 16 }}>Scanner</Text>
+                    <Text style={{ color: MyStyles.ColorBlack, fontSize: 12 }}>|II|II|</Text>
                   </TouchableOpacity>
 
                 </View>
-  
-                <Text style={{ fontSize: 14, marginBottom: 5, marginTop: 10, color: MyStyles.ColorWhite}}>Meal data:</Text>
+
+              </View>
+
+              <View style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, padding: 10, marginBottom:5}}> 
+
+                <Text style={{ fontSize: 14, alignSelf: "center", color: MyStyles.ColorWhite}}>Meal data:</Text>
   
               <TextInput
                 placeholder="Name"
@@ -347,44 +354,50 @@ export default function AddMealScreen() {
                 onChangeText={setMealGrams}
                 keyboardType="numeric"
                 placeholderTextColor= {MyStyles.ColorSilver}
-                style={{ borderBottomWidth: 1, marginBottom: 15, color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite }}
-              />
+                style={{ borderBottomWidth: 1, color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite }}
+              />  
+
+              </View>
+
+              <View style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, padding: 10, marginBottom:10}}>
   
-              <Text style={{ fontSize: 14, marginBottom: 5, color: MyStyles.ColorWhite }}>Product data in 100 grams:</Text>
+                <Text style={{ fontSize: 14, color: MyStyles.ColorWhite, alignSelf: "center" }}>Product data in 100 grams:</Text>
+                    
+                <TextInput
+                  placeholder="Calories"
+                  value={productCalories}
+                  onChangeText={setProductCalories}
+                  keyboardType="numeric"
+                  placeholderTextColor= {MyStyles.ColorSilver}
+                  style={{ borderBottomWidth: 1, marginBottom: 5 , color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite}}
+                  />
+                <TextInput
+                  placeholder="Proteins"
+                  value={productProteins}
+                  onChangeText={setProductProteins}
+                  keyboardType="numeric"
+                  placeholderTextColor= {MyStyles.ColorSilver}
+                  style={{ borderBottomWidth: 1, marginBottom: 5, color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite }}
+                  />
+                <TextInput
+                  placeholder="Fat"
+                  value={productFat}
+                  onChangeText={setProductFat}
+                  keyboardType="numeric"
+                  placeholderTextColor= {MyStyles.ColorSilver}
+                  style={{ borderBottomWidth: 1, marginBottom: 5 , color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite}}
+                  />
+                <TextInput
+                  placeholder="Carbs"
+                  value={productCarbs}
+                  onChangeText={setProductCarbs}
+                  keyboardType="numeric"
+                  placeholderTextColor= {MyStyles.ColorSilver}
+                  style={{ borderBottomWidth: 1, color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite }}
+                  />
   
-              <TextInput
-                placeholder="Calories"
-                value={productCalories}
-                onChangeText={setProductCalories}
-                keyboardType="numeric"
-                placeholderTextColor= {MyStyles.ColorSilver}
-                style={{ borderBottomWidth: 1, marginBottom: 5 , color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite}}
-              />
-              <TextInput
-                placeholder="Proteins"
-                value={productProteins}
-                onChangeText={setProductProteins}
-                keyboardType="numeric"
-                placeholderTextColor= {MyStyles.ColorSilver}
-                style={{ borderBottomWidth: 1, marginBottom: 5, color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite }}
-              />
-              <TextInput
-                placeholder="Fat"
-                value={productFat}
-                onChangeText={setProductFat}
-                keyboardType="numeric"
-                placeholderTextColor= {MyStyles.ColorSilver}
-                style={{ borderBottomWidth: 1, marginBottom: 5 , color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite}}
-              />
-              <TextInput
-                placeholder="Carbs"
-                value={productCarbs}
-                onChangeText={setProductCarbs}
-                keyboardType="numeric"
-                placeholderTextColor= {MyStyles.ColorSilver}
-                style={{ borderBottomWidth: 1, marginBottom: 20, color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite }}
-              />
-  
+              </View>
+
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
   
                 <TouchableOpacity style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorDarkCyan}} onPress={() => setModalVisible(false)}>
