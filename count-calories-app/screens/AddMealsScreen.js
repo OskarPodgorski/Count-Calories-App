@@ -146,6 +146,7 @@ export default function AddMealScreen() {
       setProductCarbs("");
   
       onMealAdded?.();
+      Refresh();
     };
 
     const handleScannedFromDatabase = () => {
@@ -156,7 +157,7 @@ export default function AddMealScreen() {
       setProductFat("");
       setProductCarbs("");
       
-      const mealEntry = mealDB.getMeal(barcode)
+      const mealEntry = mealDB.getMealByBarcode(barcode)
 
       if(!mealEntry){
         return;
@@ -238,9 +239,18 @@ export default function AddMealScreen() {
               alignItems: "center",
               justifyContent: "center",
               marginLeft:10,
-              marginBottom:6
+              marginBottom:4
             }}
-            onPress={() => setModalVisible(true)}>
+            onPress={() => {
+              setModalVisible(false);
+              navigation.navigate("BarcodeScanner",
+                {
+                  setAddMealModalVisible: setModalVisible,
+                  setBarcodeTextInput: setBarcode,
+                  invokeMealDataFromDatabase: handleScannedFromDatabase
+                }
+              )
+            }}>
             <Text style={{ color: MyStyles.ColorBlack, fontSize: 12 }}>|II|II|</Text>
           </TouchableOpacity>
 

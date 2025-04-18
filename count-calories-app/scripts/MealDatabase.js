@@ -30,18 +30,18 @@ export class MealEntry {
 
     barcodeMealMap = new Map();
     
-    getMeal(barcode){
+    getMealByBarcode(barcode){
       if(!barcode){
         return null;
       }
       return this.barcodeMealMap.get(barcode);
     }
 
-    addMeal(barcode, mealEntry){
+    addMealToBarcodeMap(barcode, mealEntry){
       if(!barcode || !mealEntry){
         return;
       }
-      this.barcodeMealMap.set(barcode,mealEntry);
+      this.barcodeMealMap.set(mealEntry.barcode,mealEntry);
     }
 
     removeMeal(barcode){
@@ -53,7 +53,7 @@ export class MealEntry {
 
     addMeal(day, mealType, mealEntry) {
       this.data[day][mealType].set(mealEntry.id, mealEntry);
-      this.addMeal(mealEntry.barcode, mealEntry);
+      this.addMealToBarcodeMap(mealEntry.barcode, mealEntry);
     }
   
     getMeals(day, mealType) {

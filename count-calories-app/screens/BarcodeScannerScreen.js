@@ -1,18 +1,35 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 
 import * as MyStyles from "../styles/MyStyles"
 
-export default function BarcodeScannerScreen() {
+export default function BarcodeScannerScreen() { 
   const navigation = useNavigation();
   const { params } = useRoute();
+  
+  const [cameraMounted, setCameraMounted] = useState(false);
 
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState('back');
   const [barcode, setBarcode] = useState("No Barcode Detected");
   const [flashlight, setFlashlight] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+
+        setCameraMounted(true);
+        console.log("Ekran aktywny");
+
+      return () => {
+
+        setCameraMounted(false);
+        console.log("Ekran nieaktywny");
+
+      };
+    }, [])
+  );
 
   function handleScan(barcode) {
     if (params)
@@ -21,6 +38,7 @@ export default function BarcodeScannerScreen() {
       navigation.navigate("Main");
       params.setAddMealModalVisible(true);
       params.setBarcodeTextInput(barcode);
+      params.invokeMealDataFromDatabase?.();
     }
   }
 
@@ -42,9 +60,10 @@ export default function BarcodeScannerScreen() {
   }
 
   return (
-    <View style={{flex: 1}}>
-      <CameraView style={{flex:1, flexDirection: "column-reverse", alignItems: "stretch"}} facing= {facing} enableTorch={flashlight} barcodeScannerSettings={{
-        barcodeTypes: ["ean13", "ean8"]
+    <View style={{flex: 1, backgroundColor: MyStyles.ColorEerieBlack}}>
+
+      {cameraMounted && (<CameraView style={{flex:1, flexDirection: "column-reverse", alignItems: "stretch"}} facing= {facing} enableTorch={flashlight} barcodeScannerSettings={{
+        barcodeTypes: ["ean13"]
       }}
       onBarcodeScanned={(b) => handleScan(b.data)}
       >
@@ -71,7 +90,8 @@ export default function BarcodeScannerScreen() {
         </View>
 
         </View>
-      </CameraView>
+      </CameraView>)}
+
     </View>
   );
 }
