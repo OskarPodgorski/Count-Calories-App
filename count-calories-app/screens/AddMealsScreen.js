@@ -1,11 +1,11 @@
-import { useState, useContext, useEffect, useCallback } from 'react';
+import { useState, useContext, useCallback, useEffect } from 'react';
 import { Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 import * as MyStyles from "../styles/MyStyles"
 import { mealDB, MealEntry } from '../scripts/MealDatabase'
-import { dailyTargetsContext } from '../scripts/Context';
+import { dailyTargetsContext, scannedBarcodeContext, ScannedBarcodeProvider } from '../scripts/Context';
 
 
 const Tab = createMaterialTopTabNavigator();
@@ -94,10 +94,12 @@ export default function AddMealScreen() {
       <View style ={{flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack}}>
   
         <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack, margin: 4}}>
-  
+
+        <ScannedBarcodeProvider>
           <MealSection day = {dayName} mealType={"Breakfast"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
           <MealSection day = {dayName} mealType={"Lunch"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
           <MealSection day = {dayName} mealType={"Dinner"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
+        </ScannedBarcodeProvider>
   
         </View>
   
@@ -111,11 +113,12 @@ export default function AddMealScreen() {
     const [refresh, refreshUI] = useState(false);
 
     const navigation = useNavigation();
-    const { params } = useRoute();
 
     const [modalVisible, setModalVisible] = useState(false);
 
+    const {scannedBarcode} = useContext(scannedBarcodeContext);
     const [barcode, setBarcode] = useState("");
+    const [waitsForBarcode, setWaitsForBarcode] = useState(false);
 
     const [mealName, setMealName] = useState('');
     const [mealGrams, setMealGrams] = useState('');
@@ -124,17 +127,17 @@ export default function AddMealScreen() {
     const [productFat, setProductFat] = useState('');
     const [productCarbs, setProductCarbs] = useState('');
 
-    useFocusEffect(
-      useCallback(() => {
-        console.log("focused")
-        if (params?.scannedBarcode) {
-          setBarcode(params.scannedBarcode);
-          setModalVisible(true);
-
-          navigation.setParams({ scannedBarcode: undefined });
+    useEffect(() => {
+      console.log("eff");
+      if (waitsForBarcode){      
+        setWaitsForBarcode(false);
+        setModalVisible(true);
+        
+        if(scannedBarcode) {
+          setBarcode(scannedBarcode);
         }
-      }, [params?.scannedBarcode])
-    );
+      }
+      }, [scannedBarcode]);
     
     const handleAdd = () => {
       mealDB.addMeal(day,mealType, new MealEntry(     
@@ -256,6 +259,7 @@ export default function AddMealScreen() {
             }}
             onPress={() => {
               setModalVisible(false);
+              setWaitsForBarcode(true);
               navigation.navigate("BarcodeScanner");
             }}>
             <Text style={{ color: MyStyles.ColorBlack, fontSize: 12 }}>|II|II|</Text>
@@ -329,6 +333,7 @@ export default function AddMealScreen() {
                     }}
                     onPress={() => {
                       setModalVisible(false);
+                      setWaitsForBarcode(true);
                       navigation.navigate("BarcodeScanner");
                     }}>
                     <Text style={{ color: MyStyles.ColorBlack, fontSize: 12 }}>|II|II|</Text>

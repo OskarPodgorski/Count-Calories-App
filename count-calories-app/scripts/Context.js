@@ -12,3 +12,15 @@ export function DailyTargetsProvider({ children }) {
       </dailyTargetsContext.Provider>
     );
   }
+
+export const scannedBarcodeContext = createContext();
+
+export function ScannedBarcodeProvider({ children }) {
+    const [scannedBarcode, setScannedBarcode] = useState("");
+
+    return (
+      <scannedBarcodeContext.Provider value={{scannedBarcode, setScannedBarcode}}>
+        {children}
+      </scannedBarcodeContext.Provider>
+    )
+}

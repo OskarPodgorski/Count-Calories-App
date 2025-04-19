@@ -12,6 +12,7 @@ import AddMealScreen from './screens/AddMealsScreen';
 import BarcodeScannerScreen from "./screens/BarcodeScannerScreen";
 import * as MyStyles from "./styles/MyStyles";
 import { DailyTargetsProvider } from './scripts/Context';
+import { ScannedBarcodeProvider } from './scripts/Context';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -41,7 +42,11 @@ function StackNavigatorCreate() {
   return(
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Main" component={DrawerCreate} />
-      <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
+      <Stack.Screen name="BarcodeScanner" component={()=>(
+          <ScannedBarcodeProvider>
+              <BarcodeScannerScreen/>
+          </ScannedBarcodeProvider>
+        )} />
     </Stack.Navigator>
 );
 }

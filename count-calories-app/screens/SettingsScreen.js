@@ -4,7 +4,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 
 import * as MyStyles from "../styles/MyStyles"
 import { dailyTargetSettings } from '../settings/Settings';
-import { dailyTargetsContext, DailyTargetsProvider } from '../scripts/Context';
+import { dailyTargetsContext } from '../scripts/Context';
 
 const Tab = createMaterialTopTabNavigator();
 
