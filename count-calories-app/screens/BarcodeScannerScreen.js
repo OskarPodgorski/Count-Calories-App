@@ -49,9 +49,8 @@ export default function BarcodeScannerScreen() {
     );
   }
 
-  function toggleCameraFacing() {
-    setFacing(c => (c === 'back' ? 'front' : 'back'));
-  }
+  const toggleCameraFacing = () => { setFacing(c => (c === 'back' ? 'front' : 'back')); };
+  const toggleFlashlight = () => { setFlashlight(c => !c); };
 
   return (
       <View style={{flex: 1, backgroundColor: MyStyles.ColorEerieBlack}}>
@@ -75,7 +74,7 @@ export default function BarcodeScannerScreen() {
           
             </TouchableOpacity>
           
-            <TouchableOpacity style={{backgroundColor: MyStyles.ColorDarkCyan,marginBottom:12, borderRadius: 8, marginLeft: 4}} onPress={() => {setFlashlight(current => !current)}}>
+            <TouchableOpacity style={{backgroundColor: MyStyles.ColorDarkCyan,marginBottom:12, borderRadius: 8, marginLeft: 4}} onPress={toggleFlashlight}>
           
               <Text style={{ color: MyStyles.ColorBlack, paddingHorizontal: 12, paddingVertical: 4, fontSize: 22}}>Flashlight</Text>
           

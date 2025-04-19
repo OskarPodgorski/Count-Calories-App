@@ -21,15 +21,39 @@ export default function AddMealScreen() {
                 tabBarIndicatorStyle: { backgroundColor: MyStyles.ColorBlack , height: 3 },
                 tabBarStyle: { backgroundColor : MyStyles.ColorDarkCyan, borderRadius: 8, overflow: 'hidden'}             
               }}>
-              <Tab.Screen name="Mon"  component={() => DayScreen('Monday')} />
-              <Tab.Screen name="Tue"  component={() => DayScreen('Tuesday')} />
-              <Tab.Screen name="Wed"  component={() => DayScreen('Wednesday')} />
-              <Tab.Screen name="Thu" component={() => DayScreen('Thursday')} />
-              <Tab.Screen name="Fri"  component={() => DayScreen('Friday')} />
-              <Tab.Screen name="Sat" component={() => DayScreen('Saturday')} />
-              <Tab.Screen name="Sun"  component={() => DayScreen('Sunday')} />
+              <Tab.Screen name="Mon"  component={DayScreen} initialParams={{dayName: "Monday"}} />
+              <Tab.Screen name="Tue"  component={DayScreen} initialParams={{dayName: "Tuesday"}}/>
+              <Tab.Screen name="Wed"  component={DayScreen} initialParams={{dayName: "Wednesday"}}/>
+              <Tab.Screen name="Thu" component={DayScreen} initialParams={{dayName: "Thursday"}}/>
+              <Tab.Screen name="Fri"  component={DayScreen} initialParams={{dayName: "Friday"}}/>
+              <Tab.Screen name="Sat" component={DayScreen} initialParams={{dayName: "Saturday"}}/>
+              <Tab.Screen name="Sun"  component={DayScreen} initialParams={{dayName: "Sunday"}}/>
             </Tab.Navigator>
           </View>
+    );
+  }
+
+  function DayScreen({ route }) {
+    const { dayName } = route.params;
+    
+    const [refreshFooter, setRefreshFooter] = useState(false);
+  
+    return (
+      <View style ={{flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack}}>
+  
+        <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack, margin: 4}}>
+
+        <ScannedBarcodeProvider>
+          <MealSection day = {dayName} mealType={"Breakfast"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
+          <MealSection day = {dayName} mealType={"Lunch"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
+          <MealSection day = {dayName} mealType={"Dinner"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
+        </ScannedBarcodeProvider>
+  
+        </View>
+  
+        <CaloriesFooter key={refreshFooter} day={dayName}/> 
+  
+      </View>
     );
   }
   
@@ -84,28 +108,6 @@ export default function AddMealScreen() {
 
           </View>
         </View>
-    );
-  }
-  
-  function DayScreen(dayName) {
-    const [refreshFooter, setRefreshFooter] = useState(false);
-  
-    return (
-      <View style ={{flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack}}>
-  
-        <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack, margin: 4}}>
-
-        <ScannedBarcodeProvider>
-          <MealSection day = {dayName} mealType={"Breakfast"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
-          <MealSection day = {dayName} mealType={"Lunch"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
-          <MealSection day = {dayName} mealType={"Dinner"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
-        </ScannedBarcodeProvider>
-  
-        </View>
-  
-        <CaloriesFooter key={refreshFooter} day={dayName}/> 
-  
-      </View>
     );
   }
   
