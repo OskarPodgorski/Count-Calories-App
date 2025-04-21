@@ -40,14 +40,12 @@ export default function App() {
 
 function StackNavigatorCreate() {
   return(
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Main" component={DrawerCreate} />
-      <Stack.Screen name="BarcodeScanner" component={()=>(
-          <ScannedBarcodeProvider>
-              <BarcodeScannerScreen/>
-          </ScannedBarcodeProvider>
-        )} />
-    </Stack.Navigator>
+    <ScannedBarcodeProvider>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Main" component={DrawerCreate} />
+        <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
+      </Stack.Navigator>
+    </ScannedBarcodeProvider>
 );
 }
 

@@ -1,11 +1,11 @@
-import { useState, useContext, useCallback, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
 
 import * as MyStyles from "../styles/MyStyles"
 import { mealDB, MealEntry } from '../scripts/MealDatabase'
-import { dailyTargetsContext, scannedBarcodeContext, ScannedBarcodeProvider } from '../scripts/Context';
+import { dailyTargetsContext, scannedBarcodeContext } from '../scripts/Context';
 
 
 const Tab = createMaterialTopTabNavigator();
@@ -35,7 +35,7 @@ export default function AddMealScreen() {
 
   function DayScreen({ route }) {
     const { dayName } = route.params;
-    
+
     const [refreshFooter, setRefreshFooter] = useState(false);
   
     return (
@@ -43,11 +43,9 @@ export default function AddMealScreen() {
   
         <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack, margin: 4}}>
 
-        <ScannedBarcodeProvider>
           <MealSection day = {dayName} mealType={"Breakfast"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
           <MealSection day = {dayName} mealType={"Lunch"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
           <MealSection day = {dayName} mealType={"Dinner"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
-        </ScannedBarcodeProvider>
   
         </View>
   
@@ -112,13 +110,11 @@ export default function AddMealScreen() {
   }
   
   function MealSection({day, mealType, onMealAdded}) {
-    const [refresh, refreshUI] = useState(false);
-
     const navigation = useNavigation();
 
     const [modalVisible, setModalVisible] = useState(false);
 
-    const {scannedBarcode} = useContext(scannedBarcodeContext);
+    const {scannedBarcode, setScannedBarcode} = useContext(scannedBarcodeContext);
     const [barcode, setBarcode] = useState("");
     const [waitsForBarcode, setWaitsForBarcode] = useState(false);
 
@@ -130,17 +126,17 @@ export default function AddMealScreen() {
     const [productCarbs, setProductCarbs] = useState('');
 
     useEffect(() => {
-      console.log("eff");
       if (waitsForBarcode){      
         setWaitsForBarcode(false);
         setModalVisible(true);
         
         if(scannedBarcode) {
           setBarcode(scannedBarcode);
+          setScannedBarcode("");
         }
       }
       }, [scannedBarcode]);
-    
+
     const handleAdd = () => {
       mealDB.addMeal(day,mealType, new MealEntry(     
         mealName,
@@ -151,9 +147,6 @@ export default function AddMealScreen() {
         productCarbs,
         barcode
       ));
-
-
-      setModalVisible(false);
       
       setBarcode("");
       setMealName("");
@@ -164,7 +157,7 @@ export default function AddMealScreen() {
       setProductCarbs("");
       
       onMealAdded?.();
-      // refreshUI(c => !c);
+      setModalVisible(false);
     };
 
     const handleScannedFromDatabase = () => {
@@ -203,16 +196,16 @@ export default function AddMealScreen() {
   
         <Text style={{ color: 'white', fontSize: 18, marginBottom: 4 }}>{mealType}</Text>
         <Text style={{ color: '#aaa' }}>Calories:</Text>
-        
-        {mealDB.getMeals(day, mealType).size > 0 && (
-          <View style={{marginTop:4}}>
-          
+              
+          {mealDB.getMeals(day, mealType).size > 0 && (
+            <View style={{marginTop:4}}>
+            
             {[...mealDB.getMeals(day, mealType).values()].map((item, index) => (
-
+              
               <View key={item.id} style={{
                 ...MyStyles.baseStyle.base, marginTop: 6, backgroundColor: MyStyles.ColorOnyx, flexDirection: "row", justifyContent: "space-between",
                 alignItems: "center"
-                }}>
+              }}>
 
                 <Text style={{...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize:15 }}>
                   {item.name}{item.name ? " - " : ""}{item.grams}{item.grams ? "g " : ""}({item.getTotalCalories()} kcal)
@@ -230,8 +223,9 @@ export default function AddMealScreen() {
                 onPress={()=>{
                   mealDB.removeMeal(day,mealType,item.id);
                   onMealAdded?.();
-                  }}>
-
+                }}>
+              
+              
             <Text style={{...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 14 }}>Remove</Text>
 
           </TouchableOpacity>

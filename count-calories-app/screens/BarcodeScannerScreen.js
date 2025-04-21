@@ -32,7 +32,6 @@ export default function BarcodeScannerScreen() {
     setBarcode(barcode);
 
     setScannedBarcode(barcode);
-    
     navigation.navigate("Main");
   }
 
