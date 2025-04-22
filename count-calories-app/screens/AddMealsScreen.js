@@ -43,9 +43,9 @@ export default function AddMealScreen() {
   
         <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack, margin: 4}}>
 
-          <MealSection day = {dayName} mealType={"Breakfast"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
-          <MealSection day = {dayName} mealType={"Lunch"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
-          <MealSection day = {dayName} mealType={"Dinner"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
+          <MealSection day={dayName} mealType={"Breakfast"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
+          <MealSection day={dayName} mealType={"Lunch"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
+          <MealSection day={dayName} mealType={"Dinner"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
   
         </View>
   
@@ -181,6 +181,8 @@ export default function AddMealScreen() {
       setProductCarbs(mealEntry.carbs);
     }
   
+    console.log(`remount ${mealType} ${day}`);
+
     return (
       <View style={{
         ...MyStyles.baseStyle.base,
@@ -198,7 +200,7 @@ export default function AddMealScreen() {
         <Text style={{ color: '#aaa' }}>Calories:</Text>
               
           {mealDB.getMeals(day, mealType).size > 0 && (
-            <View style={{marginTop:4}}>
+        <View style={{marginTop:4}}>
             
             {[...mealDB.getMeals(day, mealType).values()].map((item, index) => (
               
@@ -236,7 +238,7 @@ export default function AddMealScreen() {
   
           </View>
         )}
-  
+        
       </View>
   
         <View style={{alignItems: "flex-end", justifyContent: "flex-end"}}>
@@ -417,6 +419,6 @@ export default function AddMealScreen() {
           </View>
         </Modal>
   
-      </View>
+      </View>      
     );
   }

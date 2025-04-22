@@ -30,7 +30,7 @@ export default function BarcodeScannerScreen() {
 
   function handleScan(barcode) {
     setBarcode(barcode);
-
+    
     setScannedBarcode(barcode);
     navigation.navigate("Main");
   }

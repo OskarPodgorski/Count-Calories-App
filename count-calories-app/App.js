@@ -7,6 +7,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import LoginScreen from './screens/LoginScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import AddMealScreen from './screens/AddMealsScreen';
 import BarcodeScannerScreen from "./screens/BarcodeScannerScreen";
@@ -42,6 +43,7 @@ function StackNavigatorCreate() {
   return(
     <ScannedBarcodeProvider>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen}/>
         <Stack.Screen name="Main" component={DrawerCreate} />
         <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
       </Stack.Navigator>
