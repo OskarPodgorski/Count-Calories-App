@@ -1,6 +1,9 @@
 import 'react-native-get-random-values';
 import 'react-native-gesture-handler';
 
+import { ClerkProvider } from '@clerk/clerk-expo';
+import * as SecureStore from 'expo-secure-store';
+
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -18,24 +21,36 @@ import { ScannedBarcodeProvider } from './scripts/Context';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
+const tokenCache = {
+  getToken: (key) => SecureStore.getItemAsync(key),
+  saveToken: (key, value) => SecureStore.setItemAsync(key, value),
+};
+
 export default function App() {
   return (
-    <SafeAreaProvider>
+      <ClerkProvider
+      publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      tokenCache={tokenCache}>
 
-      <StatusBar style="light" backgroundColor= {MyStyles.ColorEerieBlack} />
-      <SafeAreaView style={{ flex: 1 , backgroundColor: MyStyles.ColorEerieBlack}}>
+        <SafeAreaProvider>
 
-        <DailyTargetsProvider>
-          <NavigationContainer>
-    
-            <StackNavigatorCreate/>
-    
-          </NavigationContainer>
-        </DailyTargetsProvider>
+          <StatusBar style="light" backgroundColor= {MyStyles.ColorEerieBlack} />
+          <SafeAreaView style={{ flex: 1 , backgroundColor: MyStyles.ColorEerieBlack}}>
 
-      </SafeAreaView>
 
-    </SafeAreaProvider>
+            <DailyTargetsProvider>
+              <NavigationContainer>
+
+                <StackNavigatorCreate/>
+
+              </NavigationContainer>
+            </DailyTargetsProvider>
+
+          </SafeAreaView>
+
+        </SafeAreaProvider>
+
+    </ClerkProvider>
   );
 }
 
