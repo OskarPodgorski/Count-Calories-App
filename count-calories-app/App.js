@@ -2,6 +2,7 @@ import 'react-native-get-random-values';
 import 'react-native-gesture-handler';
 
 import { ClerkProvider } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import * as SecureStore from 'expo-secure-store';
 
 import { StatusBar } from 'expo-status-bar';
@@ -21,15 +22,9 @@ import { ScannedBarcodeProvider } from './scripts/Context';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const tokenCache = {
-  getToken: (key) => SecureStore.getItemAsync(key),
-  saveToken: (key, value) => SecureStore.setItemAsync(key, value),
-};
-
 export default function App() {
   return (
       <ClerkProvider
-      publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
       tokenCache={tokenCache}>
 
         <SafeAreaProvider>
