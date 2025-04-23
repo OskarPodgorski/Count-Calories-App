@@ -1,12 +1,35 @@
+import React from 'react';
 import { useState, useContext } from 'react';
 import { Text, View, TouchableOpacity, TextInput, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
+import { useOAuth } from '@clerk/clerk-expo';
 
 import * as MyStyles from "../styles/MyStyles"
 
 export default function LoginScreen(){
 
     const navigation = useNavigation();
+
+    const { startOAuthFlow } = useOAuth({ strategy: 'oauth_google' });
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const { createdSessionId, setActive } = await startOAuthFlow({
+        redirectUrl: Linking.createURL('oauth-native-callback'),
+      });
+
+      if (createdSessionId) {
+        await setActive({ session: createdSessionId });    
+        
+        navigation.navigate("Main"); 
+    }
+    } catch (err) {
+      console.error('Błąd logowania przez Google:', err);
+    }
+  };
 
     return(
         <View style={{flex:1, backgroundColor:MyStyles.ColorEerieBlack, alignItems: "stretch", gap:15}}>
@@ -22,14 +45,9 @@ export default function LoginScreen(){
             <View style={{flex:1, justifyContent: "center", alignItems: "center", gap:15}}>
 
                 <TouchableOpacity style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorWhite, flexDirection:"row", alignItems:"flex-end"}}
-                onPress={()=>{navigation.navigate("Main");}}>
+                onPress={handleGoogleSignIn}>
                     <Text style={{...MyStyles.baseStyle.text, fontSize:24, paddingRight:5}}>Login with</Text>
                     <Image source={require("../assets/googleLogo.png")} style={{height:37, width:88, marginRight:6}} resizeMode="contain" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorWhite}}
-                onPress={()=>{navigation.navigate("Main");}}>
-                    <Text style={{...MyStyles.baseStyle.text, fontSize:24}}>Enter</Text>
                 </TouchableOpacity>
 
             </View>

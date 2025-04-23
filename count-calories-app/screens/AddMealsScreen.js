@@ -181,8 +181,6 @@ export default function AddMealScreen() {
       setProductCarbs(mealEntry.carbs);
     }
   
-    console.log(`remount ${mealType} ${day}`);
-
     return (
       <View style={{
         ...MyStyles.baseStyle.base,
