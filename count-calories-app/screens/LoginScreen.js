@@ -5,31 +5,33 @@ import { useNavigation } from '@react-navigation/native';
 
 import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
-import { useOAuth } from '@clerk/clerk-expo';
+import { useSSO } from '@clerk/clerk-expo';
 
 import * as MyStyles from "../styles/MyStyles"
 
 export default function LoginScreen(){
 
-    const navigation = useNavigation();
+  const navigation = useNavigation();
+  
+  const { startSSOFlow } = useSSO();
 
-    const { startOAuthFlow } = useOAuth({ strategy: 'oauth_google' });
+    const handleGoogleSignIn = async () => {
+      try {
+        const { createdSessionId, setActive } = await startSSOFlow({
+          strategy: 'oauth_google',
+          redirectUrl: Linking.createURL('oauth-native-callback'),
+        });
+    
+        console.log(createdSessionId);
 
-  const handleGoogleSignIn = async () => {
-    try {
-      const { createdSessionId, setActive } = await startOAuthFlow({
-        redirectUrl: Linking.createURL('oauth-native-callback'),
-      });
-
-      if (createdSessionId) {
-        await setActive({ session: createdSessionId });    
-        
-        navigation.navigate("Main"); 
-    }
-    } catch (err) {
-      console.error('Błąd logowania przez Google:', err);
-    }
-  };
+        if (createdSessionId) {
+          await setActive({ session: createdSessionId });
+          navigation.navigate("Main");
+        }
+      } catch (err) {
+        console.error('Błąd logowania przez Google:', err);
+      }
+    };
 
     return(
         <View style={{flex:1, backgroundColor:MyStyles.ColorEerieBlack, alignItems: "stretch", gap:15}}>
