@@ -29,7 +29,7 @@ export default function LoginScreen(){
           navigation.navigate("Main");
         }
       } catch (err) {
-        console.error('Błąd logowania przez Google:', err);
+        console.error('google login', err);
       }
     };
 
@@ -47,18 +47,19 @@ export default function LoginScreen(){
           navigation.navigate("Main");
         }
       } catch (err) {
-        console.error('Błąd logowania przez Google:', err);
+        console.error('github login', err);
       }
     };
 
     return(
-      <View style={{flex:1, backgroundColor:MyStyles.ColorEerieBlack, alignItems: "stretch", gap:15}}>
+      <View style={{flex:1, backgroundColor:MyStyles.ColorNight, alignItems: "stretch", gap:15}}>
+
+                <Text style={{...MyStyles.baseStyle.text, borderBottomLeftRadius:24, borderBottomRightRadius:24, textAlign:"center", fontSize:26, color: MyStyles.ColorSilver, backgroundColor: MyStyles.ColorEerieBlack}}>Count Calories App</Text>
 
             <View style={{flex:1.5,  justifyContent:"center", alignItems: "center", gap:15}}>
 
-                <Image source={require("../assets/logo.png")} style={{...MyStyles.baseStyle.base, width:130, height:130, backgroundColor:MyStyles.ColorNight}}/>
+                <Image source={require("../assets/logo.png")} style={{...MyStyles.baseStyle.base, width:130, height:130, backgroundColor:MyStyles.ColorWhite}}/>
 
-                <Text style={{...MyStyles.baseStyle.base, ...MyStyles.baseStyle.text, fontSize:26, color: MyStyles.ColorSilver, backgroundColor: MyStyles.ColorNight}}>Count Calories App</Text>
 
             </View>
 
