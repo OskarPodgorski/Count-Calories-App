@@ -1,10 +1,11 @@
 import 'react-native-get-random-values';
 import 'react-native-gesture-handler';
 
-import { ClerkProvider } from '@clerk/clerk-expo';
+import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import * as SecureStore from 'expo-secure-store';
 
+import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -36,7 +37,7 @@ export default function App() {
             <DailyTargetsProvider>
               <NavigationContainer>
 
-                <StackNavigatorCreate/>
+                <Root/>
 
               </NavigationContainer>
             </DailyTargetsProvider>
@@ -49,16 +50,32 @@ export default function App() {
   );
 }
 
-function StackNavigatorCreate() {
-  return(
-    <ScannedBarcodeProvider>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={LoginScreen}/>
-        <Stack.Screen name="Main" component={DrawerCreate} />
-        <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
-      </Stack.Navigator>
-    </ScannedBarcodeProvider>
-);
+function Root() {
+  const { isLoaded, isSignedIn } = useAuth();
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      setIsLoggedIn(true);
+    }
+  }, [isLoaded, isSignedIn]);
+
+  if (!isLoaded) return null;
+
+  if(isLoggedIn){
+    return(
+      <ScannedBarcodeProvider>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Main" component={DrawerCreate} />
+          <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
+        </Stack.Navigator>
+      </ScannedBarcodeProvider>
+      );    
+  }
+  else {
+    return (<LoginScreen onLoginSuccess={()=>{setIsLoggedIn(true);}}/>);
+  }
 }
 
 function DrawerCreate() {

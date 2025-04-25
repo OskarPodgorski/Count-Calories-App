@@ -5,8 +5,7 @@ import * as Linking from 'expo-linking';
 import { useSSO, useSignUp } from '@clerk/clerk-expo';
 import * as MyStyles from "../styles/MyStyles";
 
-export default function LoginScreen() {
-  const navigation = useNavigation();
+export default function LoginScreen({onLoginSuccess}) {
   const { startSSOFlow } = useSSO();
   const { signUp } = useSignUp();
 
@@ -17,11 +16,9 @@ export default function LoginScreen() {
         redirectUrl: Linking.createURL('oauth-native-callback'),
       });
 
-      console.log('Created Session ID:', createdSessionId);
-
       if (createdSessionId) {
         await setActive({ session: createdSessionId });
-        navigation.navigate("Main");
+        onLoginSuccess();
       } 
       else if (signUp) {
         
@@ -33,7 +30,7 @@ export default function LoginScreen() {
 
           if (signUp.status === 'complete') {
             await setActive({ session: signUp.createdSessionId });
-            navigation.navigate("Main");
+            onLoginSuccess();
           }
         } 
         else {
