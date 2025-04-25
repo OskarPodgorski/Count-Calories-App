@@ -1,88 +1,82 @@
 import React from 'react';
-import { useState, useContext } from 'react';
-import { Text, View, TouchableOpacity, TextInput, Image } from 'react-native';
+import { Text, View, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
-import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
-import { useSSO } from '@clerk/clerk-expo';
+import { useSSO, useSignUp } from '@clerk/clerk-expo';
+import * as MyStyles from "../styles/MyStyles";
 
-import * as MyStyles from "../styles/MyStyles"
-
-export default function LoginScreen(){
-
+export default function LoginScreen() {
   const navigation = useNavigation();
-  
   const { startSSOFlow } = useSSO();
+  const { signUp } = useSignUp();
 
-    const handleGoogleSignIn = async () => {
-      try {
-        const { createdSessionId, setActive } = await startSSOFlow({
-          strategy: 'oauth_google',
-          redirectUrl: Linking.createURL('oauth-native-callback'),
-        });
-    
-        console.log(createdSessionId);
+  const handleSignIn = async (strategy) => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({
+        strategy,
+        redirectUrl: Linking.createURL('oauth-native-callback'),
+      });
 
-        if (createdSessionId) {
-          await setActive({ session: createdSessionId });
-          navigation.navigate("Main");
+      console.log('Created Session ID:', createdSessionId);
+
+      if (createdSessionId) {
+        await setActive({ session: createdSessionId });
+        navigation.navigate("Main");
+      } 
+      else if (signUp) {
+        
+        const primaryEmail = signUp.emailAddress;
+        if (primaryEmail) {
+          const generatedUsername = primaryEmail.split('@')[0];
+
+          await signUp.update({ username: generatedUsername });
+
+          if (signUp.status === 'complete') {
+            await setActive({ session: signUp.createdSessionId });
+            navigation.navigate("Main");
+          }
+        } 
+        else {
+          console.error("Nie można ustawić username, brak emaila.");
         }
-      } catch (err) {
-        console.error('google login', err);
       }
-    };
+    } 
+    catch (err) {
+      console.error('Błąd logowania:', err);
+    }
+  };
 
-    const handleGitHubSignIn = async () => {
-      try {
-        const { createdSessionId, setActive } = await startSSOFlow({
-          strategy: 'oauth_google',
-          redirectUrl: Linking.createURL('oauth-native-callback'),
-        });
-    
-        console.log(createdSessionId);
+  return (
+    <View style={{ flex: 1, backgroundColor: MyStyles.ColorNight, alignItems: "stretch", gap: 15 }}>
 
-        if (createdSessionId) {
-          await setActive({ session: createdSessionId });
-          navigation.navigate("Main");
-        }
-      } catch (err) {
-        console.error('github login', err);
-      }
-    };
+      <Text style={{ paddingVertical: 12, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, textAlign: "center", fontSize: 26, color: MyStyles.ColorSilver, backgroundColor: MyStyles.ColorEerieBlack }}>Count Calories App</Text>
 
-    return(
-      <View style={{flex:1, backgroundColor:MyStyles.ColorNight, alignItems: "stretch", gap:15}}>
+      <View style={{ flex: 1.5, justifyContent: "flex-start", alignItems: "center", gap: 15 }}>
+        <Image source={require("../assets/logo.png")} style={{ ...MyStyles.baseStyle.base, width: 130, height: 130, backgroundColor: MyStyles.ColorEerieBlack }} />
+      </View>
 
-                <Text style={{...MyStyles.baseStyle.text, borderBottomLeftRadius:24, borderBottomRightRadius:24, textAlign:"center", fontSize:26, color: MyStyles.ColorSilver, backgroundColor: MyStyles.ColorEerieBlack}}>Count Calories App</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <View style={{ justifyContent: "center", alignItems: "stretch", gap: 15 }}>
 
-            <View style={{flex:1.5,  justifyContent:"center", alignItems: "center", gap:15}}>
+          <TouchableOpacity
+            style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorWhite, flexDirection: "row", justifyContent: "center", alignItems: "flex-end" }}
+            onPress={() => handleSignIn('oauth_google')}
+          >
+            <Text style={{ ...MyStyles.baseStyle.text, fontSize: 24, paddingRight: 5 }}>Login with</Text>
+            <Image source={require("../assets/googleLogo.png")} style={{ height: 37, width: 88, marginRight: 6 }} resizeMode="contain" />
+          </TouchableOpacity>
 
-                <Image source={require("../assets/logo.png")} style={{...MyStyles.baseStyle.base, width:130, height:130, backgroundColor:MyStyles.ColorWhite}}/>
-
-
-            </View>
-
-            <View style={{flex:1, justifyContent: "center", alignItems: "center"}}>
-
-            <View style={{justifyContent: "center", alignItems: "stretch", gap:15}}>
-
-                <TouchableOpacity style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorWhite, flexDirection:"row",justifyContent:"center", alignItems:"flex-end"}}
-                onPress={handleGoogleSignIn}>
-                    <Text style={{...MyStyles.baseStyle.text, fontSize:24, paddingRight:5}}>Login with</Text>
-                    <Image source={require("../assets/googleLogo.png")} style={{height:37, width:88, marginRight:6}} resizeMode="contain" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorWhite, flexDirection:"row", alignItems:"center"}}
-                onPress={handleGitHubSignIn}>
-                    <Text style={{...MyStyles.baseStyle.text, fontSize:24, paddingRight:4}}>Login with</Text>
-                    <Image source={require("../assets/githubLogo.png")} style={{height:43, width:106, marginRight:5 }} resizeMode="contain" />
-                </TouchableOpacity>
-
-            </View>
-
-            </View>
+          <TouchableOpacity
+            style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorWhite, flexDirection: "row", alignItems: "center" }}
+            onPress={() => handleSignIn('oauth_github')}
+          >
+            <Text style={{ ...MyStyles.baseStyle.text, fontSize: 24, paddingRight: 4 }}>Login with</Text>
+            <Image source={require("../assets/githubLogo.png")} style={{ height: 43, width: 106, marginRight: 5 }} resizeMode="contain" />
+          </TouchableOpacity>
 
         </View>
-    );
+      </View>
+
+    </View>
+  );
 }
