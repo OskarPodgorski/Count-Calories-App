@@ -1,11 +1,10 @@
 import 'react-native-get-random-values';
 import 'react-native-gesture-handler';
 
-import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
+import { ClerkProvider } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
-import * as SecureStore from 'expo-secure-store';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -51,17 +50,7 @@ export default function App() {
 }
 
 function Root() {
-  const { isLoaded, isSignedIn } = useAuth();
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      setIsLoggedIn(true);
-    }
-  }, [isLoaded, isSignedIn]);
-
-  if (!isLoaded) return null;
 
   if(isLoggedIn){
     return(
