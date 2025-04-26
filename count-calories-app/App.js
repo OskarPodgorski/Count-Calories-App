@@ -16,8 +16,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import AddMealScreen from './screens/AddMealsScreen';
 import BarcodeScannerScreen from "./screens/BarcodeScannerScreen";
 import * as MyStyles from "./styles/MyStyles";
-import { DailyTargetsProvider } from './scripts/Context';
-import { ScannedBarcodeProvider } from './scripts/Context';
+import { DailyTargetsProvider, RefreshDayProvider, ScannedBarcodeProvider } from './scripts/Context';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -54,12 +53,14 @@ function Root() {
 
   if(isLoggedIn){
     return(
+      <RefreshDayProvider>
       <ScannedBarcodeProvider>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Main" component={DrawerCreate} />
           <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
         </Stack.Navigator>
       </ScannedBarcodeProvider>
+      </RefreshDayProvider>
       );    
   }
   else {
@@ -69,6 +70,7 @@ function Root() {
 
 function DrawerCreate() {
   return(
+     
         <Drawer.Navigator
           screenOptions={{
             drawerStyle: {
@@ -98,11 +100,12 @@ function DrawerCreate() {
               textAlignVertical: "top",
               fontSize: 18
             },
-        }}
-        >
+          }}
+          >
           <Drawer.Screen name="Add Meal" component={AddMealScreen} />
           <Drawer.Screen name="Settings" component={SettingsScreen} />
         </Drawer.Navigator>
+     
   );
 }
 

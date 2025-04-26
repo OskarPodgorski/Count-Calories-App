@@ -5,12 +5,14 @@ import { useNavigation } from '@react-navigation/native';
 
 import * as MyStyles from "../styles/MyStyles"
 import { mealDB, MealEntry } from '../scripts/MealDatabase'
-import { dailyTargetsContext, scannedBarcodeContext } from '../scripts/Context';
+import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext } from '../scripts/Context';
 
 
 const Tab = createMaterialTopTabNavigator();
 
 export default function AddMealScreen() {
+  const {dayRefreshArray} = useContext(refreshDayContext);
+
     return(
         <View style={{backgroundColor: MyStyles.ColorEerieBlack, flex: 1}}>
             <Tab.Navigator
@@ -21,13 +23,13 @@ export default function AddMealScreen() {
                 tabBarIndicatorStyle: { backgroundColor: MyStyles.ColorBlack , height: 3 },
                 tabBarStyle: { backgroundColor : MyStyles.ColorDarkCyan, borderRadius: 8, overflow: 'hidden'}             
               }}>
-              <Tab.Screen name="Mon"  component={DayScreen} initialParams={{dayName: "Monday"}} />
-              <Tab.Screen name="Tue"  component={DayScreen} initialParams={{dayName: "Tuesday"}}/>
-              <Tab.Screen name="Wed"  component={DayScreen} initialParams={{dayName: "Wednesday"}}/>
-              <Tab.Screen name="Thu" component={DayScreen} initialParams={{dayName: "Thursday"}}/>
-              <Tab.Screen name="Fri"  component={DayScreen} initialParams={{dayName: "Friday"}}/>
-              <Tab.Screen name="Sat" component={DayScreen} initialParams={{dayName: "Saturday"}}/>
-              <Tab.Screen name="Sun"  component={DayScreen} initialParams={{dayName: "Sunday"}}/>
+              <Tab.Screen key={`Mo-${dayRefreshArray[0]}`} name="Mon"  component={DayScreen} initialParams={{dayName: "Monday"}}/>
+              <Tab.Screen key={`Tu-${dayRefreshArray[1]}`} name="Tue"  component={DayScreen} initialParams={{dayName: "Tuesday"}}/>
+              <Tab.Screen key={`We-${dayRefreshArray[2]}`} name="Wed"  component={DayScreen} initialParams={{dayName: "Wednesday"}}/>
+              <Tab.Screen key={`Th-${dayRefreshArray[3]}`} name="Thu" component={DayScreen} initialParams={{dayName: "Thursday"}}/>
+              <Tab.Screen key={`Fr-${dayRefreshArray[4]}`} name="Fri"  component={DayScreen} initialParams={{dayName: "Friday"}}/>
+              <Tab.Screen key={`Sa-${dayRefreshArray[5]}`} name="Sat" component={DayScreen} initialParams={{dayName: "Saturday"}}/>
+              <Tab.Screen key={`Su-${dayRefreshArray[6]}`} name="Sun"  component={DayScreen} initialParams={{dayName: "Sunday"}}/>
             </Tab.Navigator>
           </View>
     );
@@ -37,15 +39,16 @@ export default function AddMealScreen() {
     const { dayName } = route.params;
 
     const [refreshFooter, setRefreshFooter] = useState(false);
-  
+    const Refresh = () => setRefreshFooter(c => !c);
+
     return (
       <View style ={{flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack}}>
   
         <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack, margin: 4}}>
 
-          <MealSection day={dayName} mealType={"Breakfast"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
-          <MealSection day={dayName} mealType={"Lunch"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
-          <MealSection day={dayName} mealType={"Dinner"} onMealAdded={()=> setRefreshFooter(prev => !prev)}/>
+          <MealSection day={dayName} mealType={"Breakfast"} onMealAdded={Refresh}/>
+          <MealSection day={dayName} mealType={"Lunch"} onMealAdded={Refresh}/>
+          <MealSection day={dayName} mealType={"Dinner"} onMealAdded={Refresh}/>
   
         </View>
   
@@ -112,6 +115,8 @@ export default function AddMealScreen() {
   function MealSection({day, mealType, onMealAdded}) {
     const navigation = useNavigation();
 
+    const {setDayRefresh} = useContext(refreshDayContext);
+
     const [modalVisible, setModalVisible] = useState(false);
 
     const {scannedBarcode, setScannedBarcode} = useContext(scannedBarcodeContext);
@@ -131,11 +136,23 @@ export default function AddMealScreen() {
         setWaitsForBarcode(false);
         setModalVisible(true);
 
-        handleScannedFromDatabase(scannedBarcode);
+        HandleScannedFromDatabase(scannedBarcode);
 
-          setBarcode(scannedBarcode);
-          setScannedBarcode("");        
+        setBarcode(scannedBarcode);
+        setScannedBarcode("");   
       }, [scannedBarcode]);
+
+    const clearFields = () => {
+      setBarcode("");
+
+      setMealName("");
+      setMealGrams("");
+
+      setProductCalories("");
+      setProductProteins("");
+      setProductFat("");
+      setProductCarbs("");
+    }
 
     const handleAdd = () => {
       mealDB.addMeal(day,mealType, new MealEntry(     
@@ -148,19 +165,22 @@ export default function AddMealScreen() {
         barcode
       ));
       
-      setBarcode("");
-      setMealName("");
-      setMealGrams("");
-      setProductCalories("");
-      setProductProteins("");
-      setProductFat("");
-      setProductCarbs("");
+      clearFields();
       
       onMealAdded?.();
       setModalVisible(false);
+
+      setDayRefresh(day);
     };
 
-    function handleScannedFromDatabase(barcode)  {      
+    const handleCancel = () => {
+      clearFields();
+
+      setWaitsForBarcode(false);
+      setModalVisible(false);
+    };
+
+    function HandleScannedFromDatabase(barcode)  {      
       const mealEntry = mealDB.getMealByBarcode(barcode)
 
       if(!mealEntry){
@@ -398,7 +418,7 @@ export default function AddMealScreen() {
 
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
   
-                <TouchableOpacity style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorDarkCyan}} onPress={() => setModalVisible(false)}>
+                <TouchableOpacity style={{...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorDarkCyan}} onPress={handleCancel}>
                   <Text style={{...MyStyles.baseStyle.text, color: MyStyles.ColorBlack , fontSize: 16 }}>Cancel</Text>
                 </TouchableOpacity>
   
