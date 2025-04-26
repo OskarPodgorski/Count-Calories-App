@@ -126,15 +126,15 @@ export default function AddMealScreen() {
     const [productCarbs, setProductCarbs] = useState('');
 
     useEffect(() => {
-      if (waitsForBarcode){      
+      if(!waitsForBarcode || !scannedBarcode) return;
+
         setWaitsForBarcode(false);
         setModalVisible(true);
-        
-        if(scannedBarcode) {
+
+        handleScannedFromDatabase(scannedBarcode);
+
           setBarcode(scannedBarcode);
-          setScannedBarcode("");
-        }
-      }
+          setScannedBarcode("");        
       }, [scannedBarcode]);
 
     const handleAdd = () => {
@@ -160,18 +160,11 @@ export default function AddMealScreen() {
       setModalVisible(false);
     };
 
-    const handleScannedFromDatabase = () => {
-      setMealName("");
-      setMealGrams("");
-      setProductCalories("");
-      setProductProteins("");
-      setProductFat("");
-      setProductCarbs("");
-      
+    function handleScannedFromDatabase(barcode)  {      
       const mealEntry = mealDB.getMealByBarcode(barcode)
 
       if(!mealEntry){
-        return;
+        return false;
       }
 
       setMealName(mealEntry.name);
@@ -179,6 +172,8 @@ export default function AddMealScreen() {
       setProductProteins(mealEntry.proteins);
       setProductFat(mealEntry.fat);
       setProductCarbs(mealEntry.carbs);
+
+      return true;
     }
   
     return (

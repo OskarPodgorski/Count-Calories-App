@@ -12,9 +12,10 @@ export default function LoginScreen({onLoginSuccess}) {
   const { isLoaded, isSignedIn } = useAuth();
 
   const [showLoginButtons, setShowLoginButtons] = useState(false);
-const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
 useEffect(() => {
+
   if (!isLoaded) {
     setShowLoginButtons(false);
   } else if (isLoaded && isSignedIn) {
@@ -22,12 +23,9 @@ useEffect(() => {
     setIsLoggingIn(false);
     onLoginSuccess();
   } else if (isLoaded && !isSignedIn) {
-    if (isLoggingIn) {
-      setShowLoginButtons(false);
-    } else {
-      setShowLoginButtons(true);
-    }
+    setShowLoginButtons(!isLoggingIn);
   }
+  
 }, [isLoaded, isSignedIn, isLoggingIn]);
 
 const handleSignIn = async (strategy) => {
@@ -43,10 +41,9 @@ const handleSignIn = async (strategy) => {
       onLoginSuccess();
     } 
     else if (signUp) {
-      const primaryEmail = signUp.emailAddress;
-      if (primaryEmail) {
-        const generatedUsername = primaryEmail.split('@')[0];
-        await signUp.update({ username: generatedUsername });
+
+      if (signUp.emailAddress) {
+        await signUp.update({ username: (primaryEmail.split('@')[0]) });
 
         if (signUp.status === 'complete') {
           await setActive({ session: signUp.createdSessionId });
