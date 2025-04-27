@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, TextInput, ScrollView } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
 
@@ -44,13 +44,13 @@ function DayScreen({ route }) {
   return (
     <View style={{ flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack }}>
 
-      <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack, margin: 4 }}>
+      <ScrollView contentContainerStyle={{ alignItems: "stretch", padding: 4 }} showsVerticalScrollIndicator={false}>
 
         <MealSection day={dayName} mealType={"Breakfast"} onMealAdded={Refresh} />
         <MealSection day={dayName} mealType={"Lunch"} onMealAdded={Refresh} />
         <MealSection day={dayName} mealType={"Dinner"} onMealAdded={Refresh} />
 
-      </View>
+      </ScrollView>
 
       <CaloriesFooter key={refreshFooter} day={dayName} />
 
@@ -79,7 +79,7 @@ function CaloriesFooter({ day }) {
   }
 
   return (
-    <View style={{ backgroundColor: MyStyles.ColorDarkCyan, height: 82, marginHorizontal: 8, flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
+    <View style={{ backgroundColor: MyStyles.ColorDarkCyan, position: "absolute", bottom: 0, left: 0, right: 0, height: 82, marginHorizontal: 12, flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
       <View style={MyStyles.footerStyle.viewInside}>
 
         <ProgressBar actual={caloriesTotal} target={caloriesTarget} />
@@ -209,16 +209,16 @@ function MealSection({ day, mealType, onMealAdded }) {
 
       <View style={{ flex: 1 }}>
 
-        <Text style={{ color: 'white', fontSize: 18, marginBottom: 4 }}>{mealType}</Text>
-        <Text style={{ color: '#aaa' }}>Calories:</Text>
+        <Text style={{ color: MyStyles.ColorWhite, fontSize: 18, marginBottom: 2 }}>{mealType}</Text>
+        <Text style={{ color: MyStyles.ColorSilver, marginBottom: 6 }}>Calories:</Text>
 
         {mealDB.getMeals(day, mealType).size > 0 && (
-          <View style={{ marginTop: 4 }}>
+          <View style={{ gap: 5 }}>
 
             {[...mealDB.getMeals(day, mealType).values()].map((item, index) => (
 
               <View key={item.id} style={{
-                ...MyStyles.baseStyle.base, marginTop: 6, backgroundColor: MyStyles.ColorOnyx, flexDirection: "row", justifyContent: "space-between",
+                ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, flexDirection: "row", justifyContent: "space-between",
                 alignItems: "center"
               }}>
 

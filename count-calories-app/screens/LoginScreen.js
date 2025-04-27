@@ -46,7 +46,7 @@ export default function LoginScreen({ onLoginSuccess }) {
       else if (signUp) {
 
         if (signUp.emailAddress) {
-          await signUp.update({ username: (primaryEmail.split('@')[0]) });
+          await signUp.update({ username: (signUp.emailAddress.split('@')[0]) });
 
           if (signUp.status === 'complete') {
             await setActive({ session: signUp.createdSessionId });
