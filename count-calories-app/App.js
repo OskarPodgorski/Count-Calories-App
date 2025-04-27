@@ -5,7 +5,7 @@ import { ClerkProvider } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 
 import { useFonts } from 'expo-font';
-import { Fredoka_300Light, Fredoka_400Regular } from '@expo-google-fonts/fredoka';
+import { Fredoka_300Light, Fredoka_400Regular, Fredoka_500Medium } from '@expo-google-fonts/fredoka';
 
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
@@ -27,7 +27,8 @@ const Drawer = createDrawerNavigator();
 export default function App() {
   const [fontsLoaded] = useFonts({
     Fredoka_300Light,
-    Fredoka_400Regular
+    Fredoka_400Regular,
+    Fredoka_500Medium
   });
 
   if (!fontsLoaded) {

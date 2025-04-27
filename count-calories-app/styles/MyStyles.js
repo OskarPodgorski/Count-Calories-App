@@ -9,17 +9,15 @@ export const ColorOnyx = "#444444";
 export const ColorSilver = "#BBBBBB";
 
 export const BaseFont = "Fredoka_400Regular";
+export const BaseFontMedium = "Fredoka_500Medium";
 
 export const footerStyle = StyleSheet.create({
-  text: {
-    fontWeight: "bold"
-  },
   viewInside: {
     flex: 1,
-     justifyContent: 'flex-start',
-     margin: 8,
-      alignItems: 'center',
-       flexDirection: "column" 
+    justifyContent: 'flex-start',
+    margin: 8,
+    alignItems: 'center',
+    flexDirection: "column"
   }
 });
 
@@ -28,11 +26,11 @@ export const baseStyle = StyleSheet.create({
     borderRadius: 8
   },
   text: {
-    paddingHorizontal:10,
-    paddingVertical:4
-  }  
+    paddingHorizontal: 10,
+    paddingVertical: 4
+  }
 });
 
 export const textInputStyle = StyleSheet.create({
-  
+
 });

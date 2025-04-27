@@ -19,9 +19,16 @@ export default function AddMealScreen() {
         screenOptions={{
           tabBarScrollEnabled: true,
           tabBarLabelStyle: { fontSize: 14, fontFamily: MyStyles.BaseFont },
-          tabBarItemStyle: { width: 70 },
+          tabBarItemStyle: { width: 70, height: 50 },
           tabBarIndicatorStyle: { backgroundColor: MyStyles.ColorBlack, height: 3 },
-          tabBarStyle: { backgroundColor: MyStyles.ColorDarkCyan, borderRadius: 8, overflow: 'hidden' }
+          tabBarStyle: {
+            backgroundColor: MyStyles.ColorDarkCyan, borderRadius: 8, overflow: 'hidden',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            elevation: 10
+          }
         }}>
         <Tab.Screen key={`Mo-${dayRefreshArray[0]}`} name="Mon" component={DayScreen} initialParams={{ dayName: "Monday" }} />
         <Tab.Screen key={`Tu-${dayRefreshArray[1]}`} name="Tue" component={DayScreen} initialParams={{ dayName: "Tuesday" }} />
@@ -44,7 +51,7 @@ function DayScreen({ route }) {
   return (
     <View style={{ flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack }}>
 
-      <ScrollView contentContainerStyle={{ alignItems: "stretch", padding: 4, paddingBottom: 90, gap: 4 }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ alignItems: "stretch", paddingHorizontal: 4, paddingBottom: 90, paddingTop: 56, gap: 6 }} showsVerticalScrollIndicator={false}>
 
         <MealSection day={dayName} mealType={"Breakfast"} onMealAdded={Refresh} />
         <MealSection day={dayName} mealType={"Lunch"} onMealAdded={Refresh} />
@@ -82,37 +89,35 @@ function CaloriesFooter({ day }) {
     <View style={{
       backgroundColor: MyStyles.ColorDarkCyan, position: "absolute", bottom: 0, left: 0, right: 0, height: 82, marginHorizontal: 8,
       flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8,
-      shadowColor: MyStyles.ColorWhite,
-      shadowOffset: { width: 11, height: 10 },
-      shadowOpacity: 1,
-      shadowRadius: 5
+      shadowColor: MyStyles.ColorBlack,
+      elevation: 10
     }}>
       <View style={MyStyles.footerStyle.viewInside}>
 
         <ProgressBar actual={caloriesTotal} target={caloriesTarget} />
-        <Text>Calories</Text>
-        <Text style={MyStyles.footerStyle.text}>{caloriesTotal} / {caloriesTarget}</Text>
+        <Text style={{ fontFamily: MyStyles.BaseFont }}>Calories</Text>
+        <Text style={{ fontFamily: MyStyles.BaseFontMedium }}>{caloriesTotal} / {caloriesTarget}</Text>
 
       </View>
       <View style={MyStyles.footerStyle.viewInside}>
 
         <ProgressBar actual={proteintsTotal} target={proteinsTarget} />
-        <Text>Proteins</Text>
-        <Text style={MyStyles.footerStyle.text}>{proteintsTotal} / {proteinsTarget}</Text>
+        <Text style={{ fontFamily: MyStyles.BaseFont }}>Proteins</Text>
+        <Text style={{ fontFamily: MyStyles.BaseFontMedium }}>{proteintsTotal} / {proteinsTarget}</Text>
 
       </View>
       <View style={MyStyles.footerStyle.viewInside}>
 
         <ProgressBar actual={fatTotal} target={fatTarget} />
-        <Text>Fat</Text>
-        <Text style={MyStyles.footerStyle.text}>{fatTotal}/ {fatTarget}</Text>
+        <Text style={{ fontFamily: MyStyles.BaseFont }}>Fat</Text>
+        <Text style={{ fontFamily: MyStyles.BaseFontMedium }}>{fatTotal}/ {fatTarget}</Text>
 
       </View>
       <View style={MyStyles.footerStyle.viewInside}>
 
         <ProgressBar actual={carbsTotal} target={carbsTarget} />
-        <Text>Carbs</Text>
-        <Text style={MyStyles.footerStyle.text}>{carbsTotal} / {carbsTarget}</Text>
+        <Text style={{ fontFamily: MyStyles.BaseFont }}>Carbs</Text>
+        <Text style={{ fontFamily: MyStyles.BaseFontMedium }}>{carbsTotal} / {carbsTarget}</Text>
 
       </View>
     </View>
@@ -209,13 +214,14 @@ function MealSection({ day, mealType, onMealAdded }) {
       backgroundColor: MyStyles.ColorNight,
       padding: 10,
       flexDirection: "row",
-      justifyContent: "space-between"
+      justifyContent: "space-between",
+      elevation: 4
     }}>
 
       <View style={{ flex: 1 }}>
 
-        <Text style={{ color: MyStyles.ColorWhite, fontSize: 18, marginBottom: 2 }}>{mealType}</Text>
-        <Text style={{ color: MyStyles.ColorSilver, marginBottom: 6 }}>Calories:</Text>
+        <Text style={{ color: MyStyles.ColorWhite, fontSize: 18, marginBottom: 2, fontFamily: MyStyles.BaseFontMedium }}>{mealType}</Text>
+        <Text style={{ color: MyStyles.ColorSilver, marginBottom: 6, fontFamily: MyStyles.BaseFont }}>Calories:</Text>
 
         {mealDB.getMeals(day, mealType).size > 0 && (
           <View style={{ gap: 5 }}>
@@ -224,10 +230,10 @@ function MealSection({ day, mealType, onMealAdded }) {
 
               <View key={item.id} style={{
                 ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, flexDirection: "row", justifyContent: "space-between",
-                alignItems: "center"
+                alignItems: "center", elevation: 2
               }}>
 
-                <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 15 }}>
+                <Text style={{ ...MyStyles.baseStyle.text, fontFamily: MyStyles.BaseFont, color: MyStyles.ColorWhite, fontSize: 15 }}>
                   {item.name}{item.name ? " - " : ""}{item.grams}{item.grams ? "g " : ""}({item.getTotalCalories()} kcal)
                 </Text>
 
@@ -238,7 +244,8 @@ function MealSection({ day, mealType, onMealAdded }) {
                     alignItems: "center",
                     justifyContent: "center",
                     alignSelf: "stretch",
-                    margin: 4
+                    margin: 4,
+                    elevation: 2
                   }}
                   onPress={() => {
                     mealDB.removeMeal(day, mealType, item.id);
@@ -271,7 +278,8 @@ function MealSection({ day, mealType, onMealAdded }) {
             alignItems: "center",
             justifyContent: "center",
             marginLeft: 10,
-            marginBottom: 4
+            marginBottom: 4,
+            elevation: 4
           }}
           onPress={() => {
             setModalVisible(false);
@@ -290,7 +298,8 @@ function MealSection({ day, mealType, onMealAdded }) {
             alignSelf: 'flex-end',
             alignItems: "center",
             justifyContent: "center",
-            marginLeft: 10
+            marginLeft: 10,
+            elevation: 4
           }}
           onPress={() => setModalVisible(true)}>
           <Text style={{ color: MyStyles.ColorBlack, fontSize: 22 }}>+</Text>
