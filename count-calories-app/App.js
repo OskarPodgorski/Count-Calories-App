@@ -69,7 +69,7 @@ function Root() {
     return (
       <RefreshDayProvider>
         <ScannedBarcodeProvider>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: MyStyles.ColorEerieBlack } }}>
             <Stack.Screen name="Main" component={DrawerCreate} />
             <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
           </Stack.Navigator>
@@ -89,14 +89,13 @@ function DrawerCreate() {
       screenOptions={{
         drawerStyle: {
           backgroundColor: MyStyles.ColorEerieBlack,
-          width: 190,
-          borderBottomRightRadius: 32,
-          borderTopRightRadius: 0
+          width: 160
         },
         drawerLabelStyle: {
           color: MyStyles.ColorWhite,
           fontSize: 16,
-          fontFamily: MyStyles.BaseFont
+          fontFamily: MyStyles.BaseFont,
+          margin: 0
         },
         drawerItemStyle: {
           borderRadius: 8
@@ -115,6 +114,11 @@ function DrawerCreate() {
           textAlignVertical: "top",
           fontSize: 18,
           fontFamily: MyStyles.BaseFont
+        },
+        drawerType: "slide",
+        overlayColor: 'transparent',
+        sceneContainerStyle: {
+          backgroundColor: MyStyles.ColorEerieBlack
         },
       }}
     >
