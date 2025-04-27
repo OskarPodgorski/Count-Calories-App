@@ -24,7 +24,7 @@ import { DailyTargetsProvider, RefreshDayProvider, ScannedBarcodeProvider } from
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-export default function App() { 
+export default function App() {
   const [fontsLoaded] = useFonts({
     Fredoka_300Light,
     Fredoka_400Regular
@@ -37,26 +37,26 @@ export default function App() {
   }
 
   return (
-      <ClerkProvider
+    <ClerkProvider
       tokenCache={tokenCache}>
 
-        <SafeAreaProvider>
+      <SafeAreaProvider>
 
-          <StatusBar style="light" backgroundColor= {MyStyles.ColorEerieBlack} />
-          <SafeAreaView style={{ flex: 1 , backgroundColor: MyStyles.ColorEerieBlack}}>
+        <StatusBar style="light" backgroundColor={MyStyles.ColorEerieBlack} />
+        <SafeAreaView style={{ flex: 1, backgroundColor: MyStyles.ColorEerieBlack }}>
 
 
-            <DailyTargetsProvider>
-              <NavigationContainer>
+          <DailyTargetsProvider>
+            <NavigationContainer>
 
-                <Root/>
+              <Root />
 
-              </NavigationContainer>
-            </DailyTargetsProvider>
+            </NavigationContainer>
+          </DailyTargetsProvider>
 
-          </SafeAreaView>
+        </SafeAreaView>
 
-        </SafeAreaProvider>
+      </SafeAreaProvider>
 
     </ClerkProvider>
   );
@@ -65,61 +65,63 @@ export default function App() {
 function Root() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  if(isLoggedIn){
-    return(
+  if (isLoggedIn) {
+    return (
       <RefreshDayProvider>
-      <ScannedBarcodeProvider>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Main" component={DrawerCreate} />
-          <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
-        </Stack.Navigator>
-      </ScannedBarcodeProvider>
+        <ScannedBarcodeProvider>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Main" component={DrawerCreate} />
+            <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
+          </Stack.Navigator>
+        </ScannedBarcodeProvider>
       </RefreshDayProvider>
-      );    
+    );
   }
   else {
-    return (<LoginScreen onLoginSuccess={()=>{setIsLoggedIn(true);}}/>);
+    return (<LoginScreen onLoginSuccess={() => { setIsLoggedIn(true); }} />);
   }
 }
 
 function DrawerCreate() {
-  return(
-     
-        <Drawer.Navigator
-          screenOptions={{
-            drawerStyle: {
-              backgroundColor: MyStyles.ColorEerieBlack,
-              width: 190,
-              borderBottomRightRadius:8,
-              borderTopRightRadius:0
-            },
-            drawerLabelStyle: {
-              color: MyStyles.ColorWhite,
-              fontSize: 16
-            },
-            drawerItemStyle: {
-              borderRadius: 8
-            },
-            drawerActiveBackgroundColor: MyStyles.ColorDarkCyan,
-            drawerInactiveBackgroundColor: MyStyles.ColorNight,
-            headerStyle: {
-              backgroundColor: MyStyles.ColorEerieBlack,
-              height: 60
-            },
-            headerStatusBarHeight: 0,
-            headerTitleAlign: "center",
-            headerTintColor: MyStyles.ColorWhite,
-            headerShadowVisible: false,
-            headerTitleStyle: {
-              textAlignVertical: "top",
-              fontSize: 18
-            },
-          }}
-          >
-          <Drawer.Screen name="Add Meal" component={AddMealScreen} />
-          <Drawer.Screen name="Settings" component={SettingsScreen} />
-        </Drawer.Navigator>
-     
+  return (
+
+    <Drawer.Navigator
+      screenOptions={{
+        drawerStyle: {
+          backgroundColor: MyStyles.ColorEerieBlack,
+          width: 190,
+          borderBottomRightRadius: 32,
+          borderTopRightRadius: 0
+        },
+        drawerLabelStyle: {
+          color: MyStyles.ColorWhite,
+          fontSize: 16,
+          fontFamily: MyStyles.BaseFont
+        },
+        drawerItemStyle: {
+          borderRadius: 8
+        },
+        drawerActiveBackgroundColor: MyStyles.ColorDarkCyan,
+        drawerInactiveBackgroundColor: MyStyles.ColorNight,
+        headerStyle: {
+          backgroundColor: MyStyles.ColorEerieBlack,
+          height: 60
+        },
+        headerStatusBarHeight: 0,
+        headerTitleAlign: "center",
+        headerTintColor: MyStyles.ColorWhite,
+        headerShadowVisible: false,
+        headerTitleStyle: {
+          textAlignVertical: "top",
+          fontSize: 18,
+          fontFamily: MyStyles.BaseFont
+        },
+      }}
+    >
+      <Drawer.Screen name="Add Meal" component={AddMealScreen} />
+      <Drawer.Screen name="Settings" component={SettingsScreen} />
+    </Drawer.Navigator>
+
   );
 }
 

@@ -18,7 +18,7 @@ export default function AddMealScreen() {
       <Tab.Navigator
         screenOptions={{
           tabBarScrollEnabled: true,
-          tabBarLabelStyle: { fontSize: 14 },
+          tabBarLabelStyle: { fontSize: 14, fontFamily: MyStyles.BaseFont },
           tabBarItemStyle: { width: 70 },
           tabBarIndicatorStyle: { backgroundColor: MyStyles.ColorBlack, height: 3 },
           tabBarStyle: { backgroundColor: MyStyles.ColorDarkCyan, borderRadius: 8, overflow: 'hidden' }
@@ -44,7 +44,7 @@ function DayScreen({ route }) {
   return (
     <View style={{ flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack }}>
 
-      <ScrollView contentContainerStyle={{ alignItems: "stretch", padding: 4 }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ alignItems: "stretch", padding: 4, paddingBottom: 90, gap: 4 }} showsVerticalScrollIndicator={false}>
 
         <MealSection day={dayName} mealType={"Breakfast"} onMealAdded={Refresh} />
         <MealSection day={dayName} mealType={"Lunch"} onMealAdded={Refresh} />
@@ -79,7 +79,14 @@ function CaloriesFooter({ day }) {
   }
 
   return (
-    <View style={{ backgroundColor: MyStyles.ColorDarkCyan, position: "absolute", bottom: 0, left: 0, right: 0, height: 82, marginHorizontal: 12, flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
+    <View style={{
+      backgroundColor: MyStyles.ColorDarkCyan, position: "absolute", bottom: 0, left: 0, right: 0, height: 82, marginHorizontal: 8,
+      flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8,
+      shadowColor: MyStyles.ColorWhite,
+      shadowOffset: { width: 11, height: 10 },
+      shadowOpacity: 1,
+      shadowRadius: 5
+    }}>
       <View style={MyStyles.footerStyle.viewInside}>
 
         <ProgressBar actual={caloriesTotal} target={caloriesTarget} />
@@ -201,8 +208,6 @@ function MealSection({ day, mealType, onMealAdded }) {
       ...MyStyles.baseStyle.base,
       backgroundColor: MyStyles.ColorNight,
       padding: 10,
-      marginTop: 4,
-      marginBottom: 4,
       flexDirection: "row",
       justifyContent: "space-between"
     }}>
