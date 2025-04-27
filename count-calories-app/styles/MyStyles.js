@@ -8,6 +8,8 @@ export const ColorWhite = "#FFFFFF";
 export const ColorOnyx = "#444444";
 export const ColorSilver = "#BBBBBB";
 
+export const BaseFont = "Fredoka_400Regular";
+
 export const footerStyle = StyleSheet.create({
   text: {
     fontWeight: "bold"

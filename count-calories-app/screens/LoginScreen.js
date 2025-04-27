@@ -63,7 +63,7 @@ const handleSignIn = async (strategy) => {
   return (
     <View style={{ flex: 1, backgroundColor: MyStyles.ColorNight, alignItems: "stretch", gap: 15 }}>
 
-      <Text style={{ paddingVertical: 12, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, textAlign: "center", fontSize: 26, color: MyStyles.ColorSilver, backgroundColor: MyStyles.ColorEerieBlack }}>Count Calories App</Text>
+      <Text style={{ paddingVertical: 12, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, textAlign: "center",fontFamily: MyStyles.BaseFont, fontSize: 28, color: MyStyles.ColorWhite, backgroundColor: MyStyles.ColorEerieBlack }}>Count Calories App</Text>
 
       <View style={{ flex: 1.5, justifyContent: "flex-start", alignItems: "center", gap: 15 }}>
         <Image source={require("../assets/logo.png")} style={{ ...MyStyles.baseStyle.base, width: 130, height: 130, backgroundColor: MyStyles.ColorEerieBlack }} />
@@ -79,7 +79,7 @@ const handleSignIn = async (strategy) => {
               style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorWhite, flexDirection: "row", justifyContent: "center", alignItems: "flex-end" }}
               onPress={() => handleSignIn('oauth_google')}
             >
-              <Text style={{ ...MyStyles.baseStyle.text, fontSize: 24, paddingRight: 5 }}>Login with</Text>
+              <Text style={{ ...MyStyles.baseStyle.text, fontSize: 24,fontFamily: MyStyles.BaseFont, paddingRight: 5 }}>Login with</Text>
               <Image source={require("../assets/googleLogo.png")} style={{ height: 37, width: 88, marginRight: 6 }} resizeMode="contain" />
             </TouchableOpacity>
 
@@ -87,8 +87,8 @@ const handleSignIn = async (strategy) => {
               style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorWhite, flexDirection: "row", alignItems: "center" }}
               onPress={() => handleSignIn('oauth_github')}
             >
-              <Text style={{ ...MyStyles.baseStyle.text, fontSize: 24, paddingRight: 4 }}>Login with</Text>
-              <Image source={require("../assets/githubLogo.png")} style={{ height: 43, width: 106, marginRight: 5 }} resizeMode="contain" />
+              <Text style={{ ...MyStyles.baseStyle.text, fontSize: 24,fontFamily: MyStyles.BaseFont, paddingRight: 4 }}>Login with</Text>
+              <Image source={require("../assets/githubLogo.png")} style={{ height: 40, width: 98, marginRight: 5}} resizeMode="contain" />
             </TouchableOpacity>
 
           </View>

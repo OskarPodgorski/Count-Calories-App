@@ -62,7 +62,7 @@ export function RefreshDayProvider({ children }) {
       }
 
       if(typeof index === "number" && index >= 0 && index < 7) {        
-        setDayRefreshArray(c => {
+          setDayRefreshArray(c => {
           const updated = [...c];
           updated[index] += 1;
           return updated;

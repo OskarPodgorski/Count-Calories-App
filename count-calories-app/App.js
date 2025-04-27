@@ -4,6 +4,9 @@ import 'react-native-gesture-handler';
 import { ClerkProvider } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 
+import { useFonts } from 'expo-font';
+import { Fredoka_300Light, Fredoka_400Regular } from '@expo-google-fonts/fredoka';
+
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
@@ -21,7 +24,18 @@ import { DailyTargetsProvider, RefreshDayProvider, ScannedBarcodeProvider } from
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-export default function App() {
+export default function App() { 
+  const [fontsLoaded] = useFonts({
+    Fredoka_300Light,
+    Fredoka_400Regular
+  });
+
+  if (!fontsLoaded) {
+    return (
+      null
+    );
+  }
+
   return (
       <ClerkProvider
       tokenCache={tokenCache}>
