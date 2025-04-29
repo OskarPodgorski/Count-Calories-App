@@ -15,9 +15,12 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import LoginScreen from './screens/LoginScreen';
-import SettingsScreen from './screens/SettingsScreen';
-import AddMealScreen from './screens/AddMealsScreen';
 import BarcodeScannerScreen from "./screens/BarcodeScannerScreen";
+
+import AddMealScreen from './screens/AddMealsScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import AccountScreen from './screens/AccountScreen';
+
 import * as MyStyles from "./styles/MyStyles";
 import { DailyTargetsProvider, RefreshDayProvider, ScannedBarcodeProvider } from './scripts/Context';
 
@@ -125,6 +128,7 @@ function DrawerCreate() {
     >
       <Drawer.Screen name="Add Meal" component={AddMealScreen} />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
+      <Drawer.Screen name="Account" component={AccountScreen} />
     </Drawer.Navigator>
 
   );
