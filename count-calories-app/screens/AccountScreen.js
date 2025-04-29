@@ -1,5 +1,7 @@
 import { useContext } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 import { useUser } from '@clerk/clerk-expo';
 
@@ -14,53 +16,79 @@ export default function AccountScreen() {
         return null;
     }
 
-    function InfoField({ description, info }) {
+    if (user.externalAccounts.length > 0) {
+        const accountType = user.externalAccounts[0].provider.toUpperCase();
+
+        function InfoField({ description, info }) {
+            return (
+                <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorEerieBlack, padding: 5 }}>
+
+                    <Text style={{
+                        ...MyStyles.baseStyle.text,
+                        color: MyStyles.ColorWhite,
+                        fontSize: 18, textAlign: "center"
+                    }}>{description}:</Text>
+
+                    <Text style={{
+                        ...MyStyles.baseStyle.text,
+                        color: MyStyles.ColorWhite,
+                        fontSize: 18, textAlign: "center"
+                    }}>{info}</Text>
+
+                </View>
+            );
+        }
+
         return (
-            <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorEerieBlack, padding: 5 }}>
+            <View style={{ backgroundColor: MyStyles.ColorEerieBlack, flex: 1, alignItems: "center" }}>
 
-                <Text style={{
-                    ...MyStyles.baseStyle.text,
-                    color: MyStyles.ColorWhite,
-                    fontSize: 18, textAlign: "center"
-                }}>{description}:</Text>
+                <View style={{ gap: 15, marginTop: 10 }}>
 
-                <Text style={{
-                    ...MyStyles.baseStyle.text,
-                    color: MyStyles.ColorWhite,
-                    fontSize: 18, textAlign: "center"
-                }}>{info}</Text>
+                    <Image source={{ uri: user.imageUrl }} style={{ width: 200, height: 200, borderRadius: 200 / 2, elevation: 6 }} />
 
-            </View>
-        );
-    }
+                    <Text style={{
+                        ...MyStyles.baseStyle.base, ...MyStyles.baseStyle.text,
+                        backgroundColor: MyStyles.ColorNight, color: MyStyles.ColorWhite,
+                        fontSize: 30, textAlign: "center", elevation: 6
+                    }}>{user.username}</Text>
 
-    return (
-        <View style={{ backgroundColor: MyStyles.ColorEerieBlack, flex: 1, alignItems: "center" }}>
+                    <View style={{ flexDirection: "row", gap: 60, justifyContent: "center" }}>
 
-            <View style={{ flex: 1, gap: 15 }}>
+                        <TouchableOpacity style={{
+                            width: 60, height: 60, borderRadius: 30, backgroundColor: MyStyles.ColorNight, elevation: 4,
+                            alignItems: "center", justifyContent: "center"
+                        }}>
+                            <AntDesign name="deleteuser" size={30} color={MyStyles.ColorWhite} />
+                        </TouchableOpacity>
 
-                <Image source={{ uri: user.imageUrl }} style={{ marginTop: 15, width: 200, height: 200, borderRadius: 200 / 2, elevation: 6 }} />
+                        <TouchableOpacity style={{
+                            width: 60, height: 60, borderRadius: 30, backgroundColor: MyStyles.ColorNight, elevation: 4,
+                            alignItems: "center", justifyContent: "center"
+                        }}>
+                            <AntDesign name="logout" size={30} color={MyStyles.ColorWhite} />
+                        </TouchableOpacity>
 
-                <Text style={{
-                    ...MyStyles.baseStyle.base, ...MyStyles.baseStyle.text,
-                    backgroundColor: MyStyles.ColorNight, color: MyStyles.ColorWhite,
-                    fontSize: 30, textAlign: "center", elevation: 6
-                }}>{user.username}</Text>
+                    </View>
 
-            </View>
+                </View>
 
-            <View style={{ flex: 1, justifyContent: "center" }}>
+                <View style={{ flex: 1, justifyContent: "center" }}>
 
-                <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorNight, gap: 5, padding: 5, elevation: 6 }}>
+                    <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorNight, gap: 5, padding: 5, elevation: 6 }}>
 
-                    <InfoField description={"Email"} info={user.primaryEmailAddress?.emailAddress} />
-                    <InfoField description={"Name"} info={user.fullName} />
-                    <InfoField description={"Account Created"} info={new Date(user.createdAt).toLocaleDateString()} />
+                        <InfoField description={"Email"} info={user.primaryEmailAddress?.emailAddress} />
+                        <InfoField description={"Name"} info={user.fullName} />
+                        <InfoField description={"Created"} info={new Date(user.createdAt).toLocaleDateString()} />
+
+                        {accountType && (
+                            <InfoField description={"Account Type"} info={accountType} />
+                        )}
+
+                    </View>
 
                 </View>
 
             </View>
-
-        </View>
-    );
+        );
+    }
 }
