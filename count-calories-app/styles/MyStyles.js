@@ -27,10 +27,7 @@ export const baseStyle = StyleSheet.create({
   },
   text: {
     paddingHorizontal: 10,
-    paddingVertical: 4
+    paddingVertical: 4,
+    fontFamily: BaseFont
   }
-});
-
-export const textInputStyle = StyleSheet.create({
-
 });
