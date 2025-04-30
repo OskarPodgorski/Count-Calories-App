@@ -1,6 +1,4 @@
-import { useContext } from 'react';
-import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 import { useUser } from '@clerk/clerk-expo';

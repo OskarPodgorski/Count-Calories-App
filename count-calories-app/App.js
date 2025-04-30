@@ -93,7 +93,17 @@ function DrawerCreate() {
       screenOptions={{
         drawerStyle: {
           backgroundColor: MyStyles.ColorEerieBlack,
-          width: 160
+          width: 160,
+          borderRightWidth: 1,
+          borderRightColor: MyStyles.ColorDarkCyan,
+          borderTopWidth: 1,
+          borderTopColor: MyStyles.ColorDarkCyan,
+          borderBottomColor: MyStyles.ColorDarkCyan,
+          borderTopRightRadius: 8,
+          borderBottomEndRadius: 8
+        },
+        drawerContentContainerStyle: {
+          gap: 5
         },
         drawerLabelStyle: {
           color: MyStyles.ColorWhite,
@@ -102,7 +112,9 @@ function DrawerCreate() {
           margin: 0
         },
         drawerItemStyle: {
-          borderRadius: 8
+          borderRadius: 8,
+          marginVertical: 0,
+          paddingVertical: 0
         },
         drawerActiveBackgroundColor: MyStyles.ColorDarkCyan,
         drawerInactiveBackgroundColor: MyStyles.ColorNight,
