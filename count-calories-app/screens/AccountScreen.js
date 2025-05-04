@@ -1,14 +1,45 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { useState } from 'react';
+import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
-import { useUser } from '@clerk/clerk-expo';
+import { useUser, useAuth } from '@clerk/clerk-expo';
+
+import { AlertModal } from '../components/MyComponents';
 
 import * as MyStyles from "../styles/MyStyles"
 
 
 export default function AccountScreen() {
-
+    const { signOut } = useAuth();
     const { user, isLoaded } = useUser();
+
+    const [signOutModal, setSignOutModal] = useState(false);
+
+    const Logout = () => {
+        Alert.alert(
+            "Logout",
+            "Are you sure you want to log out?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Logout",
+                    onPress: async () => {
+                        try {
+                            await signOut();
+
+                        } catch (e) {
+                            console.error("Logout failed:", e);
+                        }
+                    },
+                    style: "destructive"
+                }
+            ],
+            { cancelable: true }
+        );
+    };
 
     if (!isLoaded) {
         return null;
@@ -62,7 +93,8 @@ export default function AccountScreen() {
                         <TouchableOpacity style={{
                             width: 60, height: 60, borderRadius: 30, backgroundColor: MyStyles.ColorNight, elevation: 4,
                             alignItems: "center", justifyContent: "center"
-                        }}>
+                        }}
+                            onPress={() => { setSignOutModal(c => !c) }}>
                             <AntDesign name="logout" size={30} color={MyStyles.ColorWhite} />
                         </TouchableOpacity>
 
@@ -85,6 +117,8 @@ export default function AccountScreen() {
                     </View>
 
                 </View>
+
+                <AlertModal title={"Logout"} message={"Are you sure you want to log out?"} enabled={signOutModal} />
 
             </View>
         );
