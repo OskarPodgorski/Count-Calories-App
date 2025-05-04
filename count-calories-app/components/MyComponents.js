@@ -24,17 +24,19 @@ export function AlertModal({ title, message, buttonsDef, enabled }) {
                     <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 20, textAlign: "center" }} >{title}</Text>
                     <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 16, textAlign: "center" }}>{message}</Text>
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+                    {buttonsDef && (<View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 15 }}>
 
-                        <TouchableOpacity style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorNight }}>
-                            <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 18 }}>Cancel</Text>
+                        <TouchableOpacity style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorNight }}
+                            onPress={buttonsDef[0].action}>
+                            <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 18 }}>{buttonsDef[0].text}</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorNight }}>
-                            <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 18 }}>Logout</Text>
+                        <TouchableOpacity style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorNight }}
+                            onPress={buttonsDef[1].action}>
+                            <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 18 }}>{buttonsDef[1].text}</Text>
                         </TouchableOpacity>
 
-                    </View>
+                    </View>)}
 
                 </View>
 

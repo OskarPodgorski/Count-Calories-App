@@ -118,7 +118,8 @@ export default function AccountScreen() {
 
                 </View>
 
-                <AlertModal title={"Logout"} message={"Are you sure you want to log out?"} enabled={signOutModal} />
+                <AlertModal title={"Logout"} message={"Are you sure you want to log out?"} enabled={signOutModal}
+                    buttonsDef={[{ text: "Cancel", action: () => { setSignOutModal(false) } }, { text: "Logout", action: () => { setSignOutModal(false) } }]} />
 
             </View>
         );
