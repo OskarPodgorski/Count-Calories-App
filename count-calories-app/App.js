@@ -1,8 +1,8 @@
 import 'react-native-get-random-values';
 import 'react-native-gesture-handler';
 
-import { ClerkProvider } from '@clerk/clerk-expo';
-import { tokenCache } from '@clerk/clerk-expo/token-cache'
+import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache';
 
 import { useFonts } from 'expo-font';
 import { Fredoka_300Light, Fredoka_400Regular, Fredoka_500Medium } from '@expo-google-fonts/fredoka';
@@ -10,7 +10,8 @@ import { Fredoka_300Light, Fredoka_400Regular, Fredoka_500Medium } from '@expo-g
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -47,7 +48,7 @@ export default function App() {
       <SafeAreaProvider>
 
         <StatusBar style="light" backgroundColor={MyStyles.ColorEerieBlack} />
-        <SafeAreaView style={{ flex: 1, backgroundColor: MyStyles.ColorEerieBlack }}>
+        <SafeAreaView style={{ flex: 1, paddingTop: 28, backgroundColor: MyStyles.ColorEerieBlack }}>
 
 
           <DailyTargetsProvider>
