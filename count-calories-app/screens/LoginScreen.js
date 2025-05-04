@@ -6,7 +6,7 @@ import { useAuth } from '@clerk/clerk-expo';
 
 import * as MyStyles from "../styles/MyStyles";
 
-export default function LoginScreen({ onLoginSuccess }) {
+export default function LoginScreen() {
   const { startSSOFlow } = useSSO();
   const { signUp } = useSignUp();
   const { isLoaded, isSignedIn } = useAuth();
@@ -22,7 +22,6 @@ export default function LoginScreen({ onLoginSuccess }) {
     else if (isLoaded && isSignedIn) {
       setShowLoginButtons(false);
       setIsLoggingIn(false);
-      onLoginSuccess();
     }
     else if (isLoaded && !isSignedIn) {
       setShowLoginButtons(!isLoggingIn);
@@ -41,7 +40,6 @@ export default function LoginScreen({ onLoginSuccess }) {
 
       if (createdSessionId) {
         await setActive({ session: createdSessionId });
-        onLoginSuccess();
       }
       else if (signUp) {
 
@@ -50,7 +48,6 @@ export default function LoginScreen({ onLoginSuccess }) {
 
           if (signUp.status === 'complete') {
             await setActive({ session: signUp.createdSessionId });
-            onLoginSuccess();
           }
         }
         else {

@@ -10,8 +10,7 @@ import { Fredoka_300Light, Fredoka_400Regular, Fredoka_500Medium } from '@expo-g
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -48,7 +47,7 @@ export default function App() {
       <SafeAreaProvider>
 
         <StatusBar style="light" backgroundColor={MyStyles.ColorEerieBlack} />
-        <SafeAreaView style={{ flex: 1, paddingTop: 28, backgroundColor: MyStyles.ColorEerieBlack }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: MyStyles.ColorEerieBlack }}>
 
 
           <DailyTargetsProvider>
@@ -68,9 +67,9 @@ export default function App() {
 }
 
 function Root() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoaded, isSignedIn } = useAuth();
 
-  if (isLoggedIn) {
+  if (isLoaded && isSignedIn) {
     return (
       <RefreshDayProvider>
         <ScannedBarcodeProvider>
@@ -83,7 +82,7 @@ function Root() {
     );
   }
   else {
-    return (<LoginScreen onLoginSuccess={() => { setIsLoggedIn(true); }} />);
+    return (<LoginScreen />);
   }
 }
 
