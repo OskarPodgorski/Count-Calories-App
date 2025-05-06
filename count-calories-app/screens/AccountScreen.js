@@ -15,31 +15,16 @@ export default function AccountScreen() {
 
     const [signOutModal, setSignOutModal] = useState(false);
 
-    const Logout = () => {
-        Alert.alert(
-            "Logout",
-            "Are you sure you want to log out?",
-            [
-                {
-                    text: "Cancel",
-                    style: "cancel"
-                },
-                {
-                    text: "Logout",
-                    onPress: async () => {
-                        try {
-                            await signOut();
 
-                        } catch (e) {
-                            console.error("Logout failed:", e);
-                        }
-                    },
-                    style: "destructive"
-                }
-            ],
-            { cancelable: true }
-        );
+    const Logout = async () => {
+        try {
+            await signOut();
+        }
+        catch (e) {
+            console.error("Logout failed:", e);
+        }
     };
+
 
     if (!isLoaded) {
         return null;
@@ -118,8 +103,9 @@ export default function AccountScreen() {
 
                 </View>
 
-                <AlertModal title={"Logout"} message={"Are you sure you want to log out?"} enabled={signOutModal}
-                    buttonsDef={[{ text: "Cancel", action: () => { setSignOutModal(false) } }, { text: "Logout", action: () => { setSignOutModal(false) } }]} />
+                <AlertModal title={"Logout"} message={"Are you sure you want to log out?"}
+                    modalParams={{ visible: signOutModal, onRequestClose: () => { setSignOutModal(false) } }}
+                    buttonsDef={[{ text: "Cancel", action: () => { setSignOutModal(false) } }, { text: "Logout", action: Logout }]} />
 
             </View>
         );

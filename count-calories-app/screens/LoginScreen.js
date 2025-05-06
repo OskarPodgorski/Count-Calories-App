@@ -66,7 +66,7 @@ export default function LoginScreen() {
 
       <Text style={{
         paddingVertical: 12, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, textAlign: "center", fontFamily: MyStyles.BaseFont, fontSize: 28,
-        color: MyStyles.ColorWhite, backgroundColor: MyStyles.ColorEerieBlack
+        color: MyStyles.ColorWhite, backgroundColor: MyStyles.ColorEerieBlack, elevation: 8
       }}>Count Calories App</Text>
 
       <View style={{ flex: 1.25, justifyContent: "flex-start", alignItems: "center", gap: 15 }}>
