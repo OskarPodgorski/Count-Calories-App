@@ -4,6 +4,8 @@ import 'react-native-gesture-handler';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
 
+import { ConvexProvider, ConvexReactClient } from "convex/react";
+
 import { useFonts } from 'expo-font';
 import { Fredoka_300Light, Fredoka_400Regular, Fredoka_500Medium } from '@expo-google-fonts/fredoka';
 
@@ -26,6 +28,10 @@ import { DailyTargetsProvider, RefreshDayProvider, ScannedBarcodeProvider } from
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
+const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL, {
+  unsavedChangesWarning: false,
+});
+
 export default function App() {
   const [fontsLoaded] = useFonts({
     Fredoka_300Light,
@@ -40,28 +46,31 @@ export default function App() {
   }
 
   return (
-    <ClerkProvider
-      tokenCache={tokenCache}>
+    <ConvexProvider
+      client={convex}>
+      <ClerkProvider
+        tokenCache={tokenCache}>
 
-      <SafeAreaProvider>
+        <SafeAreaProvider>
 
-        <StatusBar style="light" backgroundColor={MyStyles.ColorEerieBlack} />
-        <SafeAreaView style={{ flex: 1, backgroundColor: MyStyles.ColorEerieBlack }}>
+          <StatusBar style="light" backgroundColor={MyStyles.ColorEerieBlack} />
+          <SafeAreaView style={{ flex: 1, backgroundColor: MyStyles.ColorEerieBlack }}>
 
 
-          <DailyTargetsProvider>
-            <NavigationContainer>
+            <DailyTargetsProvider>
+              <NavigationContainer>
 
-              <Root />
+                <Root />
 
-            </NavigationContainer>
-          </DailyTargetsProvider>
+              </NavigationContainer>
+            </DailyTargetsProvider>
 
-        </SafeAreaView>
+          </SafeAreaView>
 
-      </SafeAreaProvider>
+        </SafeAreaProvider>
 
-    </ClerkProvider>
+      </ClerkProvider>
+    </ConvexProvider>
   );
 }
 
