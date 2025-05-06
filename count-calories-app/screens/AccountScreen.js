@@ -1,20 +1,17 @@
 import { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 import { useUser, useAuth } from '@clerk/clerk-expo';
 
 import { AlertModal } from '../components/MyComponents';
-
 import * as MyStyles from "../styles/MyStyles"
-
 
 export default function AccountScreen() {
     const { signOut } = useAuth();
     const { user, isLoaded } = useUser();
 
     const [signOutModal, setSignOutModal] = useState(false);
-
 
     const Logout = async () => {
         try {
@@ -24,7 +21,6 @@ export default function AccountScreen() {
             console.error("Logout failed:", e);
         }
     };
-
 
     if (!isLoaded) {
         return null;
@@ -56,7 +52,7 @@ export default function AccountScreen() {
         return (
             <View style={{ backgroundColor: MyStyles.ColorEerieBlack, flex: 1, alignItems: "center" }}>
 
-                <View style={{ gap: 15, marginTop: 10 }}>
+                <View style={{ gap: 15, marginTop: 10, alignItems: "center" }}>
 
                     <Image source={{ uri: user.imageUrl }} style={{ width: 200, height: 200, borderRadius: 200 / 2, elevation: 6 }} />
 

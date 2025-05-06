@@ -318,7 +318,7 @@ function MealSection({ day, mealType, onMealAdded }) {
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          backgroundColor: 'rgba(0, 0, 0, 0.6)'
         }}>
 
           <View style={{

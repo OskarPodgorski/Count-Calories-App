@@ -5,7 +5,7 @@ import * as MyStyles from "../styles/MyStyles";
 export function AlertModal({ modalParams, title, message, buttonsDef }) {
     return (
         <Modal
-            animationType="slide"
+            animationType="fade"
             transparent={true}
             visible={modalParams.visible}
             onRequestClose={modalParams.onRequestClose}>
@@ -14,7 +14,7 @@ export function AlertModal({ modalParams, title, message, buttonsDef }) {
                 flex: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: 'rgba(0, 0, 0, 0.4)'
+                backgroundColor: 'rgba(0, 0, 0, 0.6)'
             }}>
 
                 <View style={{
