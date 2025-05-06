@@ -1,6 +1,6 @@
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useState, useCallback, useContext } from 'react';
-import { Button, Text, TouchableOpacity, View } from 'react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useState, useCallback, useContext, useRef, useEffect } from 'react';
+import { Button, Text, TouchableOpacity, View, Animated, Easing } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -34,6 +34,33 @@ export default function BarcodeScannerScreen() {
     navigation.navigate("Main");
   }
 
+  const laserAnim = useRef(new Animated.Value(0)).current;
+
+  const laserBottomMargin = (2 + 6);
+  const laserTranslateY = laserAnim.interpolate({
+    inputRange: [0, 0.35, 0.65, 1],
+    outputRange: [0, 28, 280 - 28 - laserBottomMargin, 280 - laserBottomMargin]
+  });
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(laserAnim, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(laserAnim, {
+          toValue: 0,
+          duration: 2000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
+
   if (!permission) {
     return <View />;
   }
@@ -56,10 +83,16 @@ export default function BarcodeScannerScreen() {
       {cameraMounted && (<CameraView style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         facing={facing} enableTorch={flashlight}
         barcodeScannerSettings={{ barcodeTypes: ["ean13"] }}
-        onBarcodeScanned={(b) => handleScan(b.data)}
-      >
+        onBarcodeScanned={(b) => handleScan(b.data)}>
 
-        <View style={{ width: 280, height: 280, borderWidth: 3, borderRadius: 32, borderColor: MyStyles.ColorDarkCyan }} />
+        <View style={{ width: 280, height: 280, borderWidth: 3, borderRadius: 32, borderColor: MyStyles.ColorDarkCyan, overflow: "hidden" }} >
+          <Animated.View style={{
+            position: "absolute", top: 0, left: 0, right: 0,
+            height: 2,
+            backgroundColor: "red",
+            transform: [{ translateY: laserTranslateY }]
+          }} />
+        </View>
 
         <View style={{
           ...MyStyles.baseStyle.base,
