@@ -53,13 +53,18 @@ export default function BarcodeScannerScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: MyStyles.ColorEerieBlack }}>
 
-      {cameraMounted && (<CameraView style={{ flex: 1, flexDirection: "column-reverse", alignItems: "center" }}
+      {cameraMounted && (<CameraView style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         facing={facing} enableTorch={flashlight}
         barcodeScannerSettings={{ barcodeTypes: ["ean13"] }}
         onBarcodeScanned={(b) => handleScan(b.data)}
       >
 
-        <View style={{ ...MyStyles.baseStyle.base, zIndex: 0, marginBottom: "10%", alignItems: "center", backgroundColor: MyStyles.ColorEerieBlack, elevation: 6 }}>
+        <View style={{ width: 280, height: 280, borderWidth: 3, borderRadius: 32, borderColor: MyStyles.ColorDarkCyan }} />
+
+        <View style={{
+          ...MyStyles.baseStyle.base,
+          position: "absolute", bottom: "5%", backgroundColor: MyStyles.ColorEerieBlack, elevation: 6
+        }}>
 
           <View style={{ flexDirection: "row", gap: 10, padding: 10 }}>
 
