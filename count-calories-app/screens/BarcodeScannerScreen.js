@@ -36,7 +36,7 @@ export default function BarcodeScannerScreen() {
 
   const laserAnim = useRef(new Animated.Value(0)).current;
 
-  const laserBottomMargin = (2 + 6);
+  const laserBottomMargin = (3 + (4 * 2));
   const laserTranslateY = laserAnim.interpolate({
     inputRange: [0, 0.35, 0.65, 1],
     outputRange: [0, 28, 280 - 28 - laserBottomMargin, 280 - laserBottomMargin]
@@ -53,7 +53,7 @@ export default function BarcodeScannerScreen() {
         }),
         Animated.timing(laserAnim, {
           toValue: 0,
-          duration: 2000,
+          duration: 1500,
           easing: Easing.linear,
           useNativeDriver: true,
         }),
@@ -85,11 +85,11 @@ export default function BarcodeScannerScreen() {
         barcodeScannerSettings={{ barcodeTypes: ["ean13"] }}
         onBarcodeScanned={(b) => handleScan(b.data)}>
 
-        <View style={{ width: 280, height: 280, borderWidth: 3, borderRadius: 32, borderColor: MyStyles.ColorDarkCyan, overflow: "hidden" }} >
+        <View style={{ width: 280, height: 280, borderWidth: 4, borderRadius: 32, borderColor: MyStyles.ColorEerieBlack, overflow: "hidden" }} >
           <Animated.View style={{
             position: "absolute", top: 0, left: 0, right: 0,
-            height: 2,
-            backgroundColor: "red",
+            height: 3,
+            backgroundColor: MyStyles.ColorDarkCyan,
             transform: [{ translateY: laserTranslateY }]
           }} />
         </View>
