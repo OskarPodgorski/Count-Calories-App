@@ -85,6 +85,11 @@ export default function BarcodeScannerScreen() {
         barcodeScannerSettings={{ barcodeTypes: ["ean13"] }}
         onBarcodeScanned={(b) => handleScan(b.data)}>
 
+        <Text style={{
+          position: "absolute", top: 0, left: 0, right: 0, paddingVertical: 12, borderBottomLeftRadius: 24, borderBottomRightRadius: 24,
+          textAlign: "center", fontFamily: MyStyles.BaseFont, fontSize: 28, color: MyStyles.ColorWhite, backgroundColor: MyStyles.ColorEerieBlack, elevation: 8
+        }}>Scan Barcode</Text>
+
         <View style={{ width: 280, height: 280, borderWidth: 4, borderRadius: 32, borderColor: MyStyles.ColorEerieBlack, overflow: "hidden" }} >
           <Animated.View style={{
             position: "absolute", top: 0, left: 0, right: 0,
