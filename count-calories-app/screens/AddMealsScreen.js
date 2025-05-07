@@ -3,6 +3,8 @@ import { Text, View, TouchableOpacity, Modal, TextInput, ScrollView } from 'reac
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
 
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
 import * as MyStyles from "../styles/MyStyles"
 import { mealDB, MealEntry } from '../scripts/MealDatabase'
 import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext } from '../scripts/Context';
@@ -240,12 +242,13 @@ function MealSection({ day, mealType, onMealAdded }) {
                 <TouchableOpacity
                   style={{
                     ...MyStyles.baseStyle.base,
-                    backgroundColor: MyStyles.ColorBlack,
+                    backgroundColor: MyStyles.ColorNight,
                     alignItems: "center",
                     justifyContent: "center",
                     alignSelf: "stretch",
-                    margin: 4,
-                    elevation: 2
+                    margin: 2,
+                    padding: 4,
+                    elevation: 1
                   }}
                   onPress={() => {
                     mealDB.removeMeal(day, mealType, item.id);
@@ -253,7 +256,7 @@ function MealSection({ day, mealType, onMealAdded }) {
                   }}>
 
 
-                  <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 14 }}>Remove</Text>
+                  <MaterialIcons name="delete-forever" size={30} color={MyStyles.ColorDarkCyan} />
 
                 </TouchableOpacity>
 
