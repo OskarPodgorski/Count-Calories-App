@@ -4,7 +4,8 @@ import 'react-native-gesture-handler';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
 
-import { ConvexProvider, ConvexReactClient } from "convex/react";
+import { ConvexProvider, ConvexReactClient, useQuery } from "convex/react";
+import { api } from "./convex/_generated/api";
 
 import { useFonts } from 'expo-font';
 import { Fredoka_300Light, Fredoka_400Regular, Fredoka_500Medium } from '@expo-google-fonts/fredoka';
@@ -76,8 +77,9 @@ export default function App() {
 
 function Root() {
   const { isLoaded, isSignedIn } = useAuth();
+  const pong = useQuery(api.functions.ping.ping);
 
-  if (isLoaded && isSignedIn) {
+  if (isLoaded && isSignedIn && pong) {
     return (
       <RefreshDayProvider>
         <ScannedBarcodeProvider>
