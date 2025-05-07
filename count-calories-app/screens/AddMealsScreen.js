@@ -215,61 +215,62 @@ function MealSection({ day, mealType, onMealAdded }) {
       ...MyStyles.baseStyle.base,
       backgroundColor: MyStyles.ColorNight,
       padding: 10,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      elevation: 4
+      elevation: 4,
+      gap: 10,
+      alignItems: "stretch"
     }}>
 
-      <View style={{ flex: 1 }}>
+      <View style={{ padding: 2, gap: 2 }}>
 
-        <Text style={{ color: MyStyles.ColorWhite, fontSize: 18, marginBottom: 2, fontFamily: MyStyles.BaseFontMedium }}>{mealType}</Text>
-        <Text style={{ color: MyStyles.ColorSilver, marginBottom: 6, fontFamily: MyStyles.BaseFont }}>Calories:</Text>
-
-        {mealDB.getMeals(day, mealType).size > 0 && (
-          <View style={{ gap: 5 }}>
-
-            {[...mealDB.getMeals(day, mealType).values()].map((item, index) => (
-
-              <View key={item.id} style={{
-                ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, flexDirection: "row", justifyContent: "space-between",
-                alignItems: "center", elevation: 2
-              }}>
-
-                <Text style={{ ...MyStyles.baseStyle.text, fontFamily: MyStyles.BaseFont, color: MyStyles.ColorWhite, fontSize: 15 }}>
-                  {item.name}{item.name ? " - " : ""}{item.grams}{item.grams ? "g " : ""}({item.getTotalCalories()} kcal)
-                </Text>
-
-                <TouchableOpacity
-                  style={{
-                    ...MyStyles.baseStyle.base,
-                    backgroundColor: MyStyles.ColorNight,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    alignSelf: "stretch",
-                    margin: 2,
-                    padding: 4,
-                    elevation: 1
-                  }}
-                  onPress={() => {
-                    mealDB.removeMeal(day, mealType, item.id);
-                    onMealAdded?.();
-                  }}>
-
-
-                  <MaterialIcons name="delete-forever" size={30} color={MyStyles.ColorDarkCyan} />
-
-                </TouchableOpacity>
-
-              </View>
-
-            ))}
-
-          </View>
-        )}
+        <Text style={{ color: MyStyles.ColorWhite, fontSize: 18, fontFamily: MyStyles.BaseFontMedium }}>{mealType}</Text>
+        <Text style={{ color: MyStyles.ColorSilver, fontFamily: MyStyles.BaseFont }}>Calories:</Text>
 
       </View>
 
-      <View style={{ alignItems: "flex-end", justifyContent: "flex-end" }}>
+      {mealDB.getMeals(day, mealType).size > 0 && (
+        <View style={{ gap: 5 }}>
+
+          {[...mealDB.getMeals(day, mealType).values()].map((item, index) => (
+
+            <View key={item.id} style={{
+              ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, flexDirection: "row", justifyContent: "space-between",
+              alignItems: "center", elevation: 2
+            }}>
+
+              <Text style={{ ...MyStyles.baseStyle.text, fontFamily: MyStyles.BaseFont, color: MyStyles.ColorWhite, fontSize: 15 }}>
+                {item.name}{item.name ? " - " : ""}{item.grams}{item.grams ? "g " : ""}({item.getTotalCalories()} kcal)
+              </Text>
+
+              <TouchableOpacity
+                style={{
+                  ...MyStyles.baseStyle.base,
+                  backgroundColor: MyStyles.ColorNight,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  alignSelf: "stretch",
+                  margin: 2,
+                  padding: 4,
+                  elevation: 1
+                }}
+                onPress={() => {
+                  mealDB.removeMeal(day, mealType, item.id);
+                  onMealAdded?.();
+                }}>
+
+
+                <MaterialIcons name="delete-forever" size={30} color={MyStyles.ColorDarkCyan} />
+
+              </TouchableOpacity>
+
+            </View>
+
+          ))}
+
+        </View>
+      )}
+
+
+      <View style={{ flexDirection: "row-reverse", gap: 5 }}>
 
         <TouchableOpacity
           style={{
@@ -277,19 +278,12 @@ function MealSection({ day, mealType, onMealAdded }) {
             backgroundColor: MyStyles.ColorDarkCyan,
             minHeight: 36,
             minWidth: 36,
-            alignSelf: 'flex-end',
             alignItems: "center",
             justifyContent: "center",
-            marginLeft: 10,
-            marginBottom: 4,
             elevation: 4
           }}
-          onPress={() => {
-            setModalVisible(false);
-            setWaitsForBarcode(true);
-            navigation.navigate("BarcodeScanner");
-          }}>
-          <Text style={{ color: MyStyles.ColorBlack, fontSize: 12 }}>|II|II|</Text>
+          onPress={() => setModalVisible(true)}>
+          <Text style={{ color: MyStyles.ColorBlack, fontSize: 22 }}>+</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -298,14 +292,16 @@ function MealSection({ day, mealType, onMealAdded }) {
             backgroundColor: MyStyles.ColorDarkCyan,
             minHeight: 36,
             minWidth: 36,
-            alignSelf: 'flex-end',
             alignItems: "center",
             justifyContent: "center",
-            marginLeft: 10,
             elevation: 4
           }}
-          onPress={() => setModalVisible(true)}>
-          <Text style={{ color: MyStyles.ColorBlack, fontSize: 22 }}>+</Text>
+          onPress={() => {
+            setModalVisible(false);
+            setWaitsForBarcode(true);
+            navigation.navigate("BarcodeScanner");
+          }}>
+          <Text style={{ color: MyStyles.ColorBlack, fontSize: 12 }}>|II|II|</Text>
         </TouchableOpacity>
 
       </View>
