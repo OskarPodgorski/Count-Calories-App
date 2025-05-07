@@ -133,3 +133,5 @@ dist
 count-calories-app/ExpoStart.bat
 /count-calories-app/android
 /count-calories-app/confidential
+count-calories-app/ConvexStart.bat
+count-calories-app/ExpoClear.bat

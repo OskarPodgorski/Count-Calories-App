@@ -53,21 +53,16 @@ export default function App() {
         tokenCache={tokenCache}>
 
         <SafeAreaProvider>
-
           <StatusBar style="light" backgroundColor={MyStyles.ColorEerieBlack} />
           <SafeAreaView style={{ flex: 1, backgroundColor: MyStyles.ColorEerieBlack }}>
 
+            <NavigationContainer>
 
-            <DailyTargetsProvider>
-              <NavigationContainer>
+              <Root />
 
-                <Root />
-
-              </NavigationContainer>
-            </DailyTargetsProvider>
+            </NavigationContainer>
 
           </SafeAreaView>
-
         </SafeAreaProvider>
 
       </ClerkProvider>
@@ -77,18 +72,20 @@ export default function App() {
 
 function Root() {
   const { isLoaded, isSignedIn } = useAuth();
-  const pong = useQuery(api.functions.ping.ping);
+  const pong = useQuery(api.ping.ping);
 
   if (isLoaded && isSignedIn && pong) {
     return (
-      <RefreshDayProvider>
-        <ScannedBarcodeProvider>
-          <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: MyStyles.ColorEerieBlack } }}>
-            <Stack.Screen name="Main" component={DrawerCreate} />
-            <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
-          </Stack.Navigator>
-        </ScannedBarcodeProvider>
-      </RefreshDayProvider>
+      <DailyTargetsProvider>
+        <RefreshDayProvider>
+          <ScannedBarcodeProvider>
+            <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: MyStyles.ColorEerieBlack } }}>
+              <Stack.Screen name="Main" component={DrawerCreate} />
+              <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
+            </Stack.Navigator>
+          </ScannedBarcodeProvider>
+        </RefreshDayProvider>
+      </DailyTargetsProvider>
     );
   }
   else {

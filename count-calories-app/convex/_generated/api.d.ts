@@ -13,7 +13,8 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as functions_ping from "../functions/ping.js";
+import type * as ping from "../ping.js";
+import type * as settings from "../settings.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -24,7 +25,8 @@ import type * as functions_ping from "../functions/ping.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "functions/ping": typeof functions_ping;
+  ping: typeof ping;
+  settings: typeof settings;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
