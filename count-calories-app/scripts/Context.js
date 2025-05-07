@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useUser } from "@clerk/clerk-expo";
 
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useCallback } from 'react';
 
 export const dailyTargetsContext = createContext();
 
@@ -13,25 +13,42 @@ export function DailyTargetsProvider({ children }) {
   const data = useQuery(api.settings.getDailyTargetsQ, userId ? { userId } : "skip");
   const insertDailyTargets = useMutation(api.settings.insertDailyTargetsQ);
 
-  const [dailyTargets, setDailyTargets] = useState(data ?? {
-    userId,
+  const [dailyTargets, setDailyTargets] = useState({
     calories: 2000,
     proteins: 100,
     fat: 70,
-    carbs: 250,
+    carbs: 250
   });
 
-  useEffect(() => {
+  const updateDailyTargets = useCallback(() => {
     if (!userId) return;
 
-    const newData = { ...dailyTargets, userId: userId };
+    const newData = {
+      userId,
+      calories: dailyTargets.calories,
+      proteins: dailyTargets.proteins,
+      fat: dailyTargets.fat,
+      carbs: dailyTargets.carbs
+    };
 
+    console.log("Sending to DB:", newData);
     insertDailyTargets(newData);
+  }, [dailyTargets]);
 
+  useEffect(() => {
+    if (!data || !userId) return;
+
+    setDailyTargets(data);
+
+    console.log("uE");
+  }, [data, userId]);
+
+  useEffect(() => {
+    console.log(dailyTargets);
   }, [dailyTargets]);
 
   return (
-    <dailyTargetsContext.Provider value={{ dailyTargets, setDailyTargets }}>
+    <dailyTargetsContext.Provider value={{ dailyTargets, setDailyTargets, updateDailyTargets }}>
       {children}
     </dailyTargetsContext.Provider>
   );
