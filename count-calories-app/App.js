@@ -79,10 +79,12 @@ function Root() {
       <DailyTargetsProvider>
         <RefreshDayProvider>
           <ScannedBarcodeProvider>
+
             <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: MyStyles.ColorEerieBlack } }}>
               <Stack.Screen name="Main" component={DrawerCreate} />
               <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
             </Stack.Navigator>
+
           </ScannedBarcodeProvider>
         </RefreshDayProvider>
       </DailyTargetsProvider>
@@ -149,7 +151,6 @@ function DrawerCreate() {
       <Drawer.Screen name="Settings" component={SettingsScreen} />
       <Drawer.Screen name="Account" component={AccountScreen} />
     </Drawer.Navigator>
-
   );
 }
 

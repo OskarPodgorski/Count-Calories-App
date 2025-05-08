@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useUser } from "@clerk/clerk-expo";
 
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useState, useEffect, useRef } from 'react';
 
 export const dailyTargetsContext = createContext();
 
@@ -11,7 +11,7 @@ export function DailyTargetsProvider({ children }) {
   const userId = user?.id;
 
   const data = useQuery(api.settings.getDailyTargetsQ, userId ? { userId } : "skip");
-  const insertDailyTargets = useMutation(api.settings.insertDailyTargetsQ);
+  const updateDailyTargets = useMutation(api.settings.updateDailyTargetsQ);
 
   const [dailyTargets, setDailyTargets] = useState({
     calories: 2000,
@@ -20,35 +20,40 @@ export function DailyTargetsProvider({ children }) {
     carbs: 250
   });
 
-  const updateDailyTargets = useCallback(() => {
+  const dailyTargetsRef = useRef(dailyTargets);
+
+  useEffect(() => {
+    dailyTargetsRef.current = dailyTargets;
+    console.log(dailyTargetsRef.current);
+  }, [dailyTargets]);
+
+  function updateDailyTargetsQuery() {
     if (!userId) return;
 
-    const newData = {
-      userId,
-      calories: dailyTargets.calories,
-      proteins: dailyTargets.proteins,
-      fat: dailyTargets.fat,
-      carbs: dailyTargets.carbs
-    };
-
-    console.log("Sending to DB:", newData);
-    insertDailyTargets(newData);
-  }, [dailyTargets]);
+    updateDailyTargets({
+      userId: userId,
+      calories: dailyTargetsRef.current.calories,
+      proteins: dailyTargetsRef.current.proteins,
+      fat: dailyTargetsRef.current.fat,
+      carbs: dailyTargetsRef.current.carbs
+    });
+  }
 
   useEffect(() => {
     if (!data || !userId) return;
 
-    setDailyTargets(data);
+    setDailyTargets({
+      calories: data.calories,
+      proteins: data.proteins,
+      fat: data.fat,
+      carbs: data.carbs
+    });
 
     console.log("uE");
   }, [data, userId]);
 
-  useEffect(() => {
-    console.log(dailyTargets);
-  }, [dailyTargets]);
-
   return (
-    <dailyTargetsContext.Provider value={{ dailyTargets, setDailyTargets, updateDailyTargets }}>
+    <dailyTargetsContext.Provider value={{ dailyTargets, setDailyTargets, updateDailyTargetsQuery }}>
       {children}
     </dailyTargetsContext.Provider>
   );

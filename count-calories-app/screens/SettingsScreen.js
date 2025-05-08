@@ -27,12 +27,12 @@ export default function SettingsScreen() {
     );
 }
 function DailyTargets() {
-    const { dailyTargets, setDailyTargets, updateDailyTargets } = useContext(dailyTargetsContext);
+    const { dailyTargets, setDailyTargets, updateDailyTargetsQuery } = useContext(dailyTargetsContext);
 
     useFocusEffect(
         useCallback(() => {
             return () => {
-                updateDailyTargets();
+                updateDailyTargetsQuery();
             };
         }, [])
     )
