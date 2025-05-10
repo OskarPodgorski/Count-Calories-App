@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useUser } from "@clerk/clerk-expo";
 
-import { createContext, useState, useEffect, useRef } from 'react';
+import { createContext, useState, useEffect, useRef, useCallback } from 'react';
 
 export const dailyTargetsContext = createContext();
 
@@ -20,24 +20,24 @@ export function DailyTargetsProvider({ children }) {
     carbs: 250
   });
 
-  const dailyTargetsRef = useRef(dailyTargets);
+  //const dailyTargetsRef = useRef(dailyTargets);
 
-  useEffect(() => {
-    dailyTargetsRef.current = dailyTargets;
-    console.log(dailyTargetsRef.current);
-  }, [dailyTargets]);
+  // useEffect(() => {
+  //   dailyTargetsRef.current = dailyTargets;
+  //   console.log(dailyTargetsRef.current);
+  // }, [dailyTargets]);
 
-  function updateDailyTargetsQuery() {
+  const updateDailyTargetsQuery = useCallback(() => {
     if (!userId) return;
 
     updateDailyTargets({
       userId: userId,
-      calories: dailyTargetsRef.current.calories,
-      proteins: dailyTargetsRef.current.proteins,
-      fat: dailyTargetsRef.current.fat,
-      carbs: dailyTargetsRef.current.carbs
+      calories: dailyTargets.calories,
+      proteins: dailyTargets.proteins,
+      fat: dailyTargets.fat,
+      carbs: dailyTargets.carbs
     });
-  }
+  }, [dailyTargets]);
 
   useEffect(() => {
     if (!data || !userId) return;

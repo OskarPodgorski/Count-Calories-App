@@ -34,7 +34,7 @@ function DailyTargets() {
             return () => {
                 updateDailyTargetsQuery();
             };
-        }, [])
+        }, [dailyTargets])
     )
 
     return (
