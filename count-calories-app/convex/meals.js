@@ -12,19 +12,6 @@ export const getGlobalMealQ = query({
     },
 });
 
-// export const insertDailyTargetsQ = mutation({
-//     args: {
-//         userId: v.string(),
-//         calories: v.number(),
-//         proteins: v.number(),
-//         fat: v.number(),
-//         carbs: v.number(),
-//     },
-//     handler: async (ctx, args) => {
-//         await ctx.db.insert("dailyTargets", args);
-//     },
-// });
-
 export const updateGlobalMealQ = mutation({
     args: {
         barcode: v.string(),
@@ -50,4 +37,49 @@ export const updateGlobalMealQ = mutation({
             await ctx.db.insert("globalMeals", args);
         }
     },
+});
+
+
+
+export const getUserMealsByDateQ = query({
+    args: { userId: v.string(), date: v.string() },
+    handler: async (ctx, args) => {
+        return await ctx.db
+            .query("userMeals")
+            .withIndex("by_user_date", q => q.eq("userId", args.userId).eq("date", args.date))
+            .unique();
+    }
+});
+
+export const upsertUserMealsByDateQ = mutation({
+    args: {
+        userId: v.string(),
+        date: v.string(),
+        meals: v.record(
+            v.string(),
+            v.array(
+                v.object({
+                    name: v.string(),
+                    grams: v.number(),
+                    calories: v.number(),
+                    proteins: v.number(),
+                    fat: v.number(),
+                    carbs: v.number(),
+                    barcode: v.optional(v.string())
+                })
+            )
+        )
+    },
+    handler: async (ctx, args) => {
+        const existing = await ctx.db
+            .query("userMeals")
+            .withIndex("by_user_date", q => q.eq("userId", args.userId).eq("date", args.date))
+            .unique();
+
+        if (existing) {
+            await ctx.db.patch(existing._id, { meals: args.meals });
+        } else {
+            await ctx.db.insert("userMeals", args);
+        }
+    }
 });

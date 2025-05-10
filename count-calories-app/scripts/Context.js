@@ -37,6 +37,8 @@ export function DailyTargetsProvider({ children }) {
       fat: dailyTargets.fat,
       carbs: dailyTargets.carbs
     });
+
+    console.log("query");
   }, [dailyTargets]);
 
   useEffect(() => {
