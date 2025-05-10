@@ -13,6 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as meals from "../meals.js";
 import type * as ping from "../ping.js";
 import type * as settings from "../settings.js";
 
@@ -25,6 +26,7 @@ import type * as settings from "../settings.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  meals: typeof meals;
   ping: typeof ping;
   settings: typeof settings;
 }>;
