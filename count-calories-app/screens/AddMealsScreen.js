@@ -9,7 +9,7 @@ import * as MyStyles from "../styles/MyStyles"
 import { mealDB, MealEntry } from '../scripts/MealDatabase'
 import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext } from '../scripts/Context';
 
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useConvex } from "convex/react";
 import { api } from "../convex/_generated/api";
 
 const Tab = createMaterialTopTabNavigator();
@@ -146,15 +146,18 @@ function MealSection({ day, mealType, onMealAdded }) {
   const [productFat, setProductFat] = useState('');
   const [productCarbs, setProductCarbs] = useState('');
 
+  const convex = useConvex();
+  const updateGlobalMeal = useMutation(api.meals.updateGlobalMealQ);
+
   useEffect(() => {
     if (!waitsForBarcode || !scannedBarcode) return;
 
     setWaitsForBarcode(false);
     setModalVisible(true);
 
+    setBarcode(scannedBarcode);
     HandleScannedFromDatabase(scannedBarcode);
 
-    setBarcode(scannedBarcode);
     setScannedBarcode("");
   }, [scannedBarcode]);
 
@@ -171,15 +174,13 @@ function MealSection({ day, mealType, onMealAdded }) {
   }
 
   const handleAdd = () => {
-    const updateGlobalMeal = useMutation(api.meals.updateGlobalMealQ);
-
     updateGlobalMeal({
       barcode: barcode,
       name: mealName,
-      calories: productCalories,
-      proteins: productProteins,
-      fat: productFat,
-      carbs: productCarbs
+      calories: parseFloat(productCalories),
+      proteins: parseFloat(productProteins),
+      fat: parseFloat(productFat),
+      carbs: parseFloat(productCarbs)
     });
 
     mealDB.addMeal(day, mealType, new MealEntry(
@@ -207,18 +208,17 @@ function MealSection({ day, mealType, onMealAdded }) {
     setModalVisible(false);
   };
 
-  function HandleScannedFromDatabase(barcode) {
-    const data = useQuery(api.meals.getGlobalMealQ, barcode ? { barcode } : "skip");
-
-    if (!data) {
-      return false;
-    }
-
-    setMealName(data.name);
-    setProductCalories(data.calories);
-    setProductProteins(data.proteins);
-    setProductFat(data.fat);
-    setProductCarbs(data.carbs);
+  function HandleScannedFromDatabase() {
+    convex.query(api.meals.getGlobalMealQ, { barcode: scannedBarcode })
+      .then(data => {
+        if (data) {
+          setMealName(data.name);
+          setProductCalories(data.calories.toString());
+          setProductProteins(data.proteins.toString());
+          setProductFat(data.fat.toString());
+          setProductCarbs(data.carbs.toString());
+        }
+      });
 
     return true;
   }
