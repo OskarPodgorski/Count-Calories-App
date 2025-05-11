@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useCallback } from 'react';
 import { Text, View, TouchableOpacity, Modal, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
@@ -58,14 +58,30 @@ function DayScreen({ route }) {
   const Refresh = () => setRefreshFooter(c => !c);
 
   const date = new Date().toISOString().split("T")[0];
-  const dayData = useQuery(api.meals.getUserMealsByDateQ, userId ? { userId, date } : "skip");
+  const convex = useConvex();
 
-  console.log(dayData);
+  const [dayData, setDayData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await convex.query(api.meals.getUserMealsByDateQ, {
+        userId,
+        date,
+      });
+      console.log(result);
+
+      setDayData(result);
+    };
+
+    if (userId) fetchData();
+
+  }, [userId]);
+
 
   return (
     <View style={{ flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack }}>
 
-      {dayData === undefined ?
+      {dayData === null ?
         (<View style={{ flex: 1, justifyContent: "center", alignContent: "center" }}>
           <ActivityIndicator size={100} color={MyStyles.ColorSilver} />
         </View>)
@@ -80,7 +96,6 @@ function DayScreen({ route }) {
       }
 
       <CaloriesFooter key={refreshFooter} day={dayName} />
-
 
     </View>
   );
@@ -147,8 +162,11 @@ function CaloriesFooter({ day }) {
 
 function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   const navigation = useNavigation();
-
   const { setDayRefresh } = useContext(refreshDayContext);
+
+  const convex = useConvex();
+  const updateGlobalMeal = useMutation(api.meals.updateGlobalMealQ);
+  const insertUserMeal = useMutation(api.meals.upsertUserMealsByDateQ);
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -163,9 +181,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   const [productFat, setProductFat] = useState('');
   const [productCarbs, setProductCarbs] = useState('');
 
-  const convex = useConvex();
-  const updateGlobalMeal = useMutation(api.meals.updateGlobalMealQ);
-  const insertUserMeal = useMutation(api.meals.upsertUserMealsByDateQ)
+  const [mealsArray, setMealsArray] = useState(mealQueryArray);
 
   useEffect(() => {
     if (!waitsForBarcode || !scannedBarcode) return;
@@ -174,7 +190,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
     setModalVisible(true);
 
     setBarcode(scannedBarcode);
-    HandleScannedFromDatabase(scannedBarcode);
+    handleScannedFromDatabase();
 
     setScannedBarcode("");
   }, [scannedBarcode]);
@@ -200,6 +216,15 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
       carbs: parseFloat(productCarbs)
     };
 
+    setMealsArray(c => [...c, mealEntry]);
+
+    clearFields();
+
+    onMealAdded?.();
+    setModalVisible(false);
+
+    setDayRefresh(dayInfo.dayName);
+
     updateGlobalMeal({
       ...mealEntry,
       barcode: barcode
@@ -214,13 +239,6 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
         grams: parseFloat(mealGrams)
       }
     });
-
-    clearFields();
-
-    onMealAdded?.();
-    setModalVisible(false);
-
-    setDayRefresh(dayInfo.dayName);
   };
 
   const handleCancel = () => {
@@ -230,7 +248,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
     setModalVisible(false);
   };
 
-  function HandleScannedFromDatabase() {
+  const handleScannedFromDatabase = useCallback(() => {
     convex.query(api.meals.getGlobalMealQ, { barcode: scannedBarcode })
       .then(data => {
         if (data) {
@@ -239,11 +257,13 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
           setProductProteins(data.proteins.toString());
           setProductFat(data.fat.toString());
           setProductCarbs(data.carbs.toString());
+
+          return true;
         }
       });
 
-    return true;
-  }
+    return false;
+  }, [scannedBarcode]);
 
   return (
     <View style={{
@@ -262,10 +282,10 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
 
       </View>
 
-      {mealQueryArray.length > 0 && (
+      {mealsArray.length > 0 && (
         <View style={{ gap: 5 }}>
 
-          {mealQueryArray.map((item, index) => (
+          {mealsArray.map((item, index) => (
 
             <View key={index} style={{
               ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, flexDirection: "row", justifyContent: "space-between",
