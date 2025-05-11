@@ -12,9 +12,14 @@ import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext } from '.
 import { useQuery, useMutation, useConvex } from "convex/react";
 import { api } from "../convex/_generated/api";
 
+import { useUser } from "@clerk/clerk-expo";
+
 const Tab = createMaterialTopTabNavigator();
 
 export default function AddMealScreen() {
+  const { user } = useUser();
+  const userId = user?.id;
+
   const { dayRefreshArray } = useContext(refreshDayContext);
 
   return (
@@ -34,32 +39,35 @@ export default function AddMealScreen() {
             elevation: 10
           }
         }}>
-        <Tab.Screen key={`Mo-${dayRefreshArray[0]}`} name="Mon" component={DayScreen} initialParams={{ dayName: "Monday" }} />
-        <Tab.Screen key={`Tu-${dayRefreshArray[1]}`} name="Tue" component={DayScreen} initialParams={{ dayName: "Tuesday" }} />
-        <Tab.Screen key={`We-${dayRefreshArray[2]}`} name="Wed" component={DayScreen} initialParams={{ dayName: "Wednesday" }} />
-        <Tab.Screen key={`Th-${dayRefreshArray[3]}`} name="Thu" component={DayScreen} initialParams={{ dayName: "Thursday" }} />
-        <Tab.Screen key={`Fr-${dayRefreshArray[4]}`} name="Fri" component={DayScreen} initialParams={{ dayName: "Friday" }} />
-        <Tab.Screen key={`Sa-${dayRefreshArray[5]}`} name="Sat" component={DayScreen} initialParams={{ dayName: "Saturday" }} />
-        <Tab.Screen key={`Su-${dayRefreshArray[6]}`} name="Sun" component={DayScreen} initialParams={{ dayName: "Sunday" }} />
+        <Tab.Screen key={`Mo-${dayRefreshArray[0]}`} name="Mon" component={DayScreen} initialParams={{ dayName: "Monday", userId: userId }} />
+        <Tab.Screen key={`Tu-${dayRefreshArray[1]}`} name="Tue" component={DayScreen} initialParams={{ dayName: "Tuesday", userId: userId }} />
+        <Tab.Screen key={`We-${dayRefreshArray[2]}`} name="Wed" component={DayScreen} initialParams={{ dayName: "Wednesday", userId: userId }} />
+        <Tab.Screen key={`Th-${dayRefreshArray[3]}`} name="Thu" component={DayScreen} initialParams={{ dayName: "Thursday", userId: userId }} />
+        <Tab.Screen key={`Fr-${dayRefreshArray[4]}`} name="Fri" component={DayScreen} initialParams={{ dayName: "Friday", userId: userId }} />
+        <Tab.Screen key={`Sa-${dayRefreshArray[5]}`} name="Sat" component={DayScreen} initialParams={{ dayName: "Saturday", userId: userId }} />
+        <Tab.Screen key={`Su-${dayRefreshArray[6]}`} name="Sun" component={DayScreen} initialParams={{ dayName: "Sunday", userId: userId }} />
       </Tab.Navigator>
     </View>
   );
 }
 
 function DayScreen({ route }) {
-  const { dayName } = route.params;
+  const { dayName, userId } = route.params;
 
   const [refreshFooter, setRefreshFooter] = useState(false);
   const Refresh = () => setRefreshFooter(c => !c);
+
+  const date = new Date().toISOString().split("T")[0];
+  const dayData = useQuery(api.meals.getUserMealsByDateQ, userId ? { userId, date } : "skip");
 
   return (
     <View style={{ flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack }}>
 
       <ScrollView contentContainerStyle={{ alignItems: "stretch", paddingHorizontal: 4, paddingBottom: 90, paddingTop: 56, gap: 6 }} showsVerticalScrollIndicator={false}>
 
-        <MealSection day={dayName} mealType={"Breakfast"} onMealAdded={Refresh} />
-        <MealSection day={dayName} mealType={"Lunch"} onMealAdded={Refresh} />
-        <MealSection day={dayName} mealType={"Dinner"} onMealAdded={Refresh} />
+        <MealSection dayInfo={{ dayName, mealType: "Breakfast", date }} mealQueryArray={dayData.meals["Breakfast"]} onMealAdded={Refresh} userID={userId} />
+        <MealSection dayInfo={{ dayName, mealType: "Lunch", date }} mealQueryArray={dayData.meals["Lunch"]} onMealAdded={Refresh} userID={userId} />
+        <MealSection dayInfo={{ dayName, mealType: "Dinner", date }} mealQueryArray={dayData.meals["Dinner"]} onMealAdded={Refresh} userID={userId} />
 
       </ScrollView>
 
@@ -128,7 +136,7 @@ function CaloriesFooter({ day }) {
   );
 }
 
-function MealSection({ day, mealType, onMealAdded }) {
+function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   const navigation = useNavigation();
 
   const { setDayRefresh } = useContext(refreshDayContext);
@@ -148,6 +156,7 @@ function MealSection({ day, mealType, onMealAdded }) {
 
   const convex = useConvex();
   const updateGlobalMeal = useMutation(api.meals.updateGlobalMealQ);
+  const insertUserMeal = useMutation(api.meals.upsertUserMealsByDateQ)
 
   useEffect(() => {
     if (!waitsForBarcode || !scannedBarcode) return;
@@ -174,13 +183,17 @@ function MealSection({ day, mealType, onMealAdded }) {
   }
 
   const handleAdd = () => {
-    updateGlobalMeal({
-      barcode: barcode,
+    const mealEntry = {
       name: mealName,
       calories: parseFloat(productCalories),
       proteins: parseFloat(productProteins),
       fat: parseFloat(productFat),
       carbs: parseFloat(productCarbs)
+    };
+
+    updateGlobalMeal({
+      ...mealEntry,
+      barcode: barcode
     });
 
     mealDB.addMeal(day, mealType, new MealEntry(
@@ -240,10 +253,10 @@ function MealSection({ day, mealType, onMealAdded }) {
 
       </View>
 
-      {mealDB.getMeals(day, mealType).size > 0 && (
+      {mealQueryArray.size > 0 && (
         <View style={{ gap: 5 }}>
 
-          {[...mealDB.getMeals(day, mealType).values()].map((item, index) => (
+          {mealQueryArray.map((item, index) => (
 
             <View key={item.id} style={{
               ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, flexDirection: "row", justifyContent: "space-between",
@@ -266,7 +279,7 @@ function MealSection({ day, mealType, onMealAdded }) {
                   elevation: 1
                 }}
                 onPress={() => {
-                  mealDB.removeMeal(day, mealType, item.id);
+                  //mealDB.removeMeal(day, mealType, item.id);
                   onMealAdded?.();
                 }}>
 
