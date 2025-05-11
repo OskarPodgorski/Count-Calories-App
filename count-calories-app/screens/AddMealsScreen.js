@@ -262,12 +262,12 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
 
       </View>
 
-      {mealQueryArray.size > 0 && (
+      {mealQueryArray.length > 0 && (
         <View style={{ gap: 5 }}>
 
           {mealQueryArray.map((item, index) => (
 
-            <View key={item.id} style={{
+            <View key={index} style={{
               ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, flexDirection: "row", justifyContent: "space-between",
               alignItems: "center", elevation: 2
             }}>
