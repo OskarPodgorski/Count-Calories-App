@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { Text, View, TouchableOpacity, Modal, TextInput, ScrollView } from 'react-native';
+import { Text, View, TouchableOpacity, Modal, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
 
@@ -60,18 +60,27 @@ function DayScreen({ route }) {
   const date = new Date().toISOString().split("T")[0];
   const dayData = useQuery(api.meals.getUserMealsByDateQ, userId ? { userId, date } : "skip");
 
+  console.log(dayData);
+
   return (
     <View style={{ flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack }}>
 
-      <ScrollView contentContainerStyle={{ alignItems: "stretch", paddingHorizontal: 4, paddingBottom: 90, paddingTop: 56, gap: 6 }} showsVerticalScrollIndicator={false}>
+      {dayData === undefined ?
+        (<View style={{ flex: 1, justifyContent: "center", alignContent: "center" }}>
+          <ActivityIndicator size={100} color={MyStyles.ColorSilver} />
+        </View>)
+        :
+        (<ScrollView contentContainerStyle={{ alignItems: "stretch", paddingHorizontal: 4, paddingBottom: 90, paddingTop: 56, gap: 6 }} showsVerticalScrollIndicator={false}>
 
-        <MealSection dayInfo={{ dayName, mealType: "Breakfast", date }} mealQueryArray={dayData.meals["Breakfast"]} onMealAdded={Refresh} userID={userId} />
-        <MealSection dayInfo={{ dayName, mealType: "Lunch", date }} mealQueryArray={dayData.meals["Lunch"]} onMealAdded={Refresh} userID={userId} />
-        <MealSection dayInfo={{ dayName, mealType: "Dinner", date }} mealQueryArray={dayData.meals["Dinner"]} onMealAdded={Refresh} userID={userId} />
+          <MealSection dayInfo={{ dayName, mealType: "Breakfast", date }} mealQueryArray={dayData?.meals?.["Breakfast"] ?? []} onMealAdded={Refresh} userID={userId} />
+          <MealSection dayInfo={{ dayName, mealType: "Lunch", date }} mealQueryArray={dayData?.meals?.["Lunch"] ?? []} onMealAdded={Refresh} userID={userId} />
+          <MealSection dayInfo={{ dayName, mealType: "Dinner", date }} mealQueryArray={dayData?.meals?.["Dinner"] ?? []} onMealAdded={Refresh} userID={userId} />
 
-      </ScrollView>
+        </ScrollView>)
+      }
 
       <CaloriesFooter key={refreshFooter} day={dayName} />
+
 
     </View>
   );
@@ -196,22 +205,22 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
       barcode: barcode
     });
 
-    mealDB.addMeal(day, mealType, new MealEntry(
-      mealName,
-      mealGrams,
-      productCalories,
-      productProteins,
-      productFat,
-      productCarbs,
-      barcode
-    ));
+    insertUserMeal({
+      userId: userID,
+      date: dayInfo.date,
+      mealType: dayInfo.mealType,
+      meal: {
+        ...mealEntry,
+        grams: parseFloat(mealGrams)
+      }
+    });
 
     clearFields();
 
     onMealAdded?.();
     setModalVisible(false);
 
-    setDayRefresh(day);
+    setDayRefresh(dayInfo.dayName);
   };
 
   const handleCancel = () => {
@@ -248,7 +257,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
 
       <View style={{ padding: 2, gap: 2 }}>
 
-        <Text style={{ color: MyStyles.ColorWhite, fontSize: 18, fontFamily: MyStyles.BaseFontMedium }}>{mealType}</Text>
+        <Text style={{ color: MyStyles.ColorWhite, fontSize: 18, fontFamily: MyStyles.BaseFontMedium }}>{dayInfo.mealType}</Text>
         <Text style={{ color: MyStyles.ColorSilver, fontFamily: MyStyles.BaseFont }}>Calories:</Text>
 
       </View>
@@ -264,7 +273,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
             }}>
 
               <Text style={{ ...MyStyles.baseStyle.text, fontFamily: MyStyles.BaseFont, color: MyStyles.ColorWhite, fontSize: 15 }}>
-                {item.name}{item.name ? " - " : ""}{item.grams}{item.grams ? "g " : ""}({item.getTotalCalories()} kcal)
+                {item.name}{item.name ? " - " : ""}{item.grams}{item.grams ? "g " : ""}({item.calories} kcal)
               </Text>
 
               <TouchableOpacity
@@ -357,7 +366,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
               ...MyStyles.baseStyle.base, alignSelf: "center",
               backgroundColor: MyStyles.ColorDarkCyan, fontSize: 18, color: MyStyles.ColorBlack,
               paddingVertical: 6, paddingHorizontal: 12
-            }}>Add to {mealType}</Text>
+            }}>Add to {dayInfo.mealType}</Text>
 
             <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, padding: 10, marginBottom: 5, marginTop: 10 }}>
 
