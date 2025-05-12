@@ -76,15 +76,14 @@ export default function AddMealScreen() {
 }
 
 function DayScreen({ route }) {
-  const { dayName, userId } = route.params;
+  const { dayName, userId, date } = route.params;
 
   const [refreshFooter, setRefreshFooter] = useState(false);
   const Refresh = () => setRefreshFooter(c => !c);
 
-  const date = new Date().toISOString().split("T")[0];
   const convex = useConvex();
 
-  const [dayData, setDayData] = useState(null);
+  const [dayData, setDayData] = useState(undefined);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -105,7 +104,7 @@ function DayScreen({ route }) {
   return (
     <View style={{ flex: 1, justifyContent: "stretch", alignItems: "stretch", backgroundColor: MyStyles.ColorEerieBlack }}>
 
-      {dayData === null ?
+      {dayData === undefined ?
         (<View style={{ flex: 1, justifyContent: "center", alignContent: "center" }}>
           <ActivityIndicator size={100} color={MyStyles.ColorSilver} />
         </View>)
@@ -234,10 +233,10 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   const handleAdd = () => {
     const mealEntry = {
       name: mealName,
-      calories: parseFloat(productCalories),
-      proteins: parseFloat(productProteins),
-      fat: parseFloat(productFat),
-      carbs: parseFloat(productCarbs)
+      calories: productCalories === "" ? 0 : parseFloat(productCalories),
+      proteins: productProteins === "" ? 0 : parseFloat(productProteins),
+      fat: productFat === "" ? 0 : parseFloat(productFat),
+      carbs: productCarbs === "" ? 0 : parseFloat(productCarbs)
     };
 
     setMealsArray(c => [...c, mealEntry]);
