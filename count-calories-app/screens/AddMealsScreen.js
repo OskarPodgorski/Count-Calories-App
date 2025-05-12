@@ -3,9 +3,11 @@ import { Text, View, TouchableOpacity, Modal, TextInput, ScrollView, ActivityInd
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
 
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { startOfWeek, endOfWeek, eachDayOfInterval, format } from "date-fns";
 
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as MyStyles from "../styles/MyStyles"
+
 import { mealDB, MealEntry } from '../scripts/MealDatabase'
 import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext } from '../scripts/Context';
 
@@ -21,6 +23,22 @@ export default function AddMealScreen() {
   const userId = user?.id;
 
   const { dayRefreshArray } = useContext(refreshDayContext);
+
+  function getWeekDates(date, fullTimestamp = false) {
+    const weekDates = eachDayOfInterval({
+      start: startOfWeek(date, { weekStartsOn: 1 }),
+      end: endOfWeek(date, { weekStartsOn: 1 })
+    });
+
+    if (fullTimestamp) {
+      return weekDates
+    }
+    else {
+      return weekDates.map(d => format(d, "yyyy-MM-dd"));
+    }
+  }
+
+  const weekDates = getWeekDates(new Date());
 
   return (
     <View style={{ backgroundColor: MyStyles.ColorEerieBlack, flex: 1 }}>
@@ -39,13 +57,13 @@ export default function AddMealScreen() {
             elevation: 10
           }
         }}>
-        <Tab.Screen key={`Mo-${dayRefreshArray[0]}`} name="Mon" component={DayScreen} initialParams={{ dayName: "Monday", userId: userId }} />
-        <Tab.Screen key={`Tu-${dayRefreshArray[1]}`} name="Tue" component={DayScreen} initialParams={{ dayName: "Tuesday", userId: userId }} />
-        <Tab.Screen key={`We-${dayRefreshArray[2]}`} name="Wed" component={DayScreen} initialParams={{ dayName: "Wednesday", userId: userId }} />
-        <Tab.Screen key={`Th-${dayRefreshArray[3]}`} name="Thu" component={DayScreen} initialParams={{ dayName: "Thursday", userId: userId }} />
-        <Tab.Screen key={`Fr-${dayRefreshArray[4]}`} name="Fri" component={DayScreen} initialParams={{ dayName: "Friday", userId: userId }} />
-        <Tab.Screen key={`Sa-${dayRefreshArray[5]}`} name="Sat" component={DayScreen} initialParams={{ dayName: "Saturday", userId: userId }} />
-        <Tab.Screen key={`Su-${dayRefreshArray[6]}`} name="Sun" component={DayScreen} initialParams={{ dayName: "Sunday", userId: userId }} />
+        <Tab.Screen key={`Mo-${dayRefreshArray[0]}`} name="Mon" component={DayScreen} initialParams={{ date: weekDates[0], dayName: "Monday", userId: userId }} />
+        <Tab.Screen key={`Tu-${dayRefreshArray[1]}`} name="Tue" component={DayScreen} initialParams={{ date: weekDates[1], dayName: "Tuesday", userId: userId }} />
+        <Tab.Screen key={`We-${dayRefreshArray[2]}`} name="Wed" component={DayScreen} initialParams={{ date: weekDates[2], dayName: "Wednesday", userId: userId }} />
+        <Tab.Screen key={`Th-${dayRefreshArray[3]}`} name="Thu" component={DayScreen} initialParams={{ date: weekDates[3], dayName: "Thursday", userId: userId }} />
+        <Tab.Screen key={`Fr-${dayRefreshArray[4]}`} name="Fri" component={DayScreen} initialParams={{ date: weekDates[4], dayName: "Friday", userId: userId }} />
+        <Tab.Screen key={`Sa-${dayRefreshArray[5]}`} name="Sat" component={DayScreen} initialParams={{ date: weekDates[5], dayName: "Saturday", userId: userId }} />
+        <Tab.Screen key={`Su-${dayRefreshArray[6]}`} name="Sun" component={DayScreen} initialParams={{ date: weekDates[6], dayName: "Sunday", userId: userId }} />
       </Tab.Navigator>
     </View>
   );
