@@ -1,14 +1,21 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
-export const getGlobalMealQ = query({
-    args: { barcode: v.string() },
-
+export const getGlobalMealsByBarcodeQ = query({
+    args: {
+        barcode: v.string()
+    },
     handler: async (ctx, args) => {
+        return await ctx.db.query("globalMeals").withIndex("by_barcode", (q) => q.eq("barcode", args.barcode)).collect();
+    },
+});
 
-        const target = await ctx.db.query("globalMeals").withIndex("by_barcode", (q) => q.eq("barcode", args.barcode)).first();
-
-        return target;
+export const getGlobalMealsByNameQ = query({
+    args: {
+        name: v.string()
+    },
+    handler: async (ctx, args) => {
+        return await ctx.db.query("globalMeals").withIndex("by_name", (q) => q.eq("name", args.name)).collect();
     },
 });
 

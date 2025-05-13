@@ -18,7 +18,8 @@ export default defineSchema({
         proteins: v.number(),
         fat: v.number(),
         carbs: v.number(),
-    }).index("by_barcode", ["barcode"]),
+    }).index("by_barcode", ["barcode"])
+        .index("by_name", ["name"]),
 
     userMeals: defineTable({
         userId: v.string(),
