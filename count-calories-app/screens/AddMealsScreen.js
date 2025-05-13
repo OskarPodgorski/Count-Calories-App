@@ -300,10 +300,13 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   }, [mealsArray, userID]);
 
   const handleScannedFromDatabase = useCallback(async () => {
-    const data = await convex.query(api.meals.getGlobalMealQ, { barcode: scannedBarcode });
+    const data = await convex.query(api.meals.getGlobalMealsByBarcodeQ, { barcode: scannedBarcode });
 
-    if (data) {
+    console.log(data.length);
+
+    if (data && data.length > 0) {
       navigation.navigate("SelectMeals", {
+        barcode: scannedBarcode,
         meals: data
       });
 
