@@ -22,6 +22,10 @@ export const updateGlobalMealQ = mutation({
         carbs: v.number(),
     },
     handler: async (ctx, args) => {
+        if (!args.barcode || args.barcode === "") {
+            return;
+        }
+
         const existing = await ctx.db.query("globalMeals").withIndex("by_barcode", (q) => q.eq("barcode", args.barcode)).first();
 
         if (existing) {
@@ -97,7 +101,7 @@ export const upsertUserMealsByDateQ = mutation({
     }
 });
 
-export const deleteUserMealByNanoIDQ = mutation({
+export const deleteUserMealByNanoIdQ = mutation({
     args: {
         userId: v.string(),
         date: v.string(),
@@ -114,11 +118,11 @@ export const deleteUserMealByNanoIDQ = mutation({
 
         if (existing && existing.meals) {
             if (!existing.meals[args.mealType] || existing.meals[args.mealType].length === 0) {
-                return;
+                return false;
             }
 
             if (!existing.meals[args.mealType].find(meal => meal.nanoId === args.nanoId)) {
-                return;
+                return false;
             }
 
             const updatedMeals = {
@@ -127,6 +131,11 @@ export const deleteUserMealByNanoIDQ = mutation({
             };
 
             await ctx.db.patch(existing._id, { meals: updatedMeals });
+
+            return true;
+        }
+        else {
+            return false;
         }
     }
 });

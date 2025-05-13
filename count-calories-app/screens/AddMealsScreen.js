@@ -11,7 +11,7 @@ import * as MyStyles from "../styles/MyStyles"
 import { mealDB, MealEntry } from '../scripts/MealHelper'
 import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext } from '../scripts/Context';
 
-import { useQuery, useMutation, useConvex } from "convex/react";
+import { useMutation, useConvex } from "convex/react";
 import { api } from "../convex/_generated/api";
 
 import { useUser } from "@clerk/clerk-expo";
@@ -190,6 +190,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   const convex = useConvex();
   const updateGlobalMeal = useMutation(api.meals.updateGlobalMealQ);
   const insertUserMeal = useMutation(api.meals.upsertUserMealsByDateQ);
+  const deleteUserMeal = useMutation(api.meals.deleteUserMealByNanoIdQ);
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -249,17 +250,19 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
 
     setDayRefresh(dayInfo.dayName);
 
-    const { nanoId, grams, ...flatMealEntry } = mealEntry;
-    updateGlobalMeal({
-      ...flatMealEntry,
-      barcode: barcode
-    });
+    if (barcode !== "") {
+      const { nanoId, grams, ...flatMealEntry } = mealEntry;
+      updateGlobalMeal({
+        ...flatMealEntry,
+        barcode: barcode
+      });
+    }
 
     insertUserMeal({
       userId: userID,
       date: dayInfo.date,
       mealType: dayInfo.mealType,
-      meal: mealEntry
+      meal: { ...mealEntry }
     });
   };
 
@@ -269,6 +272,29 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
     setWaitsForBarcode(false);
     setModalVisible(false);
   };
+
+  const handleDelete = useCallback(async (nanoId) => {
+    const mealsArrayBackup = [...mealsArray];
+
+    setMealsArray(c => c.filter(item => item.nanoId !== nanoId));
+    onMealAdded?.();
+
+    try {
+      if (!await deleteUserMeal({
+        userId: userID,
+        date: dayInfo.date,
+        mealType: dayInfo.mealType,
+        nanoId
+      })) {
+        setMealsArray(mealsArrayBackup);
+        onMealAdded?.();
+      }
+    }
+    catch {
+      setMealsArray(mealsArrayBackup);
+      onMealAdded?.();
+    }
+  }, [mealsArray, userID]);
 
   const handleScannedFromDatabase = useCallback(() => {
     convex.query(api.meals.getGlobalMealQ, { barcode: scannedBarcode })
@@ -330,7 +356,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
                   elevation: 1
                 }}
                 onPress={() => {
-                  //mealDB.removeMeal(day, mealType, item.id);
+                  handleDelete(item.nanoId);
                   onMealAdded?.();
                 }}>
 
