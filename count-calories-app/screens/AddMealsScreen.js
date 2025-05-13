@@ -6,9 +6,10 @@ import { useNavigation } from '@react-navigation/native';
 import { startOfWeek, endOfWeek, eachDayOfInterval, format, getISODay } from "date-fns";
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import * as MyStyles from "../styles/MyStyles"
+import * as MyStyles from "../styles/MyStyles";
 
 import { mealDB, MealEntry } from '../scripts/MealHelper'
+import { AlertModal, ErrorModal } from '../components/MyComponents';
 import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext } from '../scripts/Context';
 
 import { useMutation, useConvex } from "convex/react";
@@ -193,6 +194,8 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   const deleteUserMeal = useMutation(api.meals.deleteUserMealByNanoIdQ);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [sendToUsModalVisible, setSendToUsModalVisible] = useState(false);
+  const [notFilledErrorVisible, setNotFilledErrorVisible] = useState(false);
 
   const { scannedBarcode, setScannedBarcode } = useContext(scannedBarcodeContext);
   const [barcode, setBarcode] = useState("");
@@ -275,6 +278,41 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
     setWaitsForBarcode(false);
     setModalVisible(false);
   };
+
+  const checkIfAllFieldsFilled = () => {
+    if (mealName !== "" &&
+      mealGrams !== "" &&
+      productCalories !== "" &&
+      productProteins !== "" &&
+      productFat !== "" &&
+      productCarbs !== "") {
+      if (barcode !== "") {
+        return 2;
+      }
+      else {
+        return 1;
+      }
+    }
+    else {
+      return 0;
+    }
+  }
+
+  const handleSendToDB = () => {
+    if (checkIfAllFieldsFilled() < 2) {
+      setNotFilledErrorVisible(true);
+      return;
+    }
+
+    updateGlobalMeal({
+      barcode: barcode,
+      name: mealName,
+      calories: productCalories === "" ? 0 : parseFloat(productCalories),
+      proteins: productProteins === "" ? 0 : parseFloat(productProteins),
+      fat: productFat === "" ? 0 : parseFloat(productFat),
+      carbs: productCarbs === "" ? 0 : parseFloat(productCarbs)
+    });
+  }
 
   const handleDelete = useCallback(async (nanoId) => {
     const mealsArrayBackup = [...mealsArray];
@@ -543,8 +581,12 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
                 <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorBlack, fontSize: 16 }}>Cancel</Text>
               </TouchableOpacity>
 
+              <TouchableOpacity style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorSilver }} onPress={() => { setSendToUsModalVisible(true); }}>
+                <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorBlack, fontFamily: MyStyles.BaseFontMedium, fontSize: 16 }}>Send To Us</Text>
+              </TouchableOpacity>
+
               <TouchableOpacity style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorDarkCyan }} onPress={handleAdd}>
-                <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorBlack, fontWeight: 'bold', fontSize: 16 }}>Add +</Text>
+                <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorBlack, fontFamily: MyStyles.BaseFontMedium, fontSize: 16 }}>Add +</Text>
               </TouchableOpacity>
 
             </View>
@@ -552,6 +594,17 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
           </View>
         </View>
       </Modal>
+
+      <AlertModal
+        modalParams={{ visible: sendToUsModalVisible, onRequestClose: () => { setSendToUsModalVisible(false); } }}
+        title="Send To Database"
+        message="Do you want to send this meal to our global database?"
+        buttonsDef={[{ text: "Cancel", action: () => { setSendToUsModalVisible(false); } }, { text: "Send", action: () => { setSendToUsModalVisible(false); handleSendToDB(); } }]} />
+
+      <ErrorModal
+        modalParams={{ visible: notFilledErrorVisible, onRequestClose: () => { setNotFilledErrorVisible(false); } }}
+        title="Info"
+        message="Not all fields are filled!" />
 
     </View>
   );

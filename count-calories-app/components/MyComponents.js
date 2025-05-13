@@ -48,3 +48,39 @@ export function AlertModal({ modalParams, title, message, buttonsDef }) {
         </Modal>
     );
 }
+
+export function ErrorModal({ modalParams, title, message }) {
+    return (
+        <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalParams.visible}
+            onRequestClose={modalParams.onRequestClose}>
+
+            <View style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)'
+            }}>
+
+                <View style={{
+                    ...MyStyles.baseStyle.base,
+                    backgroundColor: MyStyles.ColorEerieBlack, padding: 10, elevation: 6, alignItems: "center"
+                }}>
+
+                    <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 20, textAlign: "center", paddingTop: 0 }} >{title}</Text>
+                    <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 16, textAlign: "center" }}>{message}</Text>
+
+                    <TouchableOpacity style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorNight, elevation: 2, marginTop: 15 }}
+                        onPress={modalParams.onRequestClose}>
+                        <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 22 }}>OK</Text>
+                    </TouchableOpacity>
+
+                </View>
+
+            </View>
+
+        </Modal>
+    );
+}
