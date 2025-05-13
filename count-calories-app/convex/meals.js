@@ -130,7 +130,12 @@ export const deleteUserMealByNanoIdQ = mutation({
                 [args.mealType]: existing.meals[args.mealType].filter(meal => meal.nanoId !== args.nanoId)
             };
 
-            await ctx.db.patch(existing._id, { meals: updatedMeals });
+            if (Object.values(updatedMeals).every(arr => arr.length === 0)) {
+                await ctx.db.delete(existing._id);
+            }
+            else {
+                await ctx.db.patch(existing._id, { meals: updatedMeals });
+            }
 
             return true;
         }
