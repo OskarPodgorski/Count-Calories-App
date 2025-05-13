@@ -8,7 +8,7 @@ import { startOfWeek, endOfWeek, eachDayOfInterval, format, getISODay } from "da
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as MyStyles from "../styles/MyStyles"
 
-import { mealDB, MealEntry } from '../scripts/MealDatabase'
+import { mealDB, MealEntry } from '../scripts/MealHelper'
 import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext } from '../scripts/Context';
 
 import { useQuery, useMutation, useConvex } from "convex/react";

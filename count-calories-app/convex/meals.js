@@ -57,6 +57,7 @@ export const upsertUserMealsByDateQ = mutation({
         date: v.string(),
         mealType: v.string(),
         meal: v.object({
+            nanoId: v.string(),
             name: v.string(),
             grams: v.number(),
             calories: v.number(),
@@ -92,6 +93,40 @@ export const upsertUserMealsByDateQ = mutation({
                     [args.mealType]: [args.meal]
                 }
             });
+        }
+    }
+});
+
+export const deleteUserMealByNanoIDQ = mutation({
+    args: {
+        userId: v.string(),
+        date: v.string(),
+        mealType: v.string(),
+        nanoId: v.string()
+    },
+    handler: async (ctx, args) => {
+        const existing = await ctx.db
+            .query("userMeals")
+            .withIndex("by_user_date", q =>
+                q.eq("userId", args.userId).eq("date", args.date)
+            )
+            .unique();
+
+        if (existing && existing.meals) {
+            if (!existing.meals[args.mealType] || existing.meals[args.mealType].length === 0) {
+                return;
+            }
+
+            if (!existing.meals[args.mealType].find(meal => meal.nanoId === args.nanoId)) {
+                return;
+            }
+
+            const updatedMeals = {
+                ...existing.meals,
+                [args.mealType]: existing.meals[args.mealType].filter(meal => meal.nanoId !== args.nanoId)
+            };
+
+            await ctx.db.patch(existing._id, { meals: updatedMeals });
         }
     }
 });

@@ -1,11 +1,11 @@
-import { v4 as uuidv4 } from 'uuid';
+import { nanoid } from "nanoid";
 
 export class MealEntry {
-  constructor(name, grams, caloriesPer100g, proteins, fat, carbs, barcode) {
-    this.id = uuidv4();
+  constructor(name, grams, calories, proteins, fat, carbs, barcode = undefined) {
+    this.nanoid = nanoid();
     this.name = name;
     this.grams = grams;
-    this.calories = caloriesPer100g;
+    this.calories = calories;
     this.proteins = proteins;
     this.fat = fat;
     this.carbs = carbs;

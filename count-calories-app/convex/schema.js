@@ -27,6 +27,7 @@ export default defineSchema({
             v.string(),
             v.array(
                 v.object({
+                    nanoId: v.string(),
                     name: v.string(),
                     grams: v.number(),
                     calories: v.number(),
