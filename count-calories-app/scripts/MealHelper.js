@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 
 export class MealEntry {
   constructor(name, grams, calories, proteins, fat, carbs, barcode = undefined) {
-    this.nanoid = nanoid();
+    this.nanoId = nanoid();
     this.name = name;
     this.grams = grams;
     this.calories = calories;

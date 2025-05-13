@@ -231,13 +231,14 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   }
 
   const handleAdd = () => {
-    const mealEntry = {
-      name: mealName,
-      calories: productCalories === "" ? 0 : parseFloat(productCalories),
-      proteins: productProteins === "" ? 0 : parseFloat(productProteins),
-      fat: productFat === "" ? 0 : parseFloat(productFat),
-      carbs: productCarbs === "" ? 0 : parseFloat(productCarbs)
-    };
+    const mealEntry = new MealEntry(
+      mealName,
+      mealGrams === "" ? 0 : parseFloat(mealGrams),
+      productCalories === "" ? 0 : parseFloat(productCalories),
+      productProteins === "" ? 0 : parseFloat(productProteins),
+      productFat === "" ? 0 : parseFloat(productFat),
+      productCarbs === "" ? 0 : parseFloat(productCarbs)
+    );
 
     setMealsArray(c => [...c, mealEntry]);
 
@@ -248,8 +249,9 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
 
     setDayRefresh(dayInfo.dayName);
 
+    const { nanoId, grams, ...flatMealEntry } = mealEntry;
     updateGlobalMeal({
-      ...mealEntry,
+      ...flatMealEntry,
       barcode: barcode
     });
 
@@ -257,10 +259,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
       userId: userID,
       date: dayInfo.date,
       mealType: dayInfo.mealType,
-      meal: {
-        ...mealEntry,
-        grams: parseFloat(mealGrams)
-      }
+      meal: mealEntry
     });
   };
 
