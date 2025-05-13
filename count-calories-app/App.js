@@ -18,6 +18,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import LoginScreen from './screens/LoginScreen';
 import BarcodeScannerScreen from "./screens/BarcodeScannerScreen";
+import SelectMealsScreen from './screens/SelectMealsScreen';
 
 import AddMealScreen from './screens/AddMealsScreen';
 import SettingsScreen from './screens/SettingsScreen';
@@ -83,6 +84,7 @@ function Root() {
             <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: MyStyles.ColorEerieBlack } }}>
               <Stack.Screen name="Main" component={DrawerCreate} />
               <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
+              <Stack.Screen name="SelectMeals" component={SelectMealsScreen} />
             </Stack.Navigator>
 
           </ScannedBarcodeProvider>

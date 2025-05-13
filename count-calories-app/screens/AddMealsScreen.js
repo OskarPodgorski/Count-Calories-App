@@ -211,12 +211,15 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
     if (!waitsForBarcode || !scannedBarcode) return;
 
     setWaitsForBarcode(false);
-    setModalVisible(true);
-
-    setBarcode(scannedBarcode);
-    handleScannedFromDatabase();
-
     setScannedBarcode("");
+
+    (async () => {
+      if (!await handleScannedFromDatabase()) {
+        setModalVisible(true);
+        setBarcode(scannedBarcode);
+      }
+    })();
+
   }, [scannedBarcode]);
 
   const clearFields = () => {
@@ -296,19 +299,16 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
     }
   }, [mealsArray, userID]);
 
-  const handleScannedFromDatabase = useCallback(() => {
-    convex.query(api.meals.getGlobalMealQ, { barcode: scannedBarcode })
-      .then(data => {
-        if (data) {
-          setMealName(data.name);
-          setProductCalories(data.calories.toString());
-          setProductProteins(data.proteins.toString());
-          setProductFat(data.fat.toString());
-          setProductCarbs(data.carbs.toString());
+  const handleScannedFromDatabase = useCallback(async () => {
+    const data = await convex.query(api.meals.getGlobalMealQ, { barcode: scannedBarcode });
 
-          return true;
-        }
+    if (data) {
+      navigation.navigate("SelectMeals", {
+        meals: data
       });
+
+      return true;
+    }
 
     return false;
   }, [scannedBarcode]);
