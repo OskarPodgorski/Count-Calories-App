@@ -560,21 +560,16 @@ function CaloriesFooter({ footerInfoArray }) {
   const { dailyTargets } = useContext(dailyTargetsContext);
   const { calories: caloriesTarget, proteins: proteinsTarget, fat: fatTarget, carbs: carbsTarget } = dailyTargets;
 
-  const [totals, setTotals] = useState({ calories: 0, proteins: 0, fat: 0, carbs: 0 });
-
-  useEffect(() => {
-    let final = { calories: 0, proteins: 0, fat: 0, carbs: 0 };
-
-    footerInfoArray.forEach((item) => {
-      final.calories += item[0];
-      final.proteins += item[1];
-      final.fat += item[2];
-      final.carbs += item[3];
-    });
-
-    setTotals(final);
-  }, [footerInfoArray]);
-
+  const totals = footerInfoArray.reduce(
+    (acc, item) => {
+      acc.calories += item[0];
+      acc.proteins += item[1];
+      acc.fat += item[2];
+      acc.carbs += item[3];
+      return acc;
+    },
+    { calories: 0, proteins: 0, fat: 0, carbs: 0 }
+  );
 
   function ProgressBar({ actual, target }) {
     if (typeof (actual) != "number" || typeof (target) != "number") {
