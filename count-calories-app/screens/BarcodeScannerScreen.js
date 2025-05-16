@@ -18,7 +18,7 @@ export default function BarcodeScannerScreen() {
   const [facing, setFacing] = useState('back');
   const [flashlight, setFlashlight] = useState(false);
 
-  const { scannedBarcode, setScannedBarcode } = useContext(scannedBarcodeContext);
+  const { setScannedBarcode } = useContext(scannedBarcodeContext);
 
   useFocusEffect(
     useCallback(() => {

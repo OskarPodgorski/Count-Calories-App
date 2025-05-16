@@ -8,9 +8,9 @@ import { startOfWeek, endOfWeek, eachDayOfInterval, format, getISODay } from "da
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as MyStyles from "../styles/MyStyles";
 
-import { MealEntry, GetProperMacroValue } from '../scripts/MealHelper'
+import { MealEntry, GetProperMacroValue } from '../scripts/MealHelper';
 import { AlertModal, InfoModal } from '../components/MyComponents';
-import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext } from '../scripts/Context';
+import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext, selectedMealContext } from '../scripts/Context';
 
 import { useMutation, useConvex } from "convex/react";
 import { api } from "../convex/_generated/api";
@@ -158,8 +158,10 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   const [thanksInfoVisible, setThanksInfoVisible] = useState(false);
 
   const { scannedBarcode, setScannedBarcode } = useContext(scannedBarcodeContext);
+  const { selectedMeal, setSelectedMeal } = useContext(selectedMealContext);
+
   const [barcode, setBarcode] = useState("");
-  const [waitsForBarcode, setWaitsForBarcode] = useState(false);
+  const [waitsForReopen, setWaitsForReopen] = useState(false);
 
   const [mealName, setMealName] = useState('');
   const [mealGrams, setMealGrams] = useState('');
@@ -200,9 +202,9 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   }, [mealsArray]);
 
   useEffect(() => {
-    if (!waitsForBarcode || !scannedBarcode) return;
+    if (!waitsForReopen || !scannedBarcode) return;
 
-    setWaitsForBarcode(false);
+    setWaitsForReopen(false);
     setScannedBarcode("");
 
     (async () => {
@@ -213,6 +215,23 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
     })();
 
   }, [scannedBarcode]);
+
+  useEffect(() => {
+    if (!waitsForReopen || !selectedMeal) return;
+
+    setWaitsForReopen(false);
+    setModalVisible(true);
+
+    setMealName(selectedMeal.name);
+    setProductCalories(selectedMeal.calories.toString());
+    setProductProteins(selectedMeal.proteins.toString());
+    setProductFat(selectedMeal.fat.toString());
+    setProductCarbs(selectedMeal.carbs.toString());
+    setBarcode(selectedMeal.barcode);
+
+    setSelectedMeal(null);
+
+  }, [selectedMeal]);
 
   useEffect(() => {
     onMealAdded?.({
@@ -259,7 +278,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   const handleCancel = () => {
     clearFields();
 
-    setWaitsForBarcode(false);
+    setWaitsForReopen(false);
     setModalVisible(false);
   };
 
@@ -311,6 +330,8 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
         barcode: scannedBarcode,
         meals: data
       });
+
+      setWaitsForReopen(true);
 
       return true;
     }
@@ -403,7 +424,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
           }}
           onPress={() => {
             setModalVisible(false);
-            setWaitsForBarcode(true);
+            setWaitsForReopen(true);
             navigation.navigate("BarcodeScanner");
           }}>
           <Text style={{ color: MyStyles.ColorBlack, fontSize: 12 }}>|II|II|</Text>
@@ -464,7 +485,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
                   }}
                   onPress={() => {
                     setModalVisible(false);
-                    setWaitsForBarcode(true);
+                    setWaitsForReopen(true);
                     navigation.navigate("BarcodeScanner");
                   }}>
                   <Text style={{ color: MyStyles.ColorBlack, fontSize: 12 }}>|II|II|</Text>

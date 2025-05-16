@@ -20,13 +20,6 @@ export function DailyTargetsProvider({ children }) {
     carbs: 250
   });
 
-  //const dailyTargetsRef = useRef(dailyTargets);
-
-  // useEffect(() => {
-  //   dailyTargetsRef.current = dailyTargets;
-  //   console.log(dailyTargetsRef.current);
-  // }, [dailyTargets]);
-
   const updateDailyTargetsQuery = useCallback(() => {
     if (!userId) return;
 
@@ -38,7 +31,7 @@ export function DailyTargetsProvider({ children }) {
       carbs: dailyTargets.carbs
     });
 
-    console.log("query");
+    console.log("DailyTargetsMutation");
   }, [dailyTargets]);
 
   useEffect(() => {
@@ -51,7 +44,7 @@ export function DailyTargetsProvider({ children }) {
       carbs: data.carbs
     });
 
-    console.log("uE");
+    console.log("DailyTargetsSet");
   }, [data, userId]);
 
   return (
@@ -70,6 +63,18 @@ export function ScannedBarcodeProvider({ children }) {
     <scannedBarcodeContext.Provider value={{ scannedBarcode, setScannedBarcode }}>
       {children}
     </scannedBarcodeContext.Provider>
+  )
+}
+
+export const selectedMealContext = createContext();
+
+export function SelectedMealProvider({ children }) {
+  const [selectedMeal, setSelectedMeal] = useState({});
+
+  return (
+    <selectedMealContext.Provider value={{ selectedMeal, setSelectedMeal }}>
+      {children}
+    </selectedMealContext.Provider>
   )
 }
 

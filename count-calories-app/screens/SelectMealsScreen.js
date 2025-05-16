@@ -1,9 +1,8 @@
 import { useState, useContext, useEffect, useCallback } from 'react';
 import { Text, View, TouchableOpacity, Modal, TextInput, ScrollView, ActivityIndicator } from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
 
-import { startOfWeek, endOfWeek, eachDayOfInterval, format, getISODay } from "date-fns";
+import { selectedMealContext } from '../scripts/Context';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as MyStyles from "../styles/MyStyles"
@@ -11,6 +10,13 @@ import * as MyStyles from "../styles/MyStyles"
 export default function SelectMealsScreen({ route }) {
   const { meals, barcode } = route?.params;
   const navigation = useNavigation();
+
+  const { setSelectedMeal } = useContext(selectedMealContext);
+
+  function HandleSelect(meal) {
+    setSelectedMeal(meal);
+    navigation.popTo("Main");
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: MyStyles.ColorNight }}>
@@ -27,7 +33,8 @@ export default function SelectMealsScreen({ route }) {
         {meals && meals.length > 0 && (
           meals.map((item, index) => (
 
-            <TouchableOpacity key={index} style={{ borderRadius: 16, backgroundColor: MyStyles.ColorOnyx, alignItems: "stretch", padding: 5, elevation: 4 }}>
+            <TouchableOpacity key={index} style={{ borderRadius: 16, backgroundColor: MyStyles.ColorOnyx, alignItems: "stretch", padding: 5, elevation: 4 }}
+              onPress={() => { HandleSelect(item); }}>
 
               <Text style={{
                 ...MyStyles.baseStyle.base, ...MyStyles.baseStyle.text,

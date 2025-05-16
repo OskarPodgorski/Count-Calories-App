@@ -26,7 +26,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import AccountScreen from './screens/AccountScreen';
 
 import * as MyStyles from "./styles/MyStyles";
-import { DailyTargetsProvider, RefreshDayProvider, ScannedBarcodeProvider } from './scripts/Context';
+import { DailyTargetsProvider, RefreshDayProvider, ScannedBarcodeProvider, SelectedMealProvider } from './scripts/Context';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -89,13 +89,15 @@ function Main() {
       <DailyTargetsProvider>
         <RefreshDayProvider>
           <ScannedBarcodeProvider>
+            <SelectedMealProvider>
 
-            <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: MyStyles.ColorEerieBlack } }}>
-              <Stack.Screen name="Main" component={DrawerCreate} />
-              <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
-              <Stack.Screen name="SelectMeals" component={SelectMealsScreen} />
-            </Stack.Navigator>
+              <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: MyStyles.ColorEerieBlack } }}>
+                <Stack.Screen name="Main" component={DrawerCreate} />
+                <Stack.Screen name="BarcodeScanner" component={BarcodeScannerScreen} />
+                <Stack.Screen name="SelectMeals" component={SelectMealsScreen} />
+              </Stack.Navigator>
 
+            </SelectedMealProvider>
           </ScannedBarcodeProvider>
         </RefreshDayProvider>
       </DailyTargetsProvider>
