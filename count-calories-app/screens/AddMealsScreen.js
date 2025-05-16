@@ -8,7 +8,7 @@ import { startOfWeek, endOfWeek, eachDayOfInterval, format, getISODay } from "da
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as MyStyles from "../styles/MyStyles";
 
-import { mealDB, MealEntry } from '../scripts/MealHelper'
+import { mealDB, MealEntry, GetProperMacroValue } from '../scripts/MealHelper'
 import { AlertModal, InfoModal } from '../components/MyComponents';
 import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext } from '../scripts/Context';
 
@@ -171,10 +171,10 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
 
   const getMacrosTotalArray = useCallback(() => {
     return mealsArray.reduce((total, meal) => {
-      total[0] += meal.calories;
-      total[1] += meal.proteins;
-      total[2] += meal.fat;
-      total[3] += meal.carbs;
+      total[0] += GetProperMacroValue(meal.calories, meal.grams);
+      total[1] += GetProperMacroValue(meal.proteins, meal.grams);
+      total[2] += GetProperMacroValue(meal.fat, meal.grams);
+      total[3] += GetProperMacroValue(meal.carbs, meal.grams);
       return total;
     }, [0, 0, 0, 0]);
   }, [mealsArray]);
@@ -560,16 +560,19 @@ function CaloriesFooter({ footerInfoArray }) {
   const { dailyTargets } = useContext(dailyTargetsContext);
   const { calories: caloriesTarget, proteins: proteinsTarget, fat: fatTarget, carbs: carbsTarget } = dailyTargets;
 
-  const totals = footerInfoArray.reduce(
-    (acc, item) => {
-      acc.calories += item[0];
-      acc.proteins += item[1];
-      acc.fat += item[2];
-      acc.carbs += item[3];
-      return acc;
-    },
-    { calories: 0, proteins: 0, fat: 0, carbs: 0 }
-  );
+  const totals = (() => {
+    const totalRaw = footerInfoArray.reduce(
+      (acc, item) => {
+        acc.calories += item[0];
+        acc.proteins += item[1];
+        acc.fat += item[2];
+        acc.carbs += item[3];
+        return acc;
+      },
+      { calories: 0, proteins: 0, fat: 0, carbs: 0 }
+    );
+    return { calories: Math.round(totalRaw.calories), proteins: Math.round(totalRaw.proteins), fat: Math.round(totalRaw.fat), carbs: Math.round(totalRaw.carbs) }
+  })();
 
   function ProgressBar({ actual, target }) {
     if (typeof (actual) != "number" || typeof (target) != "number") {

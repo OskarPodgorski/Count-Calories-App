@@ -1,5 +1,13 @@
 import { nanoid } from "nanoid";
 
+export function GetProperMacroValue(macroValue, grams) {
+  if (macroValue === undefined || grams === undefined || typeof macroValue !== "number" || typeof grams !== "number") {
+    return 0;
+  }
+
+  return (macroValue * grams) / 100;
+}
+
 export class MealEntry {
   constructor(name, grams, calories, proteins, fat, carbs, barcode = undefined) {
     this.nanoId = nanoid();
