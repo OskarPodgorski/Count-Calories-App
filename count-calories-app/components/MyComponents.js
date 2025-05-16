@@ -49,7 +49,7 @@ export function AlertModal({ modalParams, title, message, buttonsDef }) {
     );
 }
 
-export function ErrorModal({ modalParams, title, message }) {
+export function InfoModal({ modalParams, title, message }) {
     return (
         <Modal
             animationType="fade"

@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, useCallback } from 'react';
+import { useState, useContext, useEffect, useCallback, use } from 'react';
 import { Text, View, TouchableOpacity, Modal, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +9,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as MyStyles from "../styles/MyStyles";
 
 import { mealDB, MealEntry } from '../scripts/MealHelper'
-import { AlertModal, ErrorModal } from '../components/MyComponents';
+import { AlertModal, InfoModal } from '../components/MyComponents';
 import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext } from '../scripts/Context';
 
 import { useMutation, useConvex } from "convex/react";
@@ -79,11 +79,9 @@ export default function AddMealScreen() {
 function DayScreen({ route }) {
   const { dayName, userId, date } = route.params;
 
-  const [refreshFooter, setRefreshFooter] = useState(false);
-  const Refresh = () => setRefreshFooter(c => !c);
+  const [footerInfoArray, setFooterInfoArray] = useState([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
 
   const convex = useConvex();
-
   const [dayData, setDayData] = useState(undefined);
 
   useEffect(() => {
@@ -112,74 +110,15 @@ function DayScreen({ route }) {
         :
         (<ScrollView contentContainerStyle={{ alignItems: "stretch", paddingHorizontal: 4, paddingBottom: 90, paddingTop: 56, gap: 6 }} showsVerticalScrollIndicator={false}>
 
-          <MealSection dayInfo={{ dayName, mealType: "Breakfast", date }} mealQueryArray={dayData?.meals?.["Breakfast"] ?? []} onMealAdded={Refresh} userID={userId} />
-          <MealSection dayInfo={{ dayName, mealType: "Lunch", date }} mealQueryArray={dayData?.meals?.["Lunch"] ?? []} onMealAdded={Refresh} userID={userId} />
-          <MealSection dayInfo={{ dayName, mealType: "Dinner", date }} mealQueryArray={dayData?.meals?.["Dinner"] ?? []} onMealAdded={Refresh} userID={userId} />
+          <MealSection dayInfo={{ dayName, mealType: "Breakfast", mealIndex: 0, date }} mealQueryArray={dayData?.meals?.["Breakfast"] ?? []} onMealAdded={setFooterInfoArray} userID={userId} />
+          <MealSection dayInfo={{ dayName, mealType: "Lunch", mealIndex: 1, date }} mealQueryArray={dayData?.meals?.["Lunch"] ?? []} onMealAdded={setFooterInfoArray} userID={userId} />
+          <MealSection dayInfo={{ dayName, mealType: "Dinner", mealIndex: 2, date }} mealQueryArray={dayData?.meals?.["Dinner"] ?? []} onMealAdded={setFooterInfoArray} userID={userId} />
 
         </ScrollView>)
       }
 
-      <CaloriesFooter key={refreshFooter} day={dayName} />
+      <CaloriesFooter day={dayName} footerInfoArray={footerInfoArray} />
 
-    </View>
-  );
-}
-
-function CaloriesFooter({ day }) {
-  const { calories: caloriesTotal, proteins: proteintsTotal, fat: fatTotal, carbs: carbsTotal } = mealDB.getDayTotals(day);
-  const { dailyTargets } = useContext(dailyTargetsContext);
-  const { calories: caloriesTarget, proteins: proteinsTarget, fat: fatTarget, carbs: carbsTarget } = dailyTargets;
-
-  function ProgressBar({ actual, target }) {
-    if (typeof (actual) != "number" || typeof (target) != "number") {
-      actual = 0;
-      target = 1;
-    }
-
-    const result = Math.min(Math.max((actual / target), 0), 1) * 100;
-
-    return (
-      <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorNight, alignSelf: "stretch", height: 10, marginBottom: 5, overflow: "hidden" }}>
-        <View style={{ borderRadius: 4, backgroundColor: MyStyles.ColorSilver, flex: 1, width: `${result}%` }} />
-      </View>
-    );
-  }
-
-  return (
-    <View style={{
-      backgroundColor: MyStyles.ColorDarkCyan, position: "absolute", bottom: 0, left: 0, right: 0, height: 82, marginHorizontal: 8,
-      flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8,
-      shadowColor: MyStyles.ColorBlack,
-      elevation: 10
-    }}>
-      <View style={MyStyles.footerStyle.viewInside}>
-
-        <ProgressBar actual={caloriesTotal} target={caloriesTarget} />
-        <Text style={{ fontFamily: MyStyles.BaseFont }}>Calories</Text>
-        <Text style={{ fontFamily: MyStyles.BaseFontMedium }}>{caloriesTotal} / {caloriesTarget}</Text>
-
-      </View>
-      <View style={MyStyles.footerStyle.viewInside}>
-
-        <ProgressBar actual={proteintsTotal} target={proteinsTarget} />
-        <Text style={{ fontFamily: MyStyles.BaseFont }}>Proteins</Text>
-        <Text style={{ fontFamily: MyStyles.BaseFontMedium }}>{proteintsTotal} / {proteinsTarget}</Text>
-
-      </View>
-      <View style={MyStyles.footerStyle.viewInside}>
-
-        <ProgressBar actual={fatTotal} target={fatTarget} />
-        <Text style={{ fontFamily: MyStyles.BaseFont }}>Fat</Text>
-        <Text style={{ fontFamily: MyStyles.BaseFontMedium }}>{fatTotal}/ {fatTarget}</Text>
-
-      </View>
-      <View style={MyStyles.footerStyle.viewInside}>
-
-        <ProgressBar actual={carbsTotal} target={carbsTarget} />
-        <Text style={{ fontFamily: MyStyles.BaseFont }}>Carbs</Text>
-        <Text style={{ fontFamily: MyStyles.BaseFontMedium }}>{carbsTotal} / {carbsTarget}</Text>
-
-      </View>
     </View>
   );
 }
@@ -196,6 +135,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [sendToUsModalVisible, setSendToUsModalVisible] = useState(false);
   const [notFilledErrorVisible, setNotFilledErrorVisible] = useState(false);
+  const [thanksInfoVisible, setThanksInfoVisible] = useState(false);
 
   const { scannedBarcode, setScannedBarcode } = useContext(scannedBarcodeContext);
   const [barcode, setBarcode] = useState("");
@@ -209,6 +149,35 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   const [productCarbs, setProductCarbs] = useState('');
 
   const [mealsArray, setMealsArray] = useState(mealQueryArray);
+
+  const checkIfAllFieldsFilled = () => {
+    if (mealName !== "" &&
+      mealGrams !== "" &&
+      productCalories !== "" &&
+      productProteins !== "" &&
+      productFat !== "" &&
+      productCarbs !== "") {
+      if (barcode !== "") {
+        return 2;
+      }
+      else {
+        return 1;
+      }
+    }
+    else {
+      return 0;
+    }
+  }
+
+  const getMacrosTotalArray = useCallback(() => {
+    return mealsArray.reduce((total, meal) => {
+      total[0] += meal.calories;
+      total[1] += meal.proteins;
+      total[2] += meal.fat;
+      total[3] += meal.carbs;
+      return total;
+    }, [0, 0, 0, 0]);
+  }, [mealsArray]);
 
   useEffect(() => {
     if (!waitsForBarcode || !scannedBarcode) return;
@@ -224,6 +193,13 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
     })();
 
   }, [scannedBarcode]);
+
+  useEffect(() => {
+    onMealAdded?.(c => {
+      c[dayInfo.mealIndex] = getMacrosTotalArray();
+      return [...c];
+    });
+  }, [mealsArray]);
 
   const clearFields = () => {
     setBarcode("");
@@ -247,29 +223,17 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
       productCarbs === "" ? 0 : parseFloat(productCarbs)
     );
 
-    setMealsArray(c => [...c, mealEntry]);
-
-    clearFields();
-
-    onMealAdded?.();
-    setModalVisible(false);
-
-    setDayRefresh(dayInfo.dayName);
-
-    if (barcode !== "") {
-      const { nanoId, grams, ...flatMealEntry } = mealEntry;
-      updateGlobalMeal({
-        ...flatMealEntry,
-        barcode: barcode
-      });
-    }
-
     insertUserMeal({
       userId: userID,
       date: dayInfo.date,
       mealType: dayInfo.mealType,
       meal: { ...mealEntry }
     });
+
+    setMealsArray(c => [...c, mealEntry]);
+    clearFields();
+    setModalVisible(false);
+    setDayRefresh(dayInfo.dayName);
   };
 
   const handleCancel = () => {
@@ -278,25 +242,6 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
     setWaitsForBarcode(false);
     setModalVisible(false);
   };
-
-  const checkIfAllFieldsFilled = () => {
-    if (mealName !== "" &&
-      mealGrams !== "" &&
-      productCalories !== "" &&
-      productProteins !== "" &&
-      productFat !== "" &&
-      productCarbs !== "") {
-      if (barcode !== "") {
-        return 2;
-      }
-      else {
-        return 1;
-      }
-    }
-    else {
-      return 0;
-    }
-  }
 
   const handleSendToDB = () => {
     if (checkIfAllFieldsFilled() < 2) {
@@ -312,13 +257,14 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
       fat: productFat === "" ? 0 : parseFloat(productFat),
       carbs: productCarbs === "" ? 0 : parseFloat(productCarbs)
     });
+
+    setThanksInfoVisible(true);
   }
 
   const handleDelete = useCallback(async (nanoId) => {
     const mealsArrayBackup = [...mealsArray];
 
     setMealsArray(c => c.filter(item => item.nanoId !== nanoId));
-    onMealAdded?.();
 
     try {
       if (!await deleteUserMeal({
@@ -328,12 +274,10 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
         nanoId
       })) {
         setMealsArray(mealsArrayBackup);
-        onMealAdded?.();
       }
     }
     catch {
       setMealsArray(mealsArrayBackup);
-      onMealAdded?.();
     }
   }, [mealsArray, userID]);
 
@@ -396,10 +340,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
                   padding: 4,
                   elevation: 1
                 }}
-                onPress={() => {
-                  handleDelete(item.nanoId);
-                  onMealAdded?.();
-                }}>
+                onPress={() => { handleDelete(item.nanoId); }}>
 
 
                 <MaterialIcons name="delete-forever" size={30} color={MyStyles.ColorDarkCyan} />
@@ -601,11 +542,90 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
         message="Do you want to send this meal to our global database?"
         buttonsDef={[{ text: "Cancel", action: () => { setSendToUsModalVisible(false); } }, { text: "Send", action: () => { setSendToUsModalVisible(false); handleSendToDB(); } }]} />
 
-      <ErrorModal
+      <InfoModal
         modalParams={{ visible: notFilledErrorVisible, onRequestClose: () => { setNotFilledErrorVisible(false); } }}
         title="Info"
         message="Not all fields are filled!" />
 
+      <InfoModal
+        modalParams={{ visible: thanksInfoVisible, onRequestClose: () => { setThanksInfoVisible(false); } }}
+        title="Info"
+        message="Thanks for improving this App" />
+
+    </View>
+  );
+}
+
+function CaloriesFooter({ footerInfoArray }) {
+  const { dailyTargets } = useContext(dailyTargetsContext);
+  const { calories: caloriesTarget, proteins: proteinsTarget, fat: fatTarget, carbs: carbsTarget } = dailyTargets;
+
+  const [totals, setTotals] = useState({ calories: 0, proteins: 0, fat: 0, carbs: 0 });
+
+  useEffect(() => {
+    let final = { calories: 0, proteins: 0, fat: 0, carbs: 0 };
+
+    footerInfoArray.forEach((item) => {
+      final.calories += item[0];
+      final.proteins += item[1];
+      final.fat += item[2];
+      final.carbs += item[3];
+    });
+
+    setTotals(final);
+  }, [footerInfoArray]);
+
+
+  function ProgressBar({ actual, target }) {
+    if (typeof (actual) != "number" || typeof (target) != "number") {
+      actual = 0;
+      target = 1;
+    }
+
+    const result = Math.min(Math.max((actual / target), 0), 1) * 100;
+
+    return (
+      <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorNight, alignSelf: "stretch", height: 10, marginBottom: 5, overflow: "hidden" }}>
+        <View style={{ borderRadius: 4, backgroundColor: MyStyles.ColorSilver, flex: 1, width: `${result}%` }} />
+      </View>
+    );
+  }
+
+  return (
+    <View style={{
+      backgroundColor: MyStyles.ColorDarkCyan, position: "absolute", bottom: 0, left: 0, right: 0, height: 82, marginHorizontal: 8,
+      flexDirection: 'row', borderTopLeftRadius: 8, borderTopRightRadius: 8,
+      shadowColor: MyStyles.ColorBlack,
+      elevation: 10
+    }}>
+      <View style={MyStyles.footerStyle.viewInside}>
+
+        <ProgressBar actual={totals.calories} target={caloriesTarget} />
+        <Text style={{ fontFamily: MyStyles.BaseFont }}>Calories</Text>
+        <Text style={{ fontFamily: MyStyles.BaseFontMedium }}>{totals.calories} / {caloriesTarget}</Text>
+
+      </View>
+      <View style={MyStyles.footerStyle.viewInside}>
+
+        <ProgressBar actual={totals.proteins} target={proteinsTarget} />
+        <Text style={{ fontFamily: MyStyles.BaseFont }}>Proteins</Text>
+        <Text style={{ fontFamily: MyStyles.BaseFontMedium }}>{totals.proteins} / {proteinsTarget}</Text>
+
+      </View>
+      <View style={MyStyles.footerStyle.viewInside}>
+
+        <ProgressBar actual={totals.fat} target={fatTarget} />
+        <Text style={{ fontFamily: MyStyles.BaseFont }}>Fat</Text>
+        <Text style={{ fontFamily: MyStyles.BaseFontMedium }}>{totals.fat}/ {fatTarget}</Text>
+
+      </View>
+      <View style={MyStyles.footerStyle.viewInside}>
+
+        <ProgressBar actual={totals.carbs} target={carbsTarget} />
+        <Text style={{ fontFamily: MyStyles.BaseFont }}>Carbs</Text>
+        <Text style={{ fontFamily: MyStyles.BaseFontMedium }}>{totals.carbs} / {carbsTarget}</Text>
+
+      </View>
     </View>
   );
 }
