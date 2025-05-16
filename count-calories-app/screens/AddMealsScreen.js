@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, useCallback, use } from 'react';
+import { useState, useContext, useEffect, useCallback, useReducer } from 'react';
 import { Text, View, TouchableOpacity, Modal, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
@@ -79,7 +79,27 @@ export default function AddMealScreen() {
 function DayScreen({ route }) {
   const { dayName, userId, date } = route.params;
 
-  const [footerInfoArray, setFooterInfoArray] = useState([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
+  function footerInfoReducer(state, action) {
+    switch (action.mealType) {
+      case "Breakfast":
+        const upBreakfast = [...state];
+        upBreakfast[0] = action.payload;
+        return upBreakfast;
+      case "Lunch":
+        const upLunch = [...state];
+        upLunch[1] = action.payload;
+        return upLunch;
+      case "Dinner":
+        const upDinner = [...state];
+        upDinner[2] = action.payload;
+        return upDinner;
+      case "RESET":
+        return [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+      default:
+        return state;
+    }
+  }
+  const [footerInfoArray, dispatchFooter] = useReducer(footerInfoReducer, [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]);
 
   const convex = useConvex();
   const [dayData, setDayData] = useState(undefined);
@@ -110,9 +130,9 @@ function DayScreen({ route }) {
         :
         (<ScrollView contentContainerStyle={{ alignItems: "stretch", paddingHorizontal: 4, paddingBottom: 90, paddingTop: 56, gap: 6 }} showsVerticalScrollIndicator={false}>
 
-          <MealSection dayInfo={{ dayName, mealType: "Breakfast", mealIndex: 0, date }} mealQueryArray={dayData?.meals?.["Breakfast"] ?? []} onMealAdded={setFooterInfoArray} userID={userId} />
-          <MealSection dayInfo={{ dayName, mealType: "Lunch", mealIndex: 1, date }} mealQueryArray={dayData?.meals?.["Lunch"] ?? []} onMealAdded={setFooterInfoArray} userID={userId} />
-          <MealSection dayInfo={{ dayName, mealType: "Dinner", mealIndex: 2, date }} mealQueryArray={dayData?.meals?.["Dinner"] ?? []} onMealAdded={setFooterInfoArray} userID={userId} />
+          <MealSection dayInfo={{ dayName, mealType: "Breakfast", date }} mealQueryArray={dayData?.meals?.["Breakfast"] ?? []} onMealAdded={dispatchFooter} userID={userId} />
+          <MealSection dayInfo={{ dayName, mealType: "Lunch", date }} mealQueryArray={dayData?.meals?.["Lunch"] ?? []} onMealAdded={dispatchFooter} userID={userId} />
+          <MealSection dayInfo={{ dayName, mealType: "Dinner", date }} mealQueryArray={dayData?.meals?.["Dinner"] ?? []} onMealAdded={dispatchFooter} userID={userId} />
 
         </ScrollView>)
       }
@@ -195,9 +215,9 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
   }, [scannedBarcode]);
 
   useEffect(() => {
-    onMealAdded?.(c => {
-      c[dayInfo.mealIndex] = getMacrosTotalArray();
-      return [...c];
+    onMealAdded?.({
+      mealType: dayInfo.mealType,
+      payload: getMacrosTotalArray()
     });
   }, [mealsArray]);
 
