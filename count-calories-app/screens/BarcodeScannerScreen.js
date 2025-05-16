@@ -31,7 +31,7 @@ export default function BarcodeScannerScreen() {
 
   function handleScan(barcode) {
     setScannedBarcode(barcode);
-    navigation.navigate("Main");
+    navigation.popTo('Main');
   }
 
   const laserAnim = useRef(new Animated.Value(0)).current;

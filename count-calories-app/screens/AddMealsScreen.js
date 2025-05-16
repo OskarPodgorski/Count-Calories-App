@@ -8,7 +8,7 @@ import { startOfWeek, endOfWeek, eachDayOfInterval, format, getISODay } from "da
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as MyStyles from "../styles/MyStyles";
 
-import { mealDB, MealEntry, GetProperMacroValue } from '../scripts/MealHelper'
+import { MealEntry, GetProperMacroValue } from '../scripts/MealHelper'
 import { AlertModal, InfoModal } from '../components/MyComponents';
 import { dailyTargetsContext, scannedBarcodeContext, refreshDayContext } from '../scripts/Context';
 
@@ -105,18 +105,18 @@ function DayScreen({ route }) {
   const [dayData, setDayData] = useState(undefined);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await convex.query(api.meals.getUserMealsByDateQ, {
-        userId,
-        date,
-      });
-      console.log(result);
+    if (userId) {
+      (async () => {
+        const result = await convex.query(api.meals.getUserMealsByDateQ, {
+          userId,
+          date,
+        });
+        console.log(result);
 
-      setDayData(result);
-    };
-
-    if (userId) fetchData();
-
+        setDayData(result);
+      }
+      )();
+    }
   }, [userId]);
 
 

@@ -19,10 +19,6 @@ export class MealEntry {
     this.carbs = carbs;
     this.barcode = barcode;
   }
-
-  getTotalCalories() {
-    return Math.round((this.calories * this.grams) / 100);
-  }
 }
 
 class MealDatabase {
@@ -86,5 +82,3 @@ class MealDatabase {
     return totals;
   }
 }
-
-export const mealDB = new MealDatabase();

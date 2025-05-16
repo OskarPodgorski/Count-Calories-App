@@ -10,6 +10,7 @@ import { api } from "./convex/_generated/api";
 import { useFonts } from 'expo-font';
 import { Fredoka_300Light, Fredoka_400Regular, Fredoka_500Medium } from '@expo-google-fonts/fredoka';
 
+import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -57,11 +58,7 @@ export default function App() {
           <StatusBar style="light" backgroundColor={MyStyles.ColorEerieBlack} />
           <SafeAreaView style={{ flex: 1, backgroundColor: MyStyles.ColorEerieBlack }}>
 
-            <NavigationContainer>
-
-              <Root />
-
-            </NavigationContainer>
+            <Root />
 
           </SafeAreaView>
         </SafeAreaProvider>
@@ -75,8 +72,20 @@ function Root() {
   const { isLoaded, isSignedIn } = useAuth();
   const pong = useQuery(api.ping.ping);
 
+  console.log("root");
+
   if (isLoaded && isSignedIn && pong) {
-    return (
+    return (<Main />);
+  }
+  else {
+    return (<LoginScreen />);
+  }
+}
+
+function Main() {
+  return (
+    <NavigationContainer>
+
       <DailyTargetsProvider>
         <RefreshDayProvider>
           <ScannedBarcodeProvider>
@@ -90,17 +99,15 @@ function Root() {
           </ScannedBarcodeProvider>
         </RefreshDayProvider>
       </DailyTargetsProvider>
-    );
-  }
-  else {
-    return (<LoginScreen />);
-  }
+
+    </NavigationContainer>
+  );
 }
 
 function DrawerCreate() {
   return (
-
     <Drawer.Navigator
+      unmountOnBlur={false}
       screenOptions={{
         drawerStyle: {
           backgroundColor: MyStyles.ColorEerieBlack,
@@ -155,4 +162,3 @@ function DrawerCreate() {
     </Drawer.Navigator>
   );
 }
-
