@@ -1,7 +1,11 @@
-import { useContext, useCallback, useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions } from 'react-native';
+import { useContext, useCallback, useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useFocusEffect } from '@react-navigation/native';
+
+import { useMutation, useConvex, useQuery } from "convex/react";
+import { api } from "../convex/_generated/api";
+import { useUser } from "@clerk/clerk-expo";
 
 import { LineChart } from 'react-native-chart-kit';
 
@@ -12,7 +16,21 @@ import * as MyStyles from "../styles/MyStyles"
 const Tab = createMaterialTopTabNavigator();
 
 export default function WeightScreen() {
-    const [weightsArray, setWeightsArray] = useState([]);
+    const { user } = useUser();
+    const userId = user?.id;
+    const convex = useConvex();
+
+    const [weightsArray, setWeightsArray] = useState(undefined);
+
+    useEffect(() => {
+        if (userId) {
+            (async () => {
+                setWeightsArray(await convex.query(api.weight.getUserWeightsByUserIdQ, { userId }));
+                console.log("weight Q uE");
+            }
+            )();
+        }
+    }, [userId]);
 
     return (
         <View style={{ backgroundColor: MyStyles.ColorNight, flex: 1 }}>
@@ -21,44 +39,45 @@ export default function WeightScreen() {
                 position: "absolute", top: 0, left: 0, right: 0, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, zIndex: 1,
                 backgroundColor: MyStyles.ColorEerieBlack, overflow: "hidden", alignItems: "center"
             }}>
-                <Text style={{ paddingBottom: 12, textAlign: "center", fontFamily: MyStyles.BaseFont, fontSize: 28, color: MyStyles.ColorWhite }}>Chart</Text>
-
-                <CreateChart />
+                <Chart />
 
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ paddingTop: 289 + 5, paddingHorizontal: 5, paddingBottom: 95 + 10, alignItems: "stretch", flexDirection: "column-reverse", gap: 5 }}>
 
-                {weightsArray.map((item, index) => (
-                    <View key={index} style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, alignItems: "stretch", padding: 5, elevation: 4, flexDirection: "row" }}>
+                {weightsArray === undefined ?
+                    (<ActivityIndicator size={100} color={MyStyles.ColorSilver} />)
+                    :
+                    (weightsArray.map((item, index) => (
+                        <View key={index} style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, alignItems: "stretch", padding: 5, elevation: 4, flexDirection: "row" }}>
 
-                        <View style={{ flex: 1, overflow: 'hidden', justifyContent: "center" }}>
-                            <Text
-                                style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 18 }}
-                                numberOfLines={1}
-                                ellipsizeMode="middle">
-                                Index: {index} Date: Weight:
-                            </Text>
-                        </View>
+                            <View style={{ flex: 1, overflow: 'hidden', justifyContent: "center" }}>
+                                <Text
+                                    style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 18 }}
+                                    numberOfLines={1}
+                                    ellipsizeMode="middle">
+                                    Index: {index} Date: Weight:
+                                </Text>
+                            </View>
 
-                        <TouchableOpacity
-                            style={{
-                                ...MyStyles.baseStyle.base,
-                                backgroundColor: MyStyles.ColorEerieBlack,
-                                alignItems: "center",
-                                justifyContent: "center",
-                                alignSelf: "flex-end",
-                                padding: 4,
-                                elevation: 1
-                            }}>
+                            <TouchableOpacity
+                                style={{
+                                    ...MyStyles.baseStyle.base,
+                                    backgroundColor: MyStyles.ColorEerieBlack,
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    alignSelf: "flex-end",
+                                    padding: 4,
+                                    elevation: 1
+                                }}>
 
-                            <MaterialIcons name="delete-forever" size={30} color={MyStyles.ColorDarkCyan} />
+                                <MaterialIcons name="delete-forever" size={30} color={MyStyles.ColorDarkCyan} />
 
-                        </TouchableOpacity>
+                            </TouchableOpacity>
 
-                    </View>
-                ))}
+                        </View>)
+                    ))}
 
             </ScrollView>
 
@@ -74,7 +93,7 @@ export default function WeightScreen() {
     );
 }
 
-function CreateChart() {
+function Chart() {
     const screenWidth = Dimensions.get("window").width;
 
     const data = {
@@ -86,7 +105,7 @@ function CreateChart() {
                 color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`
             },
         ],
-        legend: ["Week Weight"]
+        legend: ["Weight this week"]
     };
 
     const chartConfig = {
