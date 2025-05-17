@@ -8,7 +8,7 @@ export default defineSchema({
         calories: v.number(),
         proteins: v.number(),
         fat: v.number(),
-        carbs: v.number(),
+        carbs: v.number()
     }).index("by_userId", ["userId"]),
 
     globalMeals: defineTable({
@@ -17,7 +17,7 @@ export default defineSchema({
         calories: v.number(),
         proteins: v.number(),
         fat: v.number(),
-        carbs: v.number(),
+        carbs: v.number()
     }).index("by_barcode", ["barcode"])
         .index("by_name", ["name"]),
 
@@ -39,5 +39,12 @@ export default defineSchema({
                 })
             )
         )
-    }).index("by_user_date", ["userId", "date"])
+    }).index("by_user_date", ["userId", "date"]),
+
+    userWeights: defineTable({
+        userId: v.string(),
+        date: v.string(),
+        weight: v.number()
+    }).index("by_userId", ["userId"])
+        .index("by_userId_date", ["userId", "date"])
 });

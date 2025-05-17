@@ -16,6 +16,7 @@ import type {
 import type * as meals from "../meals.js";
 import type * as ping from "../ping.js";
 import type * as settings from "../settings.js";
+import type * as weight from "../weight.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -29,6 +30,7 @@ declare const fullApi: ApiFromModules<{
   meals: typeof meals;
   ping: typeof ping;
   settings: typeof settings;
+  weight: typeof weight;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
