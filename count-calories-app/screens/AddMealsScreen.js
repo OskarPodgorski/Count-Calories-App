@@ -361,14 +361,19 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
 
           {mealsArray.map((item, index) => (
 
-            <View key={index} style={{
+            <TouchableOpacity key={index} style={{
               ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, flexDirection: "row", justifyContent: "space-between",
               alignItems: "center", elevation: 2
             }}>
 
-              <Text style={{ ...MyStyles.baseStyle.text, fontFamily: MyStyles.BaseFont, color: MyStyles.ColorWhite, fontSize: 15 }}>
-                {item.name}{item.name ? " - " : ""}{item.grams}{item.grams ? "g " : ""}({item.calories} kcal)
-              </Text>
+              <View style={{ flex: 1, overflow: 'hidden' }}>
+                <Text
+                  style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 15 }}
+                  numberOfLines={1}
+                  ellipsizeMode="middle">
+                  {item.name}{item.name ? " - " : ""}{item.grams}{item.grams ? "g " : ""}({item.calories} kcal)
+                </Text>
+              </View>
 
               <TouchableOpacity
                 style={{
@@ -376,7 +381,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
                   backgroundColor: MyStyles.ColorNight,
                   alignItems: "center",
                   justifyContent: "center",
-                  alignSelf: "stretch",
+                  alignSelf: "flex-end",
                   margin: 2,
                   padding: 4,
                   elevation: 1
@@ -388,7 +393,7 @@ function MealSection({ userID, dayInfo, mealQueryArray, onMealAdded }) {
 
               </TouchableOpacity>
 
-            </View>
+            </TouchableOpacity>
 
           ))}
 
