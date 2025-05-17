@@ -1,4 +1,4 @@
-import { useContext, useCallback } from 'react';
+import { useContext, useCallback, useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useFocusEffect } from '@react-navigation/native';
@@ -12,6 +12,8 @@ import * as MyStyles from "../styles/MyStyles"
 const Tab = createMaterialTopTabNavigator();
 
 export default function WeightScreen() {
+    const [weightsArray, setWeightsArray] = useState([]);
+
     return (
         <View style={{ backgroundColor: MyStyles.ColorNight, flex: 1 }}>
 
@@ -26,42 +28,44 @@ export default function WeightScreen() {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingTop: 289 + 5, paddingHorizontal: 5, paddingBottom: 10, alignItems: "stretch", gap: 5 }}>
+                contentContainerStyle={{ paddingTop: 289 + 5, paddingHorizontal: 5, paddingBottom: 95 + 10, alignItems: "stretch", flexDirection: "column-reverse", gap: 5 }}>
 
-                <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, alignItems: "stretch", padding: 5, elevation: 4, flexDirection: "row" }}>
+                {weightsArray.map((item, index) => (
+                    <View key={index} style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, alignItems: "stretch", padding: 5, elevation: 4, flexDirection: "row" }}>
 
-                    <View style={{ flex: 1, overflow: 'hidden', justifyContent: "center" }}>
-                        <Text
-                            style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 18 }}
-                            numberOfLines={1}
-                            ellipsizeMode="middle">
-                            Date: Weight:
-                        </Text>
+                        <View style={{ flex: 1, overflow: 'hidden', justifyContent: "center" }}>
+                            <Text
+                                style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 18 }}
+                                numberOfLines={1}
+                                ellipsizeMode="middle">
+                                Index: {index} Date: Weight:
+                            </Text>
+                        </View>
+
+                        <TouchableOpacity
+                            style={{
+                                ...MyStyles.baseStyle.base,
+                                backgroundColor: MyStyles.ColorEerieBlack,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                alignSelf: "flex-end",
+                                padding: 4,
+                                elevation: 1
+                            }}>
+
+                            <MaterialIcons name="delete-forever" size={30} color={MyStyles.ColorDarkCyan} />
+
+                        </TouchableOpacity>
+
                     </View>
-
-                    <TouchableOpacity
-                        style={{
-                            ...MyStyles.baseStyle.base,
-                            backgroundColor: MyStyles.ColorEerieBlack,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            alignSelf: "flex-end",
-                            padding: 4,
-                            elevation: 1
-                        }}>
-
-                        <MaterialIcons name="delete-forever" size={30} color={MyStyles.ColorDarkCyan} />
-
-                    </TouchableOpacity>
-
-                </View>
+                ))}
 
             </ScrollView>
 
             <TouchableOpacity style={{
-                position: "absolute", alignSelf: "center", bottom: 30, width: 70, height: 70, borderRadius: 70 / 2, zIndex: 1, elevation: 2,
+                position: "absolute", alignSelf: "center", bottom: 25, width: 70, height: 70, borderRadius: 70 / 2, zIndex: 1, elevation: 2,
                 backgroundColor: MyStyles.ColorEerieBlack, overflow: "hidden", alignItems: "center", justifyContent: "center"
-            }}>
+            }} onPress={() => { setWeightsArray(c => [...c, 0]); }}>
                 <Ionicons name="add-circle" size={40} color={MyStyles.ColorDarkCyan} />
 
             </TouchableOpacity>
