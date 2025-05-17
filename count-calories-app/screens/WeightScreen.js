@@ -1,7 +1,5 @@
 import { useContext, useCallback, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { useFocusEffect } from '@react-navigation/native';
+import { View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, ActivityIndicator, Modal } from 'react-native';
 
 import { useMutation, useConvex, useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
@@ -12,15 +10,19 @@ import { LineChart } from 'react-native-chart-kit';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as MyStyles from "../styles/MyStyles"
-
-const Tab = createMaterialTopTabNavigator();
+import { set } from 'date-fns';
 
 export default function WeightScreen() {
     const { user } = useUser();
     const userId = user?.id;
+
     const convex = useConvex();
+    const upsertUserWeight = useMutation(api.weight.upsertUserWeightByDateQ);
 
     const [weightsArray, setWeightsArray] = useState(undefined);
+
+    const [addModalFields, setAddModalFields] = useState({ weight: "", date: "" });
+    const [addModalVisible, setAddModalVisible] = useState(false);
 
     useEffect(() => {
         if (userId) {
@@ -31,6 +33,27 @@ export default function WeightScreen() {
             )();
         }
     }, [userId]);
+
+    const handleCancel = () => {
+        setAddModalVisible(false);
+        setAddModalFields({ weight: "", date: "" });
+    }
+
+    const handleAdd = useCallback(async () => {
+        if (!userId || !addModalFields.weight || !addModalFields.date) {
+            return;
+        }
+
+        setAddModalVisible(false);
+
+        await upsertUserWeight({
+            userId: userId,
+            date: "2025-05-15",
+            weight: parseFloat(addModalFields.weight)
+        });
+
+        setAddModalFields({ weight: "", date: "" });
+    }, [userId, addModalFields]);
 
     return (
         <View style={{ backgroundColor: MyStyles.ColorNight, flex: 1 }}>
@@ -44,7 +67,7 @@ export default function WeightScreen() {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingTop: 289 + 5, paddingHorizontal: 5, paddingBottom: 95 + 10, alignItems: "stretch", flexDirection: "column-reverse", gap: 5 }}>
+                contentContainerStyle={{ paddingTop: 240 + 5, paddingHorizontal: 5, paddingBottom: 95 + 10, alignItems: "stretch", flexDirection: "column-reverse", gap: 5 }}>
 
                 {weightsArray === undefined ?
                     (<ActivityIndicator size={100} color={MyStyles.ColorSilver} />)
@@ -84,15 +107,83 @@ export default function WeightScreen() {
             <TouchableOpacity style={{
                 position: "absolute", alignSelf: "center", bottom: 25, width: 70, height: 70, borderRadius: 70 / 2, zIndex: 1, elevation: 2,
                 backgroundColor: MyStyles.ColorEerieBlack, overflow: "hidden", alignItems: "center", justifyContent: "center"
-            }} onPress={() => { setWeightsArray(c => [...c, 0]); }}>
+            }} onPress={() => { setAddModalVisible(true) }}>
                 <Ionicons name="add-circle" size={40} color={MyStyles.ColorDarkCyan} />
 
             </TouchableOpacity>
 
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={addModalVisible}
+                onRequestClose={() => setAddModalVisible(false)}>
+
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)'
+                }}>
+
+                    <View style={{
+                        ...MyStyles.baseStyle.base,
+                        backgroundColor: MyStyles.ColorEerieBlack,
+                        padding: 10,
+                        width: '80%'
+                    }}>
+
+                        <Text style={{
+                            ...MyStyles.baseStyle.base, alignSelf: "center",
+                            backgroundColor: MyStyles.ColorDarkCyan, fontSize: 18, color: MyStyles.ColorBlack,
+                            paddingVertical: 5, paddingHorizontal: 10, fontFamily: MyStyles.BaseFont
+                        }}>Add Weight</Text>
+
+                        <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, padding: 10, marginBottom: 5, marginTop: 10 }}>
+
+                            <Text style={{ fontFamily: MyStyles.BaseFont, fontSize: 14, alignSelf: "center", color: MyStyles.ColorWhite }}>Date:</Text>
+
+                            <TextInput
+                                placeholder="Date"
+                                value={addModalFields.date}
+                                onChangeText={(t) => setAddModalFields({ ...addModalFields, date: t })}
+                                placeholderTextColor={MyStyles.ColorSilver}
+                                style={{ borderBottomWidth: 1, color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite }} />
+
+                        </View>
+
+                        <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, padding: 10, marginBottom: 10 }}>
+
+                            <Text style={{ fontFamily: MyStyles.BaseFont, fontSize: 14, alignSelf: "center", color: MyStyles.ColorWhite }}>Weight:</Text>
+
+                            <TextInput
+                                placeholder="Weight"
+                                value={addModalFields.weight}
+                                onChangeText={(t) => setAddModalFields({ ...addModalFields, weight: t })}
+                                placeholderTextColor={MyStyles.ColorSilver}
+                                style={{ borderBottomWidth: 1, color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite }}
+                            />
+
+                        </View>
+
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+
+                            <TouchableOpacity style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorDarkCyan }} onPress={handleCancel}>
+                                <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorBlack, fontSize: 16 }}>Cancel</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorDarkCyan }} onPress={handleAdd}>
+                                <Text style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorBlack, fontFamily: MyStyles.BaseFontMedium, fontSize: 16 }}>Add +</Text>
+                            </TouchableOpacity>
+
+                        </View>
+
+                    </View>
+                </View>
+            </Modal>
+
         </View>
     );
 }
-
 function Chart() {
     const screenWidth = Dimensions.get("window").width;
 
