@@ -1,7 +1,9 @@
 import { useContext, useCallback } from 'react';
-import { View, Text, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useFocusEffect } from '@react-navigation/native';
+
+import { LineChart } from 'react-native-chart-kit';
 
 import * as MyStyles from "../styles/MyStyles"
 
@@ -17,9 +19,8 @@ export default function WeightScreen() {
             }}>
                 <Text style={{ paddingVertical: 12, textAlign: "center", fontFamily: MyStyles.BaseFont, fontSize: 28, color: MyStyles.ColorWhite }}>Chart</Text>
 
-                <View style={{ backgroundColor: MyStyles.ColorDarkCyan, elevation: 8, width: 100, height: 100 }}>
+                <CreateChart />
 
-                </View>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}
@@ -32,9 +33,38 @@ export default function WeightScreen() {
 }
 
 function CreateChart() {
+    const screenWidth = Dimensions.get("window").width;
+
+    const data = {
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        datasets: [
+            {
+                data: [115, 113, 112, 112, 111, 110, 108],
+                strokeWidth: 3,
+                color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // kolor linii
+            },
+        ],
+        legend: ["Week Weight"], // optional
+    };
+
+    const chartConfig = {
+        backgroundColor: MyStyles.ColorEerieBlack,
+        backgroundGradientFrom: MyStyles.ColorEerieBlack, // ← to MUSI być ustawione
+        backgroundGradientTo: MyStyles.ColorEerieBlack,   // ← i to też
+        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        decimalPlaces: 0
+    };
+
     return (
-        <View style={{ flex: 1, backgroundColor: MyStyles.ColorEerieBlack }}>
-            <Text style={{ color: MyStyles.ColorWhite }}>Chart</Text>
-        </View>
+        <LineChart
+            data={data}
+            width={screenWidth - 20}
+            height={200}
+            chartConfig={chartConfig}
+            bezier={true}
+            style={{
+                marginBottom: 10
+            }} />
     );
 }
