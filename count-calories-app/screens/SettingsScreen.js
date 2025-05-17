@@ -4,7 +4,6 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { useFocusEffect } from '@react-navigation/native';
 
 import * as MyStyles from "../styles/MyStyles"
-import { dailyTargetSettings } from '../settings/Settings';
 import { dailyTargetsContext } from '../scripts/Context';
 
 const Tab = createMaterialTopTabNavigator();
@@ -50,7 +49,7 @@ function DailyTargets() {
                     onEndEditing={(e) => {
                         setDailyTargets(prev => ({ ...prev, calories: parseInt(e.nativeEvent.text) || 0 }));
                     }}>
-                    {dailyTargetSettings.calories}
+                    {dailyTargets.calories}
                 </TextInput>
 
                 <View style={{ backgroundColor: MyStyles.ColorDarkCyan, alignItems: "center", paddingVertical: 4, paddingHorizontal: 10, borderRadius: 8 }}>
@@ -61,7 +60,7 @@ function DailyTargets() {
                     onEndEditing={(e) => {
                         setDailyTargets(prev => ({ ...prev, proteins: parseInt(e.nativeEvent.text) || 0 }));
                     }}>
-                    {dailyTargetSettings.proteins}
+                    {dailyTargets.proteins}
                 </TextInput>
 
 
@@ -73,7 +72,7 @@ function DailyTargets() {
                     onEndEditing={(e) => {
                         setDailyTargets(prev => ({ ...prev, fat: parseInt(e.nativeEvent.text) || 0 }));
                     }}>
-                    {dailyTargetSettings.fat}
+                    {dailyTargets.fat}
                 </TextInput>
 
 
@@ -85,7 +84,7 @@ function DailyTargets() {
                     onEndEditing={(e) => {
                         setDailyTargets(prev => ({ ...prev, carbs: parseInt(e.nativeEvent.text) || 0 }));
                     }}>
-                    {dailyTargetSettings.carbs}
+                    {dailyTargets.carbs}
                 </TextInput>
 
             </View>

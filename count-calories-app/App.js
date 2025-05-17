@@ -24,6 +24,7 @@ import SelectMealsScreen from './screens/SelectMealsScreen';
 import AddMealScreen from './screens/AddMealsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import AccountScreen from './screens/AccountScreen';
+import WeightScreen from './screens/WeightScreen';
 
 import * as MyStyles from "./styles/MyStyles";
 import { DailyTargetsProvider, RefreshDayProvider, ScannedBarcodeProvider, SelectedMealProvider } from './scripts/Context';
@@ -159,6 +160,7 @@ function DrawerCreate() {
       }}
     >
       <Drawer.Screen name="Add Meal" component={AddMealScreen} />
+      <Drawer.Screen name="Weight" component={WeightScreen} />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
       <Drawer.Screen name="Account" component={AccountScreen} />
     </Drawer.Navigator>
