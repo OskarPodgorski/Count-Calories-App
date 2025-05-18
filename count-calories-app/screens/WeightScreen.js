@@ -1,13 +1,13 @@
-import { useContext, useCallback, useState, useEffect, useRef } from 'react';
+import { useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, ActivityIndicator, Modal } from 'react-native';
 
-import { useMutation, useConvex, useQuery } from "convex/react";
+import { useMutation, useConvex } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useUser } from "@clerk/clerk-expo";
 
 import { LineChart } from 'react-native-chart-kit';
 import { Calendar } from 'react-native-calendars';
-import { startOfWeek, endOfWeek, eachDayOfInterval, format, getISODay } from "date-fns";
+import { format } from "date-fns";
 
 import { GetWeekDates } from '../scripts/DateHelper';
 
@@ -21,6 +21,7 @@ export default function WeightScreen() {
 
     const convex = useConvex();
     const upsertUserWeight = useMutation(api.weight.upsertUserWeightByDateQ);
+    const deleteUserWeight = useMutation(api.weight.deleteUserWeightByDateQ);
 
     const [weightsArray, setWeightsArray] = useState(undefined);
 
@@ -29,6 +30,20 @@ export default function WeightScreen() {
 
     const [addModalFields, setAddModalFields] = useState({ weight: "", date: today.current });
     const [addModalVisible, setAddModalVisible] = useState(false);
+
+    const chartWeightsArray = useMemo(() => {
+        if (!weightsArray) {
+            return [];
+        }
+        return PrepareDataForChart(weightsArray);
+    }, [weightsArray]);
+
+    function PrepareDataForChart(weightsArray) {
+        return weekDates.current.map((d) => {
+            const entry = weightsArray.find(i => i.date === d);
+            return entry ? entry.weight : null;
+        });
+    }
 
     useEffect(() => {
         if (userId) {
@@ -63,11 +78,14 @@ export default function WeightScreen() {
         setAddModalFields(c => { return { ...c, weight: "" } });
     }, [userId, addModalFields]);
 
-    const handleDelete = (date) => {
+    const handleDelete = useCallback((date) => {
         setWeightsArray(c => c.filter(i => i.date !== date));
 
-        convex.mutate(api.weight.deleteUserWeightByDateQ, { userId: userId, date: date });
-    }
+        deleteUserWeight({
+            userId: userId,
+            date: date
+        });
+    }, [userId]);
 
     return (
         <View style={{ backgroundColor: MyStyles.ColorNight, flex: 1 }}>
@@ -77,7 +95,7 @@ export default function WeightScreen() {
                 backgroundColor: MyStyles.ColorEerieBlack, overflow: "hidden", alignItems: "center"
             }}>
 
-                <Chart />
+                <Chart weekWeightsArray={chartWeightsArray} />
 
             </View>
 
@@ -107,7 +125,8 @@ export default function WeightScreen() {
                                     alignSelf: "flex-end",
                                     padding: 4,
                                     elevation: 1
-                                }}>
+                                }}
+                                onPress={() => handleDelete(item.date)}>
 
                                 <MaterialIcons name="delete-forever" size={30} color={MyStyles.ColorDarkCyan} />
 
@@ -176,6 +195,7 @@ export default function WeightScreen() {
                                 onChangeText={(t) => setAddModalFields({ ...addModalFields, weight: t })}
                                 placeholderTextColor={MyStyles.ColorSilver}
                                 style={{ borderBottomWidth: 1, color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite }}
+                                keyboardType="numeric"
                             />
 
                         </View>
@@ -199,14 +219,63 @@ export default function WeightScreen() {
         </View>
     );
 }
-function Chart() {
+
+function Chart({ weekWeightsArray }) {
+
+    function InterpolateNullsLerp(array) {
+        const result = [...array];
+
+        if (!result.some(val => typeof val === 'number')) {
+            return [0];
+        }
+
+        let firstIndex = result.findIndex(val => typeof val === 'number');
+        if (firstIndex > 0) {
+            for (let i = 0; i < firstIndex; i++) {
+                result[i] = result[firstIndex];
+            }
+        }
+
+        let lastIndex = -1;
+        for (let i = result.length - 1; i >= 0; i--) {
+            if (typeof result[i] === 'number') {
+                lastIndex = i;
+                break;
+            }
+        }
+        if (lastIndex !== -1 && lastIndex < result.length - 1) {
+            for (let i = lastIndex + 1; i < result.length; i++) {
+                result[i] = result[lastIndex];
+            }
+        }
+
+        for (let i = 0; i < result.length; i++) {
+            if (typeof result[i] !== 'number') {
+                let left = i - 1;
+                while (left >= 0 && typeof result[left] !== 'number') left--;
+
+                let right = i + 1;
+                while (right < result.length && typeof result[right] !== 'number') right++;
+
+                if (left >= 0 && right < result.length) {
+                    const a = result[left];
+                    const b = result[right];
+                    const t = (i - left) / (right - left);
+                    result[i] = a + (b - a) * t;
+                }
+            }
+        }
+
+        return result;
+    }
+
     const screenWidth = Dimensions.get("window").width;
 
     const data = {
         labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         datasets: [
             {
-                data: [115, 113, 112, 110, 111, 110, 108],
+                data: weekWeightsArray.length > 0 ? InterpolateNullsLerp(weekWeightsArray) : [0],
                 strokeWidth: 3,
                 color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`
             },

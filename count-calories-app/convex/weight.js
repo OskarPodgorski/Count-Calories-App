@@ -37,3 +37,24 @@ export const upsertUserWeightByDateQ = mutation({
         }
     },
 });
+
+export const deleteUserWeightByDateQ = mutation({
+    args: {
+        userId: v.string(),
+        date: v.string()
+    },
+    handler: async (ctx, args) => {
+        const existing = await ctx.db
+            .query("userWeights")
+            .withIndex("by_userId_date", q =>
+                q.eq("userId", args.userId).eq("date", args.date)
+            )
+            .unique();
+
+        if (!existing) {
+            return;
+        }
+
+        await ctx.db.delete(existing._id);
+    }
+});
