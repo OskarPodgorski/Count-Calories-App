@@ -6,11 +6,12 @@ import { api } from "../convex/_generated/api";
 import { useUser } from "@clerk/clerk-expo";
 
 import { LineChart } from 'react-native-chart-kit';
+import { Calendar } from 'react-native-calendars';
+import { startOfWeek, endOfWeek, eachDayOfInterval, format, getISODay } from "date-fns";
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as MyStyles from "../styles/MyStyles"
-import { set } from 'date-fns';
 
 export default function WeightScreen() {
     const { user } = useUser();
@@ -21,7 +22,7 @@ export default function WeightScreen() {
 
     const [weightsArray, setWeightsArray] = useState(undefined);
 
-    const [addModalFields, setAddModalFields] = useState({ weight: "", date: "" });
+    const [addModalFields, setAddModalFields] = useState({ weight: "", date: format(new Date(), "yyyy-MM-dd") });
     const [addModalVisible, setAddModalVisible] = useState(false);
 
     useEffect(() => {
@@ -36,7 +37,7 @@ export default function WeightScreen() {
 
     const handleCancel = () => {
         setAddModalVisible(false);
-        setAddModalFields({ weight: "", date: "" });
+        setAddModalFields(c => { return { ...c, weight: "" } });
     }
 
     const handleAdd = useCallback(async () => {
@@ -52,7 +53,7 @@ export default function WeightScreen() {
             weight: parseFloat(addModalFields.weight)
         });
 
-        setAddModalFields({ weight: "", date: "" });
+        setAddModalFields(c => { return { ...c, weight: "" } });
     }, [userId, addModalFields]);
 
     return (
@@ -79,9 +80,8 @@ export default function WeightScreen() {
                                 <Text
                                     style={{ ...MyStyles.baseStyle.text, color: MyStyles.ColorWhite, fontSize: 18 }}
                                     numberOfLines={1}
-                                    ellipsizeMode="middle">
-                                    Index: {index} Date: Weight:
-                                </Text>
+                                    ellipsizeMode="middle">{item.date}  /  {item.weight}</Text>
+
                             </View>
 
                             <TouchableOpacity
@@ -135,23 +135,24 @@ export default function WeightScreen() {
                         <Text style={{
                             ...MyStyles.baseStyle.base, alignSelf: "center",
                             backgroundColor: MyStyles.ColorDarkCyan, fontSize: 18, color: MyStyles.ColorBlack,
-                            paddingVertical: 5, paddingHorizontal: 10, fontFamily: MyStyles.BaseFont
+                            paddingVertical: 5, paddingHorizontal: 10, fontFamily: MyStyles.BaseFont, marginBottom: 10
                         }}>Add Weight</Text>
 
-                        <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, padding: 10, marginBottom: 5, marginTop: 10 }}>
+                        <Calendar
+                            style={{ ...MyStyles.baseStyle.base }}
+                            onDayPress={(d) => {
+                                setAddModalFields({ ...addModalFields, date: d.dateString });
+                            }}
+                            markedDates={{
+                                [addModalFields.date]: {
+                                    selected: true,
+                                    marked: true,
+                                    selectedColor: MyStyles.ColorDarkCyan,
+                                },
+                            }}
+                        />
 
-                            <Text style={{ fontFamily: MyStyles.BaseFont, fontSize: 14, alignSelf: "center", color: MyStyles.ColorWhite }}>Date:</Text>
-
-                            <TextInput
-                                placeholder="Date"
-                                value={addModalFields.date}
-                                onChangeText={(t) => setAddModalFields({ ...addModalFields, date: t })}
-                                placeholderTextColor={MyStyles.ColorSilver}
-                                style={{ borderBottomWidth: 1, color: MyStyles.ColorWhite, borderColor: MyStyles.ColorWhite }} />
-
-                        </View>
-
-                        <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, padding: 10, marginBottom: 10 }}>
+                        <View style={{ ...MyStyles.baseStyle.base, backgroundColor: MyStyles.ColorOnyx, padding: 10, marginVertical: 10 }}>
 
                             <Text style={{ fontFamily: MyStyles.BaseFont, fontSize: 14, alignSelf: "center", color: MyStyles.ColorWhite }}>Weight:</Text>
 
