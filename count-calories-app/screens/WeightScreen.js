@@ -1,4 +1,4 @@
-import { useContext, useCallback, useState, useEffect } from 'react';
+import { useContext, useCallback, useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions, ActivityIndicator, Modal } from 'react-native';
 
 import { useMutation, useConvex, useQuery } from "convex/react";
@@ -8,6 +8,8 @@ import { useUser } from "@clerk/clerk-expo";
 import { LineChart } from 'react-native-chart-kit';
 import { Calendar } from 'react-native-calendars';
 import { startOfWeek, endOfWeek, eachDayOfInterval, format, getISODay } from "date-fns";
+
+import { GetWeekDates } from '../scripts/DateHelper';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -22,7 +24,10 @@ export default function WeightScreen() {
 
     const [weightsArray, setWeightsArray] = useState(undefined);
 
-    const [addModalFields, setAddModalFields] = useState({ weight: "", date: format(new Date(), "yyyy-MM-dd") });
+    const today = useRef(format(new Date(), "yyyy-MM-dd"));
+    const weekDates = useRef(GetWeekDates(new Date(), false));
+
+    const [addModalFields, setAddModalFields] = useState({ weight: "", date: today.current });
     const [addModalVisible, setAddModalVisible] = useState(false);
 
     useEffect(() => {
@@ -47,14 +52,22 @@ export default function WeightScreen() {
 
         setAddModalVisible(false);
 
+        setWeightsArray(c => [...c.filter(i => i.date !== addModalFields.date), addModalFields].sort((a, b) => a.date.localeCompare(b.date)))
+
         await upsertUserWeight({
             userId: userId,
-            date: "2025-05-15",
+            date: addModalFields.date,
             weight: parseFloat(addModalFields.weight)
         });
 
         setAddModalFields(c => { return { ...c, weight: "" } });
     }, [userId, addModalFields]);
+
+    const handleDelete = (date) => {
+        setWeightsArray(c => c.filter(i => i.date !== date));
+
+        convex.mutate(api.weight.deleteUserWeightByDateQ, { userId: userId, date: date });
+    }
 
     return (
         <View style={{ backgroundColor: MyStyles.ColorNight, flex: 1 }}>
@@ -63,6 +76,7 @@ export default function WeightScreen() {
                 position: "absolute", top: 0, left: 0, right: 0, borderBottomLeftRadius: 24, borderBottomRightRadius: 24, zIndex: 1,
                 backgroundColor: MyStyles.ColorEerieBlack, overflow: "hidden", alignItems: "center"
             }}>
+
                 <Chart />
 
             </View>
@@ -192,7 +206,7 @@ function Chart() {
         labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         datasets: [
             {
-                data: [115, 113, 112, 112, 111, 110, 108],
+                data: [115, 113, 112, 110, 111, 110, 108],
                 strokeWidth: 3,
                 color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`
             },

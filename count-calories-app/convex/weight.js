@@ -8,7 +8,7 @@ export const getUserWeightsByUserIdQ = query({
     handler: async (ctx, args) => {
         const weights = await ctx.db.query("userWeights").withIndex("by_userId", (q) => q.eq("userId", args.userId)).collect();
 
-        return await (async () => { return weights.sort((a, b) => b.date.localeCompare(a.date)); })();
+        return await (async () => { return weights.sort((a, b) => a.date.localeCompare(b.date)); })();
     },
 });
 
